@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登入</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4ABBB9', // Teal/turquoise - main color
+                        secondary: '#FFCE51', // Warm yellow
+                        accent: '#FF8F77', // Coral
+                        pastel: {
+                            blue: '#A7D8F0',
+                            green: '#B2DBC5',
+                            yellow: '#FFF1C2',
+                            pink: '#FFCAD4'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-image: url('https://source.unsplash.com/1600x900/?children,colorful,playground');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+<div class="flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-md p-8 rounded-xl bg-white/70 backdrop-blur-lg shadow-lg border-2 border-pastel-blue">
+        <h2 class="text-2xl font-bold mb-6 text-center text-primary">親子發展平台</h2>
+        <form th:action="@{/perform_login}" method="post">
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium mb-1 text-gray-700">電子郵件</label>
+                <input type="text"
+                       class="w-full px-3 py-2 border border-pastel-blue rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                       id="email" name="email" placeholder="請輸入電子郵件">
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-medium mb-1 text-gray-700">密碼</label>
+                <input type="password"
+                       class="w-full px-3 py-2 border border-pastel-blue rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                       id="password" name="password" placeholder="請輸入密碼">
+            </div>
+            <div>
+                <button type="submit"
+                        class="w-full bg-primary hover:bg-opacity-90 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                    登入
+                </button>
+            </div>
+            <!-- 顯示錯誤訊息 -->
+            <div th:if="${param.error}" class="mt-4">
+                <div class="bg-accent bg-opacity-20 border border-accent text-gray-700 px-4 py-3 rounded" role="alert">
+                    登入失敗，請檢查電子郵件或密碼。
+                </div>
+            </div>
+            <div th:if="${param.logout}" class="mt-4">
+                <div class="bg-pastel-green border border-green-300 text-gray-700 px-4 py-3 rounded" role="alert">
+                    您已成功登出。
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
