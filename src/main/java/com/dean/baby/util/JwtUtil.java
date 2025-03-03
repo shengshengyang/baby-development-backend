@@ -1,26 +1,66 @@
 package com.dean.baby.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class JwtUtil {
 
+    @Value("${jwt.secret}") // Load from application.yml
+    private String secretKey;
 
-    private final String secret = UUID.randomUUID().toString();
+    // Token validity: 10 hours
+    private static final long JWT_TOKEN_VALIDITY = 10 * 60 * 60 * 1000;
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build()
+                .parseClaimsJws(token).getBody();
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
 
     public String generateToken(String username) {
-        // token 有效期設為 1 天（單位：毫秒）
-        long expiration = 86400000;
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, username);
+    }
+
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .setSubject(username) // 設置 token 主題為用戶名
-                .setIssuedAt(new Date()) // 設置發行時間
-                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // 設置過期時間
-                .signWith(SignatureAlgorithm.HS512, secret) // 使用 HS512 演算法簽署 token
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes())) // Simplified signWith
                 .compact();
+    }
+
+    public Boolean validateToken(String token, String username) {
+        final String extractedUsername = extractUsername(token);
+        return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 }

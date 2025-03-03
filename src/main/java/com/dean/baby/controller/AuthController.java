@@ -1,16 +1,23 @@
 package com.dean.baby.controller;
 
+import com.dean.baby.dto.LoginVo;
+import com.dean.baby.dto.RegisterVo;
+import com.dean.baby.dto.UserDto;
 import com.dean.baby.entity.User;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
 import com.dean.baby.repository.UserRepository;
-import com.dean.baby.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.dean.baby.service.AuthService;
+import com.dean.baby.service.EmailService;
+import com.dean.baby.service.RedisService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,30 +26,53 @@ public class AuthController {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil = new JwtUtil();
+    private final RedisService redisService;
+    private final EmailService emailService;
+    private final AuthService authService;
+    Random random = new Random();
 
-    @Autowired
-    public AuthController(UserRepository userRepo, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+
+    public AuthController(UserRepository userRepo, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, RedisService redisService, EmailService emailService, AuthService authService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.redisService = redisService;
+        this.emailService = emailService;
+        this.authService = authService;
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public String register(@NonNull @RequestParam String email) {
+
+        String code = String.valueOf(random.nextInt(900000) + 100000); // 6 位驗證碼
+        redisService.saveVerificationCode(email, code);
+        emailService.sendVerificationCode(email, code);
+        return "驗證碼已發送至 " + email;
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<String> verify(@NonNull @RequestParam String email,@NonNull @RequestParam String code, @RequestBody User user) {
+        if (redisService.verifyCode(email, code)) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepo.save(user);
+            redisService.deleteVerificationCode(email);
+            return ResponseEntity.ok("Verification successful");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification code not match or expired");
+    }
+
+    @PostMapping("/create")
+    public String create(@RequestBody RegisterVo vo) {
+        User user = userRepo.findByEmail(vo.email()).orElse(User.builder().email(vo.email()).build());
+        user.setUsername(vo.username());
+        user.setPassword(passwordEncoder.encode(vo.password()));
         userRepo.save(user);
-        return "註冊成功";
+        return "用戶已建立";
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User loginUser) {
-        // 驗證用戶名與密碼
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword())
-        );
-        // 生成並回傳 JWT token
-        return jwtUtil.generateToken(loginUser.getUsername());
+    public UserDto login(@RequestBody LoginVo vo) {
+        return authService.login(vo);
     }
 
     @PostMapping("/logout")
