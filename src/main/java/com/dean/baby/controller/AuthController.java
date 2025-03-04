@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final RedisService redisService;
     private final EmailService emailService;
     private final AuthService authService;
@@ -35,7 +34,6 @@ public class AuthController {
     public AuthController(UserRepository userRepo, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, RedisService redisService, EmailService emailService, AuthService authService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
         this.redisService = redisService;
         this.emailService = emailService;
         this.authService = authService;
@@ -62,17 +60,18 @@ public class AuthController {
     }
 
     @PostMapping("/create")
-    public String create(@RequestBody RegisterVo vo) {
-        User user = userRepo.findByEmail(vo.email()).orElse(User.builder().email(vo.email()).build());
-        user.setUsername(vo.username());
-        user.setPassword(passwordEncoder.encode(vo.password()));
-        userRepo.save(user);
-        return "用戶已建立";
+    public ResponseEntity<UserDto> create(@RequestBody RegisterVo vo) {
+        return ResponseEntity.ok(authService.register(vo));
     }
 
     @PostMapping("/login")
-    public UserDto login(@RequestBody LoginVo vo) {
-        return authService.login(vo);
+    public ResponseEntity<UserDto> login(@RequestBody LoginVo vo) {
+        return ResponseEntity.ok(authService.login(vo));
+    }
+
+    @PatchMapping
+    public ResponseEntity<UserDto> update(@RequestBody RegisterVo vo) {
+        return ResponseEntity.ok(authService.update(vo));
     }
 
     @PostMapping("/logout")

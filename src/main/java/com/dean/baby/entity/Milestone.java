@@ -17,6 +17,9 @@ public class Milestone {
 
     private String category;
 
+    @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Flashcard> flashcards;
+
     @OneToMany(mappedBy = "milestone")
     private List<MilestoneTranslation> translations;
 }

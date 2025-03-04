@@ -1,6 +1,7 @@
 package com.dean.baby.service;
 
 import com.dean.baby.dto.LoginVo;
+import com.dean.baby.dto.RegisterVo;
 import com.dean.baby.dto.UserDto;
 import com.dean.baby.entity.User;
 import com.dean.baby.exception.ApiException;
@@ -11,7 +12,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class AuthService extends BaseService{
@@ -20,14 +25,15 @@ public class AuthService extends BaseService{
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-
-    protected AuthService(UserRepository userRepository, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtUtil jwtUtil, UserRepository userRepository1) {
+    protected AuthService(UserRepository userRepository, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtUtil jwtUtil, UserRepository userRepository1, PasswordEncoder passwordEncoder) {
         super(userRepository);
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository1;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -40,8 +46,6 @@ public class AuthService extends BaseService{
         User user = userRepository.findByEmail(loginRequest.email()).orElseThrow(
                 () -> new ApiException(SysCode.USER_NOT_FOUND, "User not found")
         );
-
-        //verify password
 
 
         try {
@@ -64,5 +68,36 @@ public class AuthService extends BaseService{
         logger.info("Login successful for user: {}", user.getUsername());
 
         return userDto;
+    }
+
+    @Transactional
+    public UserDto register(RegisterVo vo) {
+        userRepository.findByEmail(vo.email()).ifPresent(user -> {
+            throw new ApiException(SysCode.USER_ALREADY_EXISTS, "用戶已存在");
+        });
+        User user = User.builder()
+                .email(vo.email())
+                .username(vo.username())
+                .password(passwordEncoder.encode(vo.password()))
+                .build();
+        userRepository.save(user);
+        return login(LoginVo.builder().email(vo.email()).password(vo.password()).build());
+    }
+
+    public UserDto update(RegisterVo vo) {
+        User user = getCurrentUser();
+        user.setEmail(vo.email());
+        user.setUsername(vo.username());
+        user.setPassword(passwordEncoder.encode(vo.password()));
+        userRepository.save(user);
+        return toDto(user);
+    }
+
+    private UserDto toDto(User user) {
+        return UserDto.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(List.of("ROLE_USER"))
+                .build();
     }
 }

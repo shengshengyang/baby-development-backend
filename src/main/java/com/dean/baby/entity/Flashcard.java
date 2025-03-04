@@ -14,6 +14,10 @@ public class Flashcard {
 
     private String category;
 
+    @ManyToOne
+    @JoinColumn(name = "milestone_id", nullable = false)
+    private Milestone milestone;
+
     @OneToMany(mappedBy = "flashcard")
     private List<FlashcardTranslation> translations;
 }

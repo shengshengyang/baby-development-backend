@@ -20,7 +20,8 @@ public enum SysCode implements ErrorCode{
     COMPANY_NAME_ALREADY_EXISTS(10012, "Company name already exists"),
     COMPANY_NOT_FOUND(10013, "Company not found"),
     JWT_VALIDATION_FAILED(10014, "JWT validation failed"),
-    CACHE_CODE_NOT_MATCH_OR_EXPIRED(10015, "Cache code not match or expired"),;
+    CACHE_CODE_NOT_MATCH_OR_EXPIRED(10015, "Cache code not match or expired"),
+    USER_ALREADY_EXISTS(10016, "User already exists"),;
 
     private final Integer code;
     private final String message;

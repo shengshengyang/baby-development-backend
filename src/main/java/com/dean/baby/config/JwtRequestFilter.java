@@ -48,7 +48,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (path.matches("/(api/auth/*|register|forgot-password|swagger-ui\\.html|swagger-ui/.*|v3/api-docs.*|swagger-resources/.*|webjars/.*)")) {
+        if (path.matches("/(auth/.*|open/.*|register|forgot-password|swagger-ui\\.html|swagger-ui/.*|v3/api-docs.*|swagger-resources/.*|webjars/.*)")) {
             filterChain.doFilter(request, response);
             return;
         }

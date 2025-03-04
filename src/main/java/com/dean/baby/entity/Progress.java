@@ -26,4 +26,8 @@ public class Progress {
     @ManyToOne
     @JoinColumn(name = "baby_id")
     private Baby baby;
+
+    @ManyToOne
+    @JoinColumn(name = "flashcard_id", nullable = false)
+    private Flashcard flashcard;
 }
