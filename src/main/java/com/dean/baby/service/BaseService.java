@@ -21,7 +21,7 @@ public abstract class BaseService {
     protected User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
+            throw new ApiException(SysCode.NOT_LOGIN);
         }
         return userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new ApiException(SysCode.USER_NOT_FOUND, authentication.getName()));

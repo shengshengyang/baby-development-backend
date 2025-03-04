@@ -1,13 +1,19 @@
 package com.dean.baby.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
-@Data
 @Table(name = "babies")
 public class Baby {
     @Id
@@ -24,5 +30,6 @@ public class Baby {
     private User user;
 
     @OneToMany(mappedBy = "baby")
+    @ToString.Exclude
     private List<Progress> progresses;
 }
