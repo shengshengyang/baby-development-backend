@@ -2,11 +2,9 @@ package com.dean.baby.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Builder
 @AllArgsConstructor
@@ -14,6 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@Data
 @Table(name = "babies")
 public class Baby {
     @Id
@@ -29,7 +28,6 @@ public class Baby {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "baby")
-    @ToString.Exclude
+    @OneToMany(mappedBy = "baby", fetch = FetchType.LAZY)
     private List<Progress> progresses;
 }

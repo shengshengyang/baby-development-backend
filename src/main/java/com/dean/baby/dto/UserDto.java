@@ -12,4 +12,5 @@ public class UserDto {
     private String email;
     private List<String> role;
     private String token;
+    private List<BabyDto> babies;
 }
