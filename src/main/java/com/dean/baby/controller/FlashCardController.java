@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,8 +45,8 @@ public class FlashCardController {
 
     // 讀取所有 Flashcard
     @GetMapping
-    public ResponseEntity<List<FlashcardDTO>> getAllFlashcards() {
-        List<FlashcardDTO> flashcards = flashCardService.getAllFlashcards();
+    public ResponseEntity<List<FlashcardDTO>> getAllFlashcards(@Nullable @RequestParam  Integer ageInMonths) {
+        List<FlashcardDTO> flashcards = flashCardService.getAllFlashcards(ageInMonths);
         return ResponseEntity.ok(flashcards);
     }
 

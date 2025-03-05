@@ -1,10 +1,15 @@
 package com.dean.baby.entity;
 
-import lombok.Data;
+import lombok.*;
 import jakarta.persistence.*;
+import org.springframework.stereotype.Service;
 
 @Entity
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "flashcard_translations")
 public class FlashcardTranslation {
     @Id

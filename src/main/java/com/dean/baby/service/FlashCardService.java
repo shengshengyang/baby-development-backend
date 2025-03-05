@@ -17,11 +17,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class FlashCardService extends BaseService{
+public class FlashCardService extends BaseService {
 
     private final FlashcardRepository flashcardRepository;
     private final FlashcardTranslationRepository translationRepository;
     private final MilestoneRepository milestoneRepository;
+
     protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository) {
         super(userRepository);
         this.flashcardRepository = flashcardRepository;
@@ -65,10 +66,15 @@ public class FlashCardService extends BaseService{
                 .map(this::convertToDTO);
     }
 
-    public List<FlashcardDTO> getAllFlashcards() {
+    public List<FlashcardDTO> getAllFlashcards(Integer ageInMonths) {
+        if (ageInMonths != null) {
+            return flashcardRepository.findByMilestoneAgeInMonths(ageInMonths).stream()
+                    .map(this::convertToDTO)
+                    .toList();
+        }
         return flashcardRepository.findAll().stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -94,7 +100,7 @@ public class FlashCardService extends BaseService{
                     translation.setFlashcard(flashcard);
                     return translation;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         flashcard.setTranslations(newTranslations);
 
@@ -118,14 +124,14 @@ public class FlashCardService extends BaseService{
 
     private FlashcardDTO convertToDTO(Flashcard flashcard) {
         List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations().stream()
-                .map(translation -> new FlashcardTranslationDTO(
-                        translation.getId(),
-                        translation.getLanguageCode(),
-                        translation.getFrontText(),
-                        translation.getBackText(),
-                        translation.getImageUrl()
-                ))
-                .collect(Collectors.toList());
+                .map(translation -> FlashcardTranslationDTO.builder()
+                        .id(translation.getId())
+                        .languageCode(translation.getLanguageCode())
+                        .frontText(translation.getFrontText())
+                        .backText(translation.getBackText())
+                        .imageUrl(translation.getImageUrl())
+                        .build())
+                .toList();
 
         return new FlashcardDTO(
                 flashcard.getId(),
