@@ -4,8 +4,6 @@ import com.dean.baby.dto.LoginVo;
 import com.dean.baby.dto.RegisterVo;
 import com.dean.baby.dto.UserDto;
 import com.dean.baby.entity.User;
-import com.dean.baby.exception.ApiException;
-import com.dean.baby.exception.SysCode;
 import com.dean.baby.repository.UserRepository;
 import com.dean.baby.service.AuthService;
 import com.dean.baby.service.EmailService;
@@ -13,7 +11,6 @@ import com.dean.baby.service.RedisService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +28,7 @@ public class AuthController {
     Random random = new Random();
 
 
-    public AuthController(UserRepository userRepo, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, RedisService redisService, EmailService emailService, AuthService authService) {
+    public AuthController(UserRepository userRepo, PasswordEncoder passwordEncoder, RedisService redisService, EmailService emailService, AuthService authService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.redisService = redisService;

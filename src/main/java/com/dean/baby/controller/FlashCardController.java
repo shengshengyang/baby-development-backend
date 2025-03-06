@@ -8,12 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/flash-card")
 public class FlashCardController {
 
     private final FlashCardService flashCardService;
@@ -24,7 +22,7 @@ public class FlashCardController {
     }
 
     // 創建 Flashcard
-    @PostMapping
+    @PostMapping("/flash-card")
     public ResponseEntity<FlashcardDTO> createFlashcard(@RequestBody FlashcardDTO flashcardDTO) {
         List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
         FlashcardDTO createdFlashcard = flashCardService.createFlashcard(
@@ -36,7 +34,7 @@ public class FlashCardController {
     }
 
     // 讀取單個 Flashcard
-    @GetMapping("/{id}")
+    @GetMapping("/open/flash-card/{id}")
     public ResponseEntity<FlashcardDTO> getFlashcardById(@PathVariable Long id) {
         Optional<FlashcardDTO> flashcardDTO = flashCardService.getFlashcardById(id);
         return flashcardDTO.map(ResponseEntity::ok)
@@ -44,14 +42,15 @@ public class FlashCardController {
     }
 
     // 讀取所有 Flashcard
-    @GetMapping
-    public ResponseEntity<List<FlashcardDTO>> getAllFlashcards(@Nullable @RequestParam  Integer ageInMonths) {
-        List<FlashcardDTO> flashcards = flashCardService.getAllFlashcards(ageInMonths);
+
+    @GetMapping("/open/flash-card")
+    public ResponseEntity<List<FlashcardDTO>> getAllFlashcards(@RequestHeader("Accept-Language") String language) {
+        List<FlashcardDTO> flashcards = flashCardService.getAllFlashcards(language);
         return ResponseEntity.ok(flashcards);
     }
 
     // 更新 Flashcard
-    @PutMapping("/{id}")
+    @PutMapping("/flash-card/{id}")
     public ResponseEntity<FlashcardDTO> updateFlashcard(@PathVariable Long id, @RequestBody FlashcardDTO flashcardDTO) {
         List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
         FlashcardDTO updatedFlashcard = flashCardService.updateFlashcard(
@@ -63,7 +62,7 @@ public class FlashCardController {
     }
 
     // 刪除 Flashcard
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/flash-card/{id}")
     public ResponseEntity<Void> deleteFlashcard(@PathVariable Long id) {
         flashCardService.deleteFlashcard(id);
         return ResponseEntity.noContent().build();

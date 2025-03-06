@@ -17,12 +17,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class FlashCardService extends BaseService {
+public class FlashCardService extends BaseService{
 
     private final FlashcardRepository flashcardRepository;
     private final FlashcardTranslationRepository translationRepository;
     private final MilestoneRepository milestoneRepository;
-
     protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository) {
         super(userRepository);
         this.flashcardRepository = flashcardRepository;
@@ -66,14 +65,9 @@ public class FlashCardService extends BaseService {
                 .map(this::convertToDTO);
     }
 
-    public List<FlashcardDTO> getAllFlashcards(Integer ageInMonths) {
-        if (ageInMonths != null) {
-            return flashcardRepository.findByMilestoneAgeInMonths(ageInMonths).stream()
-                    .map(this::convertToDTO)
-                    .toList();
-        }
+    public List<FlashcardDTO> getAllFlashcards( String language) {
         return flashcardRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(   flashcard -> convertToLanguageDTO(flashcard, language))
                 .toList();
     }
 
@@ -124,21 +118,45 @@ public class FlashCardService extends BaseService {
 
     private FlashcardDTO convertToDTO(Flashcard flashcard) {
         List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations().stream()
-                .map(translation -> FlashcardTranslationDTO.builder()
-                        .id(translation.getId())
-                        .languageCode(translation.getLanguageCode())
-                        .frontText(translation.getFrontText())
-                        .backText(translation.getBackText())
-                        .imageUrl(translation.getImageUrl())
-                        .build())
+                .map(translation -> new FlashcardTranslationDTO(
+                        translation.getId(),
+                        translation.getLanguageCode(),
+                        translation.getFrontText(),
+                        translation.getBackText(),
+                        translation.getImageUrl()
+                ))
                 .toList();
 
-        return new FlashcardDTO(
-                flashcard.getId(),
-                flashcard.getCategory(),
-                flashcard.getMilestone().getId(),
-                translationDTOs
-        );
+        return FlashcardDTO.builder()
+                .id(flashcard.getId())
+                .category(flashcard.getCategory())
+                .milestoneId(flashcard.getMilestone().getId())
+                .ageInMonths(flashcard.getMilestone().getAgeInMonths())
+                .translations(translationDTOs)
+                .build();
     }
+
+    private FlashcardDTO convertToLanguageDTO(Flashcard flashcard, String language) {
+        List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations()
+                .stream()
+                .filter(translation -> translation.getLanguageCode().equals(language))
+                .map(translation -> new FlashcardTranslationDTO(
+                        translation.getId(),
+                        translation.getLanguageCode(),
+                        translation.getFrontText(),
+                        translation.getBackText(),
+                        translation.getImageUrl()
+                ))
+                .toList();
+
+        return FlashcardDTO.builder()
+                .id(flashcard.getId())
+                .category(flashcard.getCategory())
+                .milestoneId(flashcard.getMilestone().getId())
+                .ageInMonths(flashcard.getMilestone().getAgeInMonths())
+                .translations(translationDTOs)
+                .build();
+    }
+
 
 }
