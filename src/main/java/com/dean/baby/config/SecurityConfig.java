@@ -3,6 +3,7 @@ package com.dean.baby.config;
 import com.dean.baby.util.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@Order(1)
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
@@ -32,11 +34,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**","/open/**",
+                .securityMatcher("/api/**") // 明確指定API路徑
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("api/auth/**", "api/open/**",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
-                                "/swagger-resources/**", "/webjars/**").permitAll() // 開放登入與登出 API, 開放 API/open/** 路徑
-                        .anyRequest().authenticated() // 其他請求需驗證
+                                "/swagger-resources/**", "/webjars/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
