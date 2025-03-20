@@ -1,6 +1,7 @@
 package com.dean.baby.api.service;
 
 import com.dean.baby.common.dto.FlashcardDTO;
+import com.dean.baby.common.dto.FlashcardLanguageDTO;
 import com.dean.baby.common.dto.FlashcardTranslationDTO;
 import com.dean.baby.common.entity.Flashcard;
 import com.dean.baby.common.entity.FlashcardTranslation;
@@ -13,14 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class FlashCardService extends BaseService{
+public class FlashCardService extends BaseService {
 
     private final FlashcardRepository flashcardRepository;
     private final FlashcardTranslationRepository translationRepository;
     private final MilestoneRepository milestoneRepository;
+
     protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository) {
         super(userRepository);
         this.flashcardRepository = flashcardRepository;
@@ -64,9 +67,10 @@ public class FlashCardService extends BaseService{
                 .map(this::convertToDTO);
     }
 
-    public List<FlashcardDTO> getAllFlashcards( String language) {
+    public List<FlashcardLanguageDTO> getAllFlashcards(String language) {
         return flashcardRepository.findAll().stream()
-                .map(   flashcard -> convertToLanguageDTO(flashcard, language))
+                .map(flashcard -> convertToLanguageDTO(flashcard, language))
+                .filter(Objects::nonNull)
                 .toList();
     }
 
@@ -135,27 +139,22 @@ public class FlashCardService extends BaseService{
                 .build();
     }
 
-    private FlashcardDTO convertToLanguageDTO(Flashcard flashcard, String language) {
-        List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations()
+    private FlashcardLanguageDTO convertToLanguageDTO(Flashcard flashcard, String language) {
+        return flashcard.getTranslations()
                 .stream()
-                .filter(translation -> translation.getLanguageCode().equals(language))
-                .map(translation -> new FlashcardTranslationDTO(
-                        translation.getId(),
-                        translation.getLanguageCode(),
-                        translation.getFrontText(),
-                        translation.getBackText(),
-                        translation.getImageUrl()
-                ))
-                .toList();
-
-        return FlashcardDTO.builder()
-                .id(flashcard.getId())
-                .category(flashcard.getCategory())
-                .milestoneId(flashcard.getMilestone().getId())
-                .ageInMonths(flashcard.getMilestone().getAgeInMonths())
-                .translations(translationDTOs)
-                .build();
+                .filter(translation -> translation.getLanguageCode().equalsIgnoreCase(language))
+                .findFirst()
+                .map(translation -> FlashcardLanguageDTO.builder()
+                        .id(flashcard.getId())
+                        .category(flashcard.getCategory())
+                        .milestoneId(flashcard.getMilestone().getId())
+                        .ageInMonths(flashcard.getMilestone().getAgeInMonths())
+                        .languageCode(translation.getLanguageCode())
+                        .frontText(translation.getFrontText())
+                        .backText(translation.getBackText())
+                        .imageUrl(translation.getImageUrl())
+                        .build())
+                .orElse(null);
     }
-
 
 }

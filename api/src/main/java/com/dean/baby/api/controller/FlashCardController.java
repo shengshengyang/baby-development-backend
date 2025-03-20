@@ -1,6 +1,7 @@
 package com.dean.baby.api.controller;
 
 import com.dean.baby.common.dto.FlashcardDTO;
+import com.dean.baby.common.dto.FlashcardLanguageDTO;
 import com.dean.baby.common.dto.FlashcardTranslationDTO;
 import com.dean.baby.api.service.FlashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,8 @@ public class FlashCardController {
     // 讀取所有 Flashcard
 
     @GetMapping("/open/flash-card")
-    public ResponseEntity<List<FlashcardDTO>> getAllFlashcards(@RequestHeader("Accept-Language") String language) {
-        List<FlashcardDTO> flashcards = flashCardService.getAllFlashcards(language);
+    public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashcards(@RequestHeader("Accept-Language") String language) {
+        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards(language);
         return ResponseEntity.ok(flashcards);
     }
 
