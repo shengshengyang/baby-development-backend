@@ -1,4 +1,4 @@
-package com.dean.baby.api.service;
+package com.dean.baby.common.service;
 
 import com.dean.baby.common.entity.User;
 import com.dean.baby.common.exception.ApiException;

@@ -3,7 +3,7 @@ package com.dean.baby.api.controller;
 import com.dean.baby.common.dto.FlashcardDTO;
 import com.dean.baby.common.dto.FlashcardLanguageDTO;
 import com.dean.baby.common.dto.FlashcardTranslationDTO;
-import com.dean.baby.api.service.FlashCardService;
+import com.dean.baby.common.service.FlashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

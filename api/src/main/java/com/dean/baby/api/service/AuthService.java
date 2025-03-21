@@ -8,6 +8,7 @@ import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.UserRepository;
 import com.dean.baby.api.util.JwtUtil;
+import com.dean.baby.common.service.BaseService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class AuthService extends BaseService{
+public class AuthService extends BaseService {
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;

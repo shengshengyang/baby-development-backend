@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Layout</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4ABBB9',
+                        secondary: '#FFCE51',
+                        accent: '#FF8F77',
+                        pastel: {
+                            blue: '#A7D8F0',
+                            green: '#B2DBC5',
+                            yellow: '#FFF1C2',
+                            pink: '#FFCAD4'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-image: url('https://source.unsplash.com/1600x900/?children,colorful,playground');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="text-gray-800 font-sans">
+
+<!-- 導覽列 Navbar -->
+<nav class="fixed top-0 left-0 right-0 bg-primary text-white shadow-md z-10">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <!-- 網站/系統標題 -->
+        <span class="text-lg font-bold">Dashboard1</span>
+
+        <!-- 小螢幕漢堡選單按鈕（md:hidden: 只在 md 斷點以下顯示） -->
+        <button class="md:hidden" onclick="toggleSidebar()">
+            <!-- 這裡可放漢堡 icon 或任意文字 -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+
+        <!-- 登出區塊 -->
+        <form th:action="@{/logout}" method="post" id="logoutForm" class="hidden">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </form>
+        <a href="#" class="hover:underline hidden md:inline-block"
+           onclick="document.getElementById('logoutForm').submit(); return false;">Logout</a>
+    </div>
+</nav>
+
+<!-- 側邊欄 Sidebar -->
+<div id="sidebar"
+     class="fixed top-14 left-0 h-full bg-pastel.green shadow-lg p-5
+            w-56 hidden md:block">
+    <h5 class="text-lg font-semibold mb-4">Menu</h5>
+    <ul class="space-y-3">
+        <li>
+            <a class="block py-1 px-2 rounded hover:bg-primary hover:text-white" th:href="@{/dashboard}">
+                Dashboard
+            </a>
+        </li>
+        <li>
+            <a class="block py-1 px-2 rounded hover:bg-primary hover:text-white" th:href="@{/reports}">
+                Reports
+            </a>
+        </li>
+        <li>
+            <a class="block py-1 px-2 rounded hover:bg-primary hover:text-white" th:href="@{/settings}">
+                Settings
+            </a>
+        </li>
+        <li>
+            <a class="block py-1 px-2 rounded hover:bg-primary hover:text-white" th:href="@{/categories}">
+                Category
+            </a>
+        </li>
+        <li>
+            <a class="block py-1 px-2 rounded hover:bg-primary hover:text-white" th:href="@{/flashcard}">
+                Flashcard
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- 主內容區，子頁面內容會插入此區 -->
+<main class="md:ml-56 mt-20 p-6" layout:fragment="content">
+    <!-- 預設內容，可留空或顯示 Dashboard 首頁內容 -->
+    <h1 class="text-3xl font-bold mb-6 text-primary">Dashboard</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Metric 卡片範例 -->
+        <div class="bg-pastel.yellow p-5 rounded-xl shadow-lg">
+            <h5 class="text-xl font-semibold mb-2">Metric 1</h5>
+            <p>Value: <span th:text="${metric1}">0</span></p>
+        </div>
+        <div class="bg-pastel.blue p-5 rounded-xl shadow-lg">
+            <h5 class="text-xl font-semibold mb-2">Metric 2</h5>
+            <p>Value: <span th:text="${metric2}">0</span></p>
+        </div>
+        <div class="bg-pastel.pink p-5 rounded-xl shadow-lg">
+            <h5 class="text-xl font-semibold mb-2">Metric 3</h5>
+            <p>Value: <span th:text="${metric3}">0</span></p>
+        </div>
+    </div>
+</main>
+
+<!-- 簡易的 JS 切換側邊欄顯示函式 （只在小螢幕下作用） -->
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        // 切換 hidden class (小螢幕時顯示/隱藏)
+        sidebar.classList.toggle('hidden');
+    }
+</script>
+
+</body>
+</html>

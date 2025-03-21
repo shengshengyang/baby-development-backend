@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboardLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Flashcard 表單</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1 class="text-3xl font-bold mb-6 text-primary"
+        th:text="${flashcard.id} != null ? '修改 Flashcard' : '新增 Flashcard'"></h1>
+
+    <form th:action="@{${flashcard.id} != null ? '/flashcards/edit' : '/flashcards/add'}" method="post"
+          class="bg-white p-6 rounded-lg shadow-md space-y-4">
+        <!-- 若為編輯模式，隱藏 id 欄位 -->
+        <div th:if="${flashcard.id} != null">
+            <input type="hidden" name="id" th:value="${flashcard.id}" />
+        </div>
+
+        <!-- Category 選擇 -->
+        <div>
+            <label class="block mb-1 font-medium">Category</label>
+            <select name="categoryId" required class="w-full border rounded px-3 py-2">
+                <option value="" disabled selected>請選擇分類</option>
+                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
+                        th:selected="${flashcard.category != null} ? ${cat.id} == ${flashcard.category.id} : false">
+                </option>
+            </select>
+        </div>
+
+        <!-- Milestone 選擇 -->
+        <div>
+            <label class="block mb-1 font-medium">Milestone</label>
+            <select name="milestoneId" required class="w-full border rounded px-3 py-2">
+                <option value="" disabled selected>請選擇 Milestone</option>
+                <option th:each="ms : ${milestones}" th:value="${ms.id}"
+                        th:text="${ms.ageInMonths}"
+                        th:selected="${flashcard.milestone != null} ? ${ms.id} == ${flashcard.milestone.id} : false">
+                </option>
+            </select>
+        </div>
+
+        <!-- Translation 區段：只處理第一筆 Translation -->
+        <div th:with="translation=${flashcard.translations[0]}">
+            <div>
+                <label class="block mb-1 font-medium">語言代碼</label>
+                <input type="text" name="translations[0].languageCode"
+                       th:value="${translation.languageCode}" placeholder="例如：en 或 zh_TW"
+                       required class="w-full border rounded px-3 py-2" />
+            </div>
+            <div>
+                <label class="block mb-1 font-medium">正面文字</label>
+                <input type="text" name="translations[0].frontText"
+                       th:value="${translation.frontText}" placeholder="正面文字" required
+                       class="w-full border rounded px-3 py-2" />
+            </div>
+            <div>
+                <label class="block mb-1 font-medium">背面文字</label>
+                <input type="text" name="translations[0].backText"
+                       th:value="${translation.backText}" placeholder="背面文字" required
+                       class="w-full border rounded px-3 py-2" />
+            </div>
+            <div>
+                <label class="block mb-1 font-medium">圖片 URL</label>
+                <input type="text" name="translations[0].imageUrl"
+                       th:value="${translation.imageUrl}" placeholder="圖片 URL"
+                       class="w-full border rounded px-3 py-2" />
+            </div>
+        </div>
+
+        <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
+            <span th:text="${flashcard.id} != null ? '更新 Flashcard' : '新增 Flashcard'"></span>
+        </button>
+    </form>
+</section>
+</body>
+</html>

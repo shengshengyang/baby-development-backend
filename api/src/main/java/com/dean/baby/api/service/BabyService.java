@@ -5,6 +5,7 @@ import com.dean.baby.common.dto.BabyDto;
 import com.dean.baby.common.entity.Baby;
 import com.dean.baby.common.repository.BabyRepository;
 import com.dean.baby.common.repository.UserRepository;
+import com.dean.baby.common.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

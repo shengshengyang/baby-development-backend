@@ -1,8 +1,10 @@
-package com.dean.baby.api.service;
+package com.dean.baby.common.service;
 
 import com.dean.baby.common.dto.FlashcardDTO;
 import com.dean.baby.common.dto.FlashcardLanguageDTO;
 import com.dean.baby.common.dto.FlashcardTranslationDTO;
+import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.common.entity.Category;
 import com.dean.baby.common.entity.Flashcard;
 import com.dean.baby.common.entity.FlashcardTranslation;
 import com.dean.baby.common.entity.Milestone;
@@ -39,7 +41,7 @@ public class FlashCardService extends BaseService {
 
         // 創建 Flashcard Entity
         Flashcard flashcard = new Flashcard();
-        flashcard.setCategory(category);
+        flashcard.setCategory(new Category());
         flashcard.setMilestone(milestone);
 
         // 將 DTO 轉換為 Entity
@@ -81,7 +83,7 @@ public class FlashCardService extends BaseService {
                 .orElseThrow(() -> new RuntimeException("Flashcard not found"));
 
         // 更新屬性
-        flashcard.setCategory(category);
+        flashcard.setCategory(new Category());
 
         // 刪除舊的翻譯
         translationRepository.deleteAll(flashcard.getTranslations());
@@ -132,7 +134,7 @@ public class FlashCardService extends BaseService {
 
         return FlashcardDTO.builder()
                 .id(flashcard.getId())
-                .category(flashcard.getCategory())
+                .category(flashcard.getCategory().getName().get(Language.TRADITIONAL_CHINESE))
                 .milestoneId(flashcard.getMilestone().getId())
                 .ageInMonths(flashcard.getMilestone().getAgeInMonths())
                 .translations(translationDTOs)
@@ -146,7 +148,7 @@ public class FlashCardService extends BaseService {
                 .findFirst()
                 .map(translation -> FlashcardLanguageDTO.builder()
                         .id(flashcard.getId())
-                        .category(flashcard.getCategory())
+                        .category(flashcard.getCategory().getName().get(Language.TRADITIONAL_CHINESE))
                         .milestoneId(flashcard.getMilestone().getId())
                         .ageInMonths(flashcard.getMilestone().getAgeInMonths())
                         .languageCode(translation.getLanguageCode())

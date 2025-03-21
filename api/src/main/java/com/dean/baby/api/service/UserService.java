@@ -4,6 +4,7 @@ import com.dean.baby.common.dto.UpdateUserRequestVo;
 import com.dean.baby.common.dto.UserDto;
 import com.dean.baby.common.entity.User;
 import com.dean.baby.common.repository.UserRepository;
+import com.dean.baby.common.service.BaseService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
