@@ -14,7 +14,9 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@Builder
 @Table(name = "progress")
+@AllArgsConstructor
 public class Progress implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

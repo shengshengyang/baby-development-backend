@@ -36,4 +36,8 @@ public class User implements Serializable {
             this.username = this.email;
         }
     }
+
+    public boolean isBaby(Long babyId) {
+        return this.babies.stream().anyMatch(baby -> baby.getId().equals(babyId));
+    }
 }

@@ -1,20 +1,19 @@
 package com.dean.baby.common.service;
 
+import com.dean.baby.common.dto.CheckProgressRequestVo;
 import com.dean.baby.common.dto.FlashcardDTO;
 import com.dean.baby.common.dto.FlashcardLanguageDTO;
 import com.dean.baby.common.dto.FlashcardTranslationDTO;
 import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.entity.Category;
-import com.dean.baby.common.entity.Flashcard;
-import com.dean.baby.common.entity.FlashcardTranslation;
-import com.dean.baby.common.entity.Milestone;
-import com.dean.baby.common.repository.FlashcardRepository;
-import com.dean.baby.common.repository.FlashcardTranslationRepository;
-import com.dean.baby.common.repository.MilestoneRepository;
-import com.dean.baby.common.repository.UserRepository;
+import com.dean.baby.common.entity.*;
+import com.dean.baby.common.exception.ApiException;
+import com.dean.baby.common.exception.SysCode;
+import com.dean.baby.common.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,12 +24,14 @@ public class FlashCardService extends BaseService {
     private final FlashcardRepository flashcardRepository;
     private final FlashcardTranslationRepository translationRepository;
     private final MilestoneRepository milestoneRepository;
+    private final ProgressRepository progressRepository;
 
-    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository) {
+    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository, ProgressRepository progressRepository) {
         super(userRepository);
         this.flashcardRepository = flashcardRepository;
         this.translationRepository = translationRepository;
         this.milestoneRepository = milestoneRepository;
+        this.progressRepository = progressRepository;
     }
 
     @Transactional
@@ -121,6 +122,25 @@ public class FlashCardService extends BaseService {
         flashcardRepository.delete(flashcard);
     }
 
+    @Transactional
+    public void checkProgress(CheckProgressRequestVo vo) {
+        User user = getCurrentUser();
+        if (!user.isBaby(vo.babyId())) {
+            throw new ApiException(SysCode.NOT_YOUR_BABY);
+        }
+        Progress progress = progressRepository.findByBabyIdAndFlashcardId(vo.babyId(), vo.flashcardId())
+                .orElseGet(() -> Progress.builder()
+                        .baby(Baby.builder().id(vo.babyId()).build())
+                        .flashcard(Flashcard.builder().id(vo.flashcardId()).build())
+                        .achieved(false)
+                        .build());
+
+        progress.setAchieved(!progress.isAchieved());
+        progress.setDateAchieved(progress.isAchieved() ? LocalDate.now() : null);
+
+        progressRepository.save(progress);
+    }
+
     private FlashcardDTO convertToDTO(Flashcard flashcard) {
         List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations().stream()
                 .map(translation -> new FlashcardTranslationDTO(
@@ -158,5 +178,4 @@ public class FlashCardService extends BaseService {
                         .build())
                 .orElse(null);
     }
-
 }

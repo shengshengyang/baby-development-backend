@@ -1,5 +1,6 @@
 package com.dean.baby.api.controller;
 
+import com.dean.baby.common.dto.CheckProgressRequestVo;
 import com.dean.baby.common.dto.FlashcardDTO;
 import com.dean.baby.common.dto.FlashcardLanguageDTO;
 import com.dean.baby.common.dto.FlashcardTranslationDTO;
@@ -40,6 +41,12 @@ public class FlashCardController {
         Optional<FlashcardDTO> flashcardDTO = flashCardService.getFlashcardById(id);
         return flashcardDTO.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/flash-card/check-progress")
+    public ResponseEntity<Void> checkProgress(@RequestBody CheckProgressRequestVo vo) {
+        flashCardService.checkProgress(vo);
+        return ResponseEntity.noContent().build();
     }
 
     // 讀取所有 Flashcard
