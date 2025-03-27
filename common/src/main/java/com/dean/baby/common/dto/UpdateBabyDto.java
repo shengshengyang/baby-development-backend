@@ -10,9 +10,7 @@ import lombok.Setter;
 public class UpdateBabyDto {
     private String name;
     private Double headCircumference;
-
     private Double height;
-
     private Double weight;
 
 }

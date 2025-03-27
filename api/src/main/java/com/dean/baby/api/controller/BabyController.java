@@ -2,11 +2,8 @@ package com.dean.baby.api.controller;
 
 import com.dean.baby.common.dto.BabyCreateRequestVo;
 import com.dean.baby.common.dto.BabyDto;
-import com.dean.baby.api.service.BabyService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.dean.baby.common.service.BabyService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,7 +23,7 @@ public class BabyController {
     }
 
     @PostMapping
-    public BabyDto createOrUpdateBaby(BabyCreateRequestVo vo) {
+    public BabyDto createOrUpdateBaby(@RequestBody BabyCreateRequestVo vo) {
         return babyService.createOrUpdateBaby(vo);
     }
 }

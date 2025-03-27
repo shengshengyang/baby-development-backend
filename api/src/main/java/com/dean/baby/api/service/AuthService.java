@@ -1,8 +1,10 @@
 package com.dean.baby.api.service;
 
+import com.dean.baby.common.dto.BabyDto;
 import com.dean.baby.common.dto.LoginVo;
 import com.dean.baby.common.dto.RegisterVo;
 import com.dean.baby.common.dto.UserDto;
+import com.dean.baby.common.entity.Baby;
 import com.dean.baby.common.entity.User;
 import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
@@ -61,6 +63,7 @@ public class AuthService extends BaseService {
                 .username(userDetails.getUsername())
                 .token(jwt)
                 .email(user.getEmail())
+                .babies(user.getBabies() != null ? user.getBabies().stream().map(BabyDto::fromEntity).toList() : List.of())
                 .role(userDetails.getAuthorities().stream()
                         .map(Object::toString)
                         .toList())

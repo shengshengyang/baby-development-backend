@@ -1,11 +1,10 @@
-package com.dean.baby.api.service;
+package com.dean.baby.common.service;
 
 import com.dean.baby.common.dto.BabyCreateRequestVo;
 import com.dean.baby.common.dto.BabyDto;
 import com.dean.baby.common.entity.Baby;
 import com.dean.baby.common.repository.BabyRepository;
 import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.common.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +30,21 @@ public class BabyService extends BaseService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<BabyDto> listBabiesFromUser() {
+        return babyRepository.findByUserId(getCurrentUser().getId()).stream()
+                .map(BabyDto::fromEntity)
+                .toList();
+    }
+
+
+
     @Transactional
     public BabyDto createOrUpdateBaby(BabyCreateRequestVo vo) {
-        Baby baby = babyRepository.findById(vo.id()).orElse(Baby.builder()
-                .name(vo.name())
-                .birthDate(LocalDate.parse(vo.birthDate()))
-                .user(getCurrentUser())
-                .build());
+        Baby baby = vo.id() == null ? new Baby() : babyRepository.findById(vo.id()).orElseThrow();
+        baby.setName(vo.name());
+        baby.setBirthDate(LocalDate.parse(vo.birthDate()));
+        baby.setUser(getCurrentUser());
         return BabyDto.fromEntity(babyRepository.save(baby));
     }
 }

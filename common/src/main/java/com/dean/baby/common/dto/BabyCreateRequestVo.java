@@ -1,7 +1,9 @@
 package com.dean.baby.common.dto;
 
+import jakarta.annotation.Nullable;
+
 public record BabyCreateRequestVo(
-        Long id,
+        @Nullable Long id,
         String name,
         String birthDate
 ) {

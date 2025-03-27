@@ -17,7 +17,7 @@ public class BabyDto {
         return BabyDto.builder()
                 .name(baby.getName())
                 .birthDate(baby.getBirthDate().toString())
-                .progresses(ProgressDto.fromEntities(baby.getProgresses()))
+                .progresses(baby.getProgresses() == null ? null : ProgressDto.fromEntities(baby.getProgresses()))
                 .build();
     }
 }
