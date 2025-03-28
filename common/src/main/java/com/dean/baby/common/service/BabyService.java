@@ -3,6 +3,8 @@ package com.dean.baby.common.service;
 import com.dean.baby.common.dto.BabyCreateRequestVo;
 import com.dean.baby.common.dto.BabyDto;
 import com.dean.baby.common.entity.Baby;
+import com.dean.baby.common.exception.ApiException;
+import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.BabyRepository;
 import com.dean.baby.common.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,13 @@ public class BabyService extends BaseService {
         return babyRepository.findByUserId(getCurrentUser().getId()).stream()
                 .map(BabyDto::fromEntity)
                 .toList();
+    }
+
+    @Transactional
+    public BabyDto getBaby(Long id) {
+        return babyRepository.findById(id)
+                .map(BabyDto::fromEntity)
+                .orElseThrow(() -> new ApiException(SysCode.BABY_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)

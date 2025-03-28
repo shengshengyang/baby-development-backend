@@ -1,9 +1,6 @@
 package com.dean.baby.common.service;
 
-import com.dean.baby.common.dto.CheckProgressRequestVo;
-import com.dean.baby.common.dto.FlashcardDTO;
-import com.dean.baby.common.dto.FlashcardLanguageDTO;
-import com.dean.baby.common.dto.FlashcardTranslationDTO;
+import com.dean.baby.common.dto.*;
 import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.entity.*;
 import com.dean.baby.common.exception.ApiException;
@@ -25,13 +22,15 @@ public class FlashCardService extends BaseService {
     private final FlashcardTranslationRepository translationRepository;
     private final MilestoneRepository milestoneRepository;
     private final ProgressRepository progressRepository;
+    private final BabyService babyService;
 
-    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository, ProgressRepository progressRepository) {
+    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository, ProgressRepository progressRepository, BabyService babyService) {
         super(userRepository);
         this.flashcardRepository = flashcardRepository;
         this.translationRepository = translationRepository;
         this.milestoneRepository = milestoneRepository;
         this.progressRepository = progressRepository;
+        this.babyService = babyService;
     }
 
     @Transactional
@@ -123,7 +122,7 @@ public class FlashCardService extends BaseService {
     }
 
     @Transactional
-    public void checkProgress(CheckProgressRequestVo vo) {
+    public BabyDto checkProgress(CheckProgressRequestVo vo) {
         User user = getCurrentUser();
         if (!user.isBaby(vo.babyId())) {
             throw new ApiException(SysCode.NOT_YOUR_BABY);
@@ -139,6 +138,8 @@ public class FlashCardService extends BaseService {
         progress.setDateAchieved(progress.isAchieved() ? LocalDate.now() : null);
 
         progressRepository.save(progress);
+
+        return babyService.getBaby(vo.babyId());
     }
 
     private FlashcardDTO convertToDTO(Flashcard flashcard) {

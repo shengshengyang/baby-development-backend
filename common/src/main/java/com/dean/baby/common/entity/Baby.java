@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "babies")
+@ToString
 public class Baby implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

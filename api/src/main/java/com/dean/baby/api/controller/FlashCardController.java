@@ -1,9 +1,6 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.CheckProgressRequestVo;
-import com.dean.baby.common.dto.FlashcardDTO;
-import com.dean.baby.common.dto.FlashcardLanguageDTO;
-import com.dean.baby.common.dto.FlashcardTranslationDTO;
+import com.dean.baby.common.dto.*;
 import com.dean.baby.common.service.FlashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,9 +41,8 @@ public class FlashCardController {
     }
 
     @PostMapping("/flash-card/check-progress")
-    public ResponseEntity<Void> checkProgress(@RequestBody CheckProgressRequestVo vo) {
-        flashCardService.checkProgress(vo);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<BabyDto> checkProgress(@RequestBody CheckProgressRequestVo vo) {
+        return ResponseEntity.ok(flashCardService.checkProgress(vo));
     }
 
     // 讀取所有 Flashcard

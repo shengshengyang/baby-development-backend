@@ -23,7 +23,8 @@ public enum SysCode implements ErrorCode{
     CACHE_CODE_NOT_MATCH_OR_EXPIRED(10015, "Cache code not match or expired"),
     USER_ALREADY_EXISTS(10016, "User already exists"),
     NOT_LOGIN(10017, "Not login"),
-    NOT_YOUR_BABY(10018, "Not your baby"),;
+    NOT_YOUR_BABY(10018, "Not your baby"),
+    BABY_NOT_FOUND(10019, "Baby not found"),;
 
     private final Integer code;
     private final String message;

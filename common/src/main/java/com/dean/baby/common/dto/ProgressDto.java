@@ -24,7 +24,7 @@ public class ProgressDto {
                         .ageInMonths(progress.getAgeInMonths())
                         .category(progress.getCategory())
                         .achieved(progress.isAchieved())
-                        .dateAchieved(progress.getDateAchieved().toString())
+                        .dateAchieved(progress.getDateAchieved() != null ? progress.getDateAchieved().toString() : null)
                         .build())
                 .toList();
     }
