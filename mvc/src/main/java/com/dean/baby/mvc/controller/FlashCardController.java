@@ -19,9 +19,9 @@ import java.util.Optional;
 public class FlashCardController {
 
 
-    private FlashcardRepository flashcardRepository;
-    private CategoryRepository categoryRepository;
-    private MilestoneRepository milestoneRepository;
+    private final FlashcardRepository flashcardRepository;
+    private final CategoryRepository categoryRepository;
+    private final MilestoneRepository milestoneRepository;
 
     public FlashCardController(FlashcardRepository flashcardRepository, CategoryRepository categoryRepository, MilestoneRepository milestoneRepository) {
         this.flashcardRepository = flashcardRepository;

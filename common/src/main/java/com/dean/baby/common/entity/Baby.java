@@ -35,4 +35,7 @@ public class Baby implements Serializable {
 
     @OneToMany(mappedBy = "baby", fetch = FetchType.LAZY)
     private List<Progress> progresses;
+
+    @OneToMany(mappedBy = "baby", fetch = FetchType.LAZY)
+    private List<BabyVaccineSchedule> babyVaccineSchedules;
 }

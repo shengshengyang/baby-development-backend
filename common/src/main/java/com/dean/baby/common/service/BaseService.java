@@ -26,4 +26,11 @@ public abstract class BaseService {
         return userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new ApiException(SysCode.USER_NOT_FOUND, authentication.getName()));
     }
+
+    protected void isCurrentUserBabyOwner(Long babyId) {
+        if(getCurrentUser().getBabies().stream()
+                .noneMatch(baby -> baby.getId().equals(babyId))){
+            throw new  ApiException(SysCode.NOT_YOUR_BABY);
+        }
+    }
 }
