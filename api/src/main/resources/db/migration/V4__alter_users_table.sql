@@ -6,9 +6,4 @@ ALTER TABLE users
 -- 增加測試資料
 
 INSERT INTO users (username, password, email) VALUES
-                                                  ('john_doe', 'password123', 'john.doe@example.com'),
-                                                  ('jane_smith', 'securepass', 'jane.smith@example.com'),
-                                                  ('alice_wonder', 'alice123', 'alice.wonder@example.com'),
-                                                  ('bob_builder', 'buildit', 'bob.builder@example.com'),
-                                                  ('admin', '1234', 'aaa@mail.com'),
-                                                  ('charlie_brown', 'charlie2023', 'charlie.brown@example.com');
+                                                  ('user', '$2a$10$uxW46deN90orpy0axp2nWec7Yv1i/fDYs/fxplAqwiy/P783QaR/G', 'aaa@mail.com');
