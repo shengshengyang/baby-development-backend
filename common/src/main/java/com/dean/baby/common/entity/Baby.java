@@ -2,11 +2,14 @@ package com.dean.baby.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -21,8 +24,8 @@ public class Baby implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     private String name;
 

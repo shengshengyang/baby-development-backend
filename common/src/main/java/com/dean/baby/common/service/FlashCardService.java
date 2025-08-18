@@ -1,19 +1,18 @@
 package com.dean.baby.common.service;
 
 import com.dean.baby.common.dto.*;
-import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.entity.*;
 import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class FlashCardService extends BaseService {
@@ -34,7 +33,7 @@ public class FlashCardService extends BaseService {
     }
 
     @Transactional
-    public FlashcardDTO createFlashcard(Long milestoneId, String category, List<FlashcardTranslationDTO> translationsDTO) {
+    public FlashcardDTO createFlashcard(UUID milestoneId, UUID category, List<FlashcardTranslationDTO> translationsDTO) {
         // 查找 Milestone
         Milestone milestone = milestoneRepository.findById(milestoneId)
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
@@ -64,7 +63,7 @@ public class FlashCardService extends BaseService {
         return convertToDTO(savedFlashcard);
     }
 
-    public Optional<FlashcardDTO> getFlashcardById(Long id) {
+    public Optional<FlashcardDTO> getFlashcardById(UUID id) {
         return flashcardRepository.findById(id)
                 .map(this::convertToDTO);
     }
@@ -77,7 +76,7 @@ public class FlashCardService extends BaseService {
     }
 
     @Transactional
-    public FlashcardDTO updateFlashcard(Long id, String category, List<FlashcardTranslationDTO> translationsDTO) {
+    public FlashcardDTO updateFlashcard(UUID id, UUID category, List<FlashcardTranslationDTO> translationsDTO) {
         // 查找 Flashcard
         Flashcard flashcard = flashcardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Flashcard not found"));
@@ -109,7 +108,7 @@ public class FlashCardService extends BaseService {
     }
 
     @Transactional
-    public void deleteFlashcard(Long id) {
+    public void deleteFlashcard(UUID id) {
         // 查找 Flashcard
         Flashcard flashcard = flashcardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Flashcard not found"));
@@ -155,7 +154,7 @@ public class FlashCardService extends BaseService {
 
         return FlashcardDTO.builder()
                 .id(flashcard.getId())
-                .category(flashcard.getCategory().getName().get(Language.TRADITIONAL_CHINESE))
+                .categoryId(flashcard.getCategory().getId())
                 .milestoneId(flashcard.getMilestone().getId())
                 .ageInMonths(flashcard.getMilestone().getAgeInMonths())
                 .translations(translationDTOs)
@@ -169,7 +168,7 @@ public class FlashCardService extends BaseService {
                 .findFirst()
                 .map(translation -> FlashcardLanguageDTO.builder()
                         .id(flashcard.getId())
-                        .category(flashcard.getCategory().getName().get(Language.TRADITIONAL_CHINESE))
+                        .categoryId(flashcard.getCategory().getId())
                         .milestoneId(flashcard.getMilestone().getId())
                         .ageInMonths(flashcard.getMilestone().getAgeInMonths())
                         .languageCode(translation.getLanguageCode())

@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface ArticleTranslationRepository extends JpaRepository<ArticleTranslation, Long> {
-    List<ArticleTranslation> findByArticleIdAndLanguageCode(Long articleId, String languageCode);
+public interface ArticleTranslationRepository extends JpaRepository<ArticleTranslation, UUID> {
+    List<ArticleTranslation> findByArticleIdAndLanguageCode(UUID articleId, String languageCode);
 }

@@ -2,16 +2,19 @@ package com.dean.baby.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Table(name = "vaccine")
 @Data
 public class Vaccine implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     // 疫苗名稱，如"五合一"、"肺炎鏈球菌"等
     private String name;
@@ -28,5 +31,4 @@ public class Vaccine implements Serializable {
     // 其他備註說明
     private String description;
 
-    // Getter/Setter 省略...
 }

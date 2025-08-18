@@ -5,8 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -16,8 +18,8 @@ import java.util.List;
 @Table(name = "flashcards")
 public class Flashcard {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")

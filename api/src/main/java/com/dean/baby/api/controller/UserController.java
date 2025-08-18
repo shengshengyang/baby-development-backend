@@ -2,7 +2,7 @@ package com.dean.baby.api.controller;
 
 import com.dean.baby.common.dto.UpdateUserRequestVo;
 import com.dean.baby.common.dto.UserDto;
-import com.dean.baby.api.service.UserService;
+import com.dean.baby.common.service.UserService;
 import jdk.jfr.Description;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

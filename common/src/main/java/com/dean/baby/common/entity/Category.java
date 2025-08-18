@@ -4,8 +4,10 @@ import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.util.LanguageMapConverter;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -13,8 +15,8 @@ import java.util.Map;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     /**
      * JSON 欄位儲存多語言名稱，例如：

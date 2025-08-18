@@ -1,0 +1,20 @@
+body {
+    background-image: url('https://source.unsplash.com/1600x900/?children,colorful,playground');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+html.dark body {
+    background-image: url('https://source.unsplash.com/1600x900/?children,dark,night');
+}
+html.dark .bg-white\/70 {
+    background-color: rgba(31, 41, 55, 0.8) !important; /* gray-800/80 */
+}
+html.dark .text-primary {
+    color: #FFCE51 !important; /* secondary */
+}
+html.dark .border-pastel-blue {
+    border-color: #374151 !important; /* gray-700 */
+}
+

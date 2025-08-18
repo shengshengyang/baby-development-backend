@@ -6,15 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class FlashcardDTO {
-    private Long id;
-    private String category;                    // 分類
-    private Long milestoneId;                   // 關聯的 Milestone ID
+    private UUID id;
+    private UUID categoryId;                    // 分類
+    private UUID milestoneId;                   // 關聯的 Milestone ID
     private int ageInMonths;                    // 關聯的 Milestone 的月齡
     private List<FlashcardTranslationDTO> translations;
 }

@@ -4,13 +4,12 @@ import com.dean.baby.common.dto.BabyDto;
 import com.dean.baby.common.dto.LoginVo;
 import com.dean.baby.common.dto.RegisterVo;
 import com.dean.baby.common.dto.UserDto;
-import com.dean.baby.common.entity.Baby;
 import com.dean.baby.common.entity.User;
 import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.api.util.JwtUtil;
 import com.dean.baby.common.service.BaseService;
+import com.dean.baby.common.util.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,12 +29,16 @@ public class AuthService extends BaseService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    protected AuthService(UserRepository userRepository, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtUtil jwtUtil, UserRepository userRepository1, PasswordEncoder passwordEncoder) {
+    protected AuthService(UserRepository userRepository,
+                          AuthenticationManager authenticationManager,
+                          UserDetailsService userDetailsService,
+                          JwtUtil jwtUtil,
+                          PasswordEncoder passwordEncoder) {
         super(userRepository);
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository1;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 

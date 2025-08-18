@@ -9,6 +9,7 @@ import com.dean.baby.common.service.BabyVaccineScheduleService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("/baby")
 @RestController
@@ -33,12 +34,12 @@ public class BabyController {
     }
 
     @GetMapping("/{babyId}/schedules")
-    public List<BabyVaccineSchedule> getSchedules(@PathVariable Long babyId) {
+    public List<BabyVaccineSchedule> getSchedules(@PathVariable UUID babyId) {
         return scheduleService.findSchedulesByBaby(babyId);
     }
 
     @PostMapping("/{babyId}/schedules/generate")
-    public List<BabyVaccineSchedule> generateSchedules(@PathVariable Long babyId) {
+    public List<BabyVaccineSchedule> generateSchedules(@PathVariable UUID babyId) {
         return scheduleService.generateDefaultScheduleForBaby(babyId, true);
     }
 

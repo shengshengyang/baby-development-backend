@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/categories")
@@ -44,7 +45,7 @@ public class CategoryController {
 
     // 3. 進入修改頁面 (edit.html)
     @GetMapping("/edit/{id}")
-    public String editCategory(@PathVariable("id") Long id, Model model) {
+    public String editCategory(@PathVariable("id") UUID id, Model model) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
         if (categoryOpt.isPresent()) {
             model.addAttribute("category", categoryOpt.get());
@@ -56,7 +57,7 @@ public class CategoryController {
     }
 
     @PostMapping("/edit")
-    public String updateCategory(@RequestParam("id") Long id,
+    public String updateCategory(@RequestParam("id") UUID id,
                                  @RequestParam("zhTW") String zhTW,
                                  @RequestParam("en") String en) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
@@ -76,7 +77,7 @@ public class CategoryController {
 
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable UUID id) {
         categoryRepository.deleteById(id);
         return "redirect:/categories";
     }

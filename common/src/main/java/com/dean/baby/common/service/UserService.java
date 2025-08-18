@@ -1,10 +1,13 @@
-package com.dean.baby.api.service;
+package com.dean.baby.common.service;
 
+import com.dean.baby.common.dto.LoginVo;
+import com.dean.baby.common.dto.RegisterVo;
 import com.dean.baby.common.dto.UpdateUserRequestVo;
 import com.dean.baby.common.dto.UserDto;
 import com.dean.baby.common.entity.User;
+import com.dean.baby.common.exception.ApiException;
+import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.common.service.BaseService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,18 @@ public class UserService extends BaseService {
         user.setEmail(vo.email());
         user.setPassword(passwordEncoder.encode(vo.password()));
         return toDto(userRepository.save(user));
+    }
+
+    public void register(RegisterVo vo) {
+        userRepository.findByEmail(vo.email()).ifPresent(user -> {
+            throw new ApiException(SysCode.USER_ALREADY_EXISTS, "用戶已存在");
+        });
+        User user = User.builder()
+                .email(vo.email())
+                .username(vo.username())
+                .password(passwordEncoder.encode(vo.password()))
+                .build();
+        userRepository.save(user);
     }
 
 

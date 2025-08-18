@@ -24,7 +24,9 @@ public enum SysCode implements ErrorCode{
     USER_ALREADY_EXISTS(10016, "User already exists"),
     NOT_LOGIN(10017, "Not login"),
     NOT_YOUR_BABY(10018, "Not your baby"),
-    BABY_NOT_FOUND(10019, "Baby not found"),;
+    BABY_NOT_FOUND(10019, "Baby not found"),
+    REGISTER_FAILED(10020, "Register failed, please try again later")
+    ;
 
     private final Integer code;
     private final String message;

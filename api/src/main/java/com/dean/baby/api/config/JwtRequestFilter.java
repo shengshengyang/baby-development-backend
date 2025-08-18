@@ -3,7 +3,7 @@ package com.dean.baby.api.config;
 import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.api.util.JwtUtil;
+import com.dean.baby.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

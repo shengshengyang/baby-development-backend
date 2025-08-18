@@ -2,8 +2,10 @@ package com.dean.baby.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -15,8 +17,8 @@ import java.time.LocalDate;
 @Table(name = "measurements")
 public class Measurement {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "baby_id")

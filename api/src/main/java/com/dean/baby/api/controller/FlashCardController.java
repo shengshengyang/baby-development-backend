@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class FlashCardController {
@@ -26,7 +27,7 @@ public class FlashCardController {
         List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
         FlashcardDTO createdFlashcard = flashCardService.createFlashcard(
                 flashcardDTO.getMilestoneId(),
-                flashcardDTO.getCategory(),
+                flashcardDTO.getCategoryId(),
                 translations
         );
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
@@ -34,7 +35,7 @@ public class FlashCardController {
 
     // 讀取單個 Flashcard
     @GetMapping("/open/flash-card/{id}")
-    public ResponseEntity<FlashcardDTO> getFlashcardById(@PathVariable Long id) {
+    public ResponseEntity<FlashcardDTO> getFlashcardById(@PathVariable UUID id) {
         Optional<FlashcardDTO> flashcardDTO = flashCardService.getFlashcardById(id);
         return flashcardDTO.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -55,11 +56,11 @@ public class FlashCardController {
 
     // 更新 Flashcard
     @PutMapping("/flash-card/{id}")
-    public ResponseEntity<FlashcardDTO> updateFlashcard(@PathVariable Long id, @RequestBody FlashcardDTO flashcardDTO) {
+    public ResponseEntity<FlashcardDTO> updateFlashcard(@PathVariable UUID id, @RequestBody FlashcardDTO flashcardDTO) {
         List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
         FlashcardDTO updatedFlashcard = flashCardService.updateFlashcard(
                 id,
-                flashcardDTO.getCategory(),
+                flashcardDTO.getCategoryId(),
                 translations
         );
         return ResponseEntity.ok(updatedFlashcard);
@@ -67,7 +68,7 @@ public class FlashCardController {
 
     // 刪除 Flashcard
     @DeleteMapping("/flash-card/{id}")
-    public ResponseEntity<Void> deleteFlashcard(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFlashcard(@PathVariable UUID id) {
         flashCardService.deleteFlashcard(id);
         return ResponseEntity.noContent().build();
     }

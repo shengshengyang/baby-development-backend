@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +44,7 @@ public class BabyVaccineScheduleService extends BaseService{
      * 依 babyId 查詢該寶寶的接種排程
      */
     @Transactional(readOnly = true)
-    public List<BabyVaccineSchedule> findSchedulesByBaby(Long babyId) {
+    public List<BabyVaccineSchedule> findSchedulesByBaby(UUID babyId) {
         isCurrentUserBabyOwner(babyId);
         return scheduleRepository.findByBabyId(babyId);
     }
@@ -56,7 +53,7 @@ public class BabyVaccineScheduleService extends BaseService{
      * 依 babyId + vaccineId 查詢
      */
     @Transactional(readOnly = true)
-    public List<BabyVaccineSchedule> findSchedulesByBabyAndVaccine(Long babyId, Long vaccineId) {
+    public List<BabyVaccineSchedule> findSchedulesByBabyAndVaccine(UUID babyId, UUID vaccineId) {
         return scheduleRepository.findByBabyIdAndVaccineId(babyId, vaccineId);
     }
 
@@ -74,7 +71,7 @@ public class BabyVaccineScheduleService extends BaseService{
      * @param babyId 指定寶寶 ID
      * @param allVaccines 是否對所有疫苗產生 (true: 對 vaccine 全部生成)
      */
-    public List<BabyVaccineSchedule> generateDefaultScheduleForBaby(Long babyId, boolean allVaccines) {
+    public List<BabyVaccineSchedule> generateDefaultScheduleForBaby(UUID babyId, boolean allVaccines) {
         isCurrentUserBabyOwner(babyId);
         // 1) 找到寶寶資料
         Baby baby = babyRepository.findById(babyId)
@@ -119,7 +116,7 @@ public class BabyVaccineScheduleService extends BaseService{
     /**
      * 更新某一筆排程為「已施打」, 並填入實際施打時間
      */
-    public BabyVaccineSchedule completeSchedule(Long scheduleId, LocalDate actualDate) {
+    public BabyVaccineSchedule completeSchedule(UUID scheduleId, LocalDate actualDate) {
         BabyVaccineSchedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
         schedule.setActualDate(actualDate);
@@ -130,7 +127,7 @@ public class BabyVaccineScheduleService extends BaseService{
     /**
      * 更新某一筆排程為「延遲(DELAYED)」並重新安排日期
      */
-    public BabyVaccineSchedule delayAndReschedule(Long scheduleId, LocalDate newDate) {
+    public BabyVaccineSchedule delayAndReschedule(UUID scheduleId, LocalDate newDate) {
         BabyVaccineSchedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
         schedule.setStatus(VaccineStatus.DELAYED);

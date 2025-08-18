@@ -4,17 +4,19 @@ import com.dean.baby.common.dto.enums.VaccineStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "baby_vaccine_schedule")
 @Data
 public class BabyVaccineSchedule implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     // 關聯到寶寶
     @ManyToOne

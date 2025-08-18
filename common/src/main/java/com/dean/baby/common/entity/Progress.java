@@ -2,12 +2,14 @@ package com.dean.baby.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -21,13 +23,16 @@ public class Progress implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @Column(name = "age_in_months")
     private int ageInMonths;
 
-    private String category;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     private boolean achieved;
 

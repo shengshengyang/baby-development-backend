@@ -2,10 +2,12 @@ package com.dean.baby.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -17,9 +19,11 @@ import java.util.List;
 public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(columnDefinition = "BINARY(16)")
+    @UuidGenerator
+    private UUID id;
 
     private String username;
     private String password;
@@ -37,7 +41,7 @@ public class User implements Serializable {
         }
     }
 
-    public boolean isBaby(Long babyId) {
+    public boolean isBaby(UUID babyId) {
         return this.babies.stream().anyMatch(baby -> baby.getId().equals(babyId));
     }
 }

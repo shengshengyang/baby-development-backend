@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/flashcard")
@@ -53,8 +54,8 @@ public class FlashCardController {
     // 處理新增 Flashcard
     @PostMapping("/add")
     public String addFlashcard(@ModelAttribute Flashcard flashcard,
-                               @RequestParam("categoryId") Long categoryId,
-                               @RequestParam("milestoneId") Long milestoneId) {
+                               @RequestParam("categoryId") UUID categoryId,
+                               @RequestParam("milestoneId") UUID milestoneId) {
         Optional<Category> categoryOpt = categoryRepository.findById(categoryId);
         Optional<Milestone> milestoneOpt = milestoneRepository.findById(milestoneId);
         if (categoryOpt.isPresent() && milestoneOpt.isPresent()) {
@@ -71,7 +72,7 @@ public class FlashCardController {
 
     // 編輯頁面：顯示編輯 Flashcard 表單
     @GetMapping("/edit/{id}")
-    public String editFlashcardForm(@PathVariable("id") Long id, Model model) {
+    public String editFlashcardForm(@PathVariable("id") UUID id, Model model) {
         Optional<Flashcard> flashcardOpt = flashcardRepository.findById(id);
         if (flashcardOpt.isPresent()) {
             model.addAttribute("flashcard", flashcardOpt.get());
@@ -85,8 +86,8 @@ public class FlashCardController {
     // 處理更新 Flashcard
     @PostMapping("/edit")
     public String updateFlashcard(@ModelAttribute Flashcard flashcard,
-                                  @RequestParam("categoryId") Long categoryId,
-                                  @RequestParam("milestoneId") Long milestoneId) {
+                                  @RequestParam("categoryId") UUID categoryId,
+                                  @RequestParam("milestoneId") UUID milestoneId) {
         Optional<Category> categoryOpt = categoryRepository.findById(categoryId);
         Optional<Milestone> milestoneOpt = milestoneRepository.findById(milestoneId);
         if (categoryOpt.isPresent() && milestoneOpt.isPresent()) {
@@ -102,7 +103,7 @@ public class FlashCardController {
 
     // 刪除 Flashcard
     @PostMapping("/delete/{id}")
-    public String deleteFlashcard(@PathVariable("id") Long id) {
+    public String deleteFlashcard(@PathVariable("id") UUID id) {
         flashcardRepository.deleteById(id);
         return "redirect:/flashcards";
     }

@@ -2,6 +2,9 @@ package com.dean.baby.common.entity;
 
 import lombok.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -12,8 +15,8 @@ import jakarta.persistence.*;
 @Table(name = "flashcard_translations")
 public class FlashcardTranslation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "flashcard_id")

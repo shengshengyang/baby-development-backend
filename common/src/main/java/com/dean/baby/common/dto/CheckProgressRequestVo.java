@@ -1,7 +1,9 @@
 package com.dean.baby.common.dto;
 
+import java.util.UUID;
+
 public record CheckProgressRequestVo(
-        Long babyId,
-        Long flashcardId
+        UUID babyId,
+        UUID flashcardId
 ) {
 }

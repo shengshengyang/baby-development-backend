@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BabyService extends BaseService {
@@ -33,7 +34,7 @@ public class BabyService extends BaseService {
     }
 
     @Transactional
-    public BabyDto getBaby(Long id) {
+    public BabyDto getBaby(UUID id) {
         return babyRepository.findById(id)
                 .map(BabyDto::fromEntity)
                 .orElseThrow(() -> new ApiException(SysCode.BABY_NOT_FOUND));

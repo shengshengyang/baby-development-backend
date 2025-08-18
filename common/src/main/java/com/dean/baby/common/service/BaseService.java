@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.UUID;
+
 public abstract class BaseService {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -27,7 +29,7 @@ public abstract class BaseService {
                 .orElseThrow(() -> new ApiException(SysCode.USER_NOT_FOUND, authentication.getName()));
     }
 
-    protected void isCurrentUserBabyOwner(Long babyId) {
+    protected void isCurrentUserBabyOwner(UUID babyId) {
         if(getCurrentUser().getBabies().stream()
                 .noneMatch(baby -> baby.getId().equals(babyId))){
             throw new  ApiException(SysCode.NOT_YOUR_BABY);
