@@ -1,33 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboardLayout}">
 <head>
     <meta charset="UTF-8">
     <title>修改分類</title>
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
-<div class="max-w-4xl mx-auto py-8">
-    <h1 class="text-3xl font-bold mb-6 text-primary">修改分類</h1>
-    <form th:action="@{/categories/edit}" method="post" class="bg-white p-6 rounded-lg shadow-md space-y-4">
-        <!-- 隱藏欄位傳遞分類 ID -->
-        <input type="hidden" name="id" th:value="${category.id}" />
-        <div>
-            <label class="block mb-1 font-medium">中文分類名稱</label>
-            <input type="text" name="zhTW"
-                   th:value="${category.name[T(com.dean.baby.common.dto.enums.Language).TRADITIONAL_CHINESE]}"
-                   placeholder="例如：語言" required class="w-full border rounded px-3 py-2" />
-        </div>
-        <div>
-            <label class="block mb-1 font-medium">英文分類名稱</label>
-            <input type="text" name="en"
-                   th:value="${category.name[T(com.dean.baby.common.dto.enums.Language).ENGLISH]}"
-                   placeholder="例如：Language" required class="w-full border rounded px-3 py-2" />
-        </div>
-        <!-- 更新分類用的 Submit Button -->
-        <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
-            更新分類
-        </button>
-    </form>
-</div>
+<body>
+<section layout:fragment="content">
+    <div class="max-w-4xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6 text-primary">修改分類</h1>
+        <form th:action="@{/categories/edit}" method="post" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+            <!-- 隱藏欄位傳遞分類 ID -->
+            <input type="hidden" name="id" th:value="${category.id}" />
+            <div>
+                <label class="block mb-1 font-medium">中文分類名稱</label>
+                <input type="text" name="zhTW"
+                       th:value="${category.name[T(com.dean.baby.common.dto.enums.Language).TRADITIONAL_CHINESE]}"
+                       placeholder="例如：語言" required class="w-full border rounded px-3 py-2" />
+            </div>
+            <div>
+                <label class="block mb-1 font-medium">英文分類名稱</label>
+                <input type="text" name="en"
+                       th:value="${category.name[T(com.dean.baby.common.dto.enums.Language).ENGLISH]}"
+                       placeholder="例如：Language" required class="w-full border rounded px-3 py-2" />
+            </div>
+            <!-- 更新分類用的 Submit Button -->
+            <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
+                更新分類
+            </button>
+        </form>
+    </div>
+</section>
 </body>
 </html>

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>登入</title>
+    <!-- 首屏依 localStorage 設定 dark，避免 FOUC -->
+    <script>(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}})();</script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -25,24 +27,46 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
 <!-- 主題切換按鈕 -->
 <div class="fixed top-4 right-4 z-50">
-    <button id="theme-toggle" class="bg-primary text-white px-3 py-1 rounded shadow">
-        切換主題
+    <button id="theme-toggle" class="bg-primary text-white px-3 py-1 rounded shadow flex items-center justify-center">
+        <span id="theme-icon">
+            <!-- 預設 SVG，JS 會切換 -->
+            <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+                <path stroke="currentColor" stroke-width="2" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+            <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke="currentColor" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+            </svg>
+        </span>
     </button>
 </div>
 <script>
     const btn = document.getElementById('theme-toggle');
+    const iconSun = document.getElementById('icon-sun');
+    const iconMoon = document.getElementById('icon-moon');
+    function updateThemeIcon() {
+        if (document.documentElement.classList.contains('dark')) {
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        } else {
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        }
+    }
     btn.onclick = () => {
         document.documentElement.classList.toggle('dark');
         localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        updateThemeIcon();
     };
     if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
     }
+    updateThemeIcon();
 </script>
 <div class="flex justify-center items-center min-h-screen">
     <div class="w-full max-w-md p-8 rounded-xl bg-white/70 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg border-2 border-pastel-blue dark:border-gray-700">

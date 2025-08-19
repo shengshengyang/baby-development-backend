@@ -1,20 +1,26 @@
+:root {
+    --bg-image: url('https://source.unsplash.com/1600x900/?children,colorful,playground');
+}
+:root.dark {
+    --bg-image: url('https://source.unsplash.com/1600x900/?children,dark,night');
+}
 body {
-    background-image: url('https://source.unsplash.com/1600x900/?children,colorful,playground');
+    background-image: var(--bg-image);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
 }
-html.dark body {
-    background-image: url('https://source.unsplash.com/1600x900/?children,dark,night');
-}
-html.dark .bg-white\/70 {
-    background-color: rgba(31, 41, 55, 0.8) !important; /* gray-800/80 */
-}
-html.dark .text-primary {
-    color: #FFCE51 !important; /* secondary */
-}
-html.dark .border-pastel-blue {
-    border-color: #374151 !important; /* gray-700 */
-}
+/* 暗黑模式下常見元素覆寫（搭配 Tailwind 類） */
+html.dark .bg-white { background-color: rgba(31, 41, 55, 0.85) !important; }
+html.dark .bg-white\/70 { background-color: rgba(31, 41, 55, 0.8) !important; }
+html.dark .text-primary { color: #FFCE51 !important; }
+html.dark .border-pastel-blue { border-color: #374151 !important; }
+html.dark .text-gray-700 { color: #e5e7eb !important; }
+html.dark .border-gray-300 { border-color: #374151 !important; }
+html.dark .bg-pastel\.green { background-color: #1f2937 !important; }
 
+/* 修正暗黑模式下最外層 min-h-screen 背景色 */
+html.dark .min-h-screen {
+    background-color: rgba(31, 41, 55, 0.7) !important;
+}
