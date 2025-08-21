@@ -36,25 +36,25 @@ public class AuthController {
     }
 
 
-    @PostMapping("/register")
-    public String register(@NonNull @RequestParam String email) {
-
-        String code = String.valueOf(random.nextInt(900000) + 100000); // 6 位驗證碼
-        redisService.saveVerificationCode(email, code);
-        emailService.sendVerificationCode(email, code);
-        return "驗證碼已發送至 " + email;
-    }
-
-    @PostMapping("/verify")
-    public ResponseEntity<String> verify(@NonNull @RequestParam String email,@NonNull @RequestParam String code, @RequestBody User user) {
-        if (redisService.verifyCode(email, code)) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepo.save(user);
-            redisService.deleteVerificationCode(email);
-            return ResponseEntity.ok("Verification successful");
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification code not match or expired");
-    }
+//    @PostMapping("/register")
+//    public String register(@NonNull @RequestParam String email) {
+//
+//        String code = String.valueOf(random.nextInt(900000) + 100000); // 6 位驗證碼
+//        redisService.saveVerificationCode(email, code);
+//        emailService.sendVerificationCode(email, code);
+//        return "驗證碼已發送至 " + email;
+//    }
+//
+//    @PostMapping("/verify")
+//    public ResponseEntity<String> verify(@NonNull @RequestParam String email,@NonNull @RequestParam String code, @RequestBody User user) {
+//        if (redisService.verifyCode(email, code)) {
+//            user.setPassword(passwordEncoder.encode(user.getPassword()));
+//            userRepo.save(user);
+//            redisService.deleteVerificationCode(email);
+//            return ResponseEntity.ok("Verification successful");
+//        }
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification code not match or expired");
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<UserDto> create(@RequestBody RegisterVo vo) {

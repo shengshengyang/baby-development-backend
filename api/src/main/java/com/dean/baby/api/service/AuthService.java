@@ -10,6 +10,7 @@ import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.UserRepository;
 import com.dean.baby.common.service.BaseService;
 import com.dean.baby.common.util.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 
@@ -100,11 +103,37 @@ public class AuthService extends BaseService {
         return toDto(user);
     }
 
+    public UserDto getUser() {
+        User user = getCurrentUser();
+        return toDto(user);
+    }
+
     private UserDto toDto(User user) {
+        String token = getCurrentToken();
+        if (token == null || !jwtUtil.validateToken(token, user.getEmail())) {
+            token = jwtUtil.generateToken(user.getEmail());
+        }
         return UserDto.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(List.of("ROLE_USER"))
+                .token(token)
                 .build();
+    }
+
+    private String getCurrentToken() {
+        try {
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes != null) {
+                HttpServletRequest request = attributes.getRequest();
+                String authHeader = request.getHeader("Authorization");
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                    return authHeader.substring(7);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug("Failed to get current token from request", e);
+        }
+        return null;
     }
 }
