@@ -154,8 +154,8 @@ public class FlashCardService extends BaseService {
 
         return FlashcardDTO.builder()
                 .id(flashcard.getId())
-                .categoryId(flashcard.getCategory().getId())
-                .milestoneId(flashcard.getMilestone().getId())
+                .category(CategoryDTO.fromEntity(flashcard.getCategory()))
+                .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
                 .ageInMonths(flashcard.getMilestone().getAgeInMonths())
                 .translations(translationDTOs)
                 .build();
@@ -166,16 +166,7 @@ public class FlashCardService extends BaseService {
                 .stream()
                 .filter(translation -> translation.getLanguageCode().equalsIgnoreCase(language))
                 .findFirst()
-                .map(translation -> FlashcardLanguageDTO.builder()
-                        .id(flashcard.getId())
-                        .categoryId(flashcard.getCategory().getId())
-                        .milestoneId(flashcard.getMilestone().getId())
-                        .ageInMonths(flashcard.getMilestone().getAgeInMonths())
-                        .languageCode(translation.getLanguageCode())
-                        .frontText(translation.getFrontText())
-                        .backText(translation.getBackText())
-                        .imageUrl(translation.getImageUrl())
-                        .build())
+                .map(translation -> FlashcardLanguageDTO.fromEntityWithLanguage(flashcard, translation))
                 .orElse(null);
     }
 }

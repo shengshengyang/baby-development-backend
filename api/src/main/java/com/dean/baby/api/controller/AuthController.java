@@ -3,14 +3,11 @@ package com.dean.baby.api.controller;
 import com.dean.baby.common.dto.LoginVo;
 import com.dean.baby.common.dto.RegisterVo;
 import com.dean.baby.common.dto.UserDto;
-import com.dean.baby.common.entity.User;
 import com.dean.baby.common.repository.UserRepository;
 import com.dean.baby.api.service.AuthService;
 import com.dean.baby.api.service.EmailService;
 import com.dean.baby.api.service.RedisService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 

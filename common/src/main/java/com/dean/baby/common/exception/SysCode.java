@@ -25,8 +25,9 @@ public enum SysCode implements ErrorCode{
     NOT_LOGIN(10017, "Not login"),
     NOT_YOUR_BABY(10018, "Not your baby"),
     BABY_NOT_FOUND(10019, "Baby not found"),
-    REGISTER_FAILED(10020, "Register failed, please try again later")
-    ;
+    REGISTER_FAILED(10020, "Register failed, please try again later"),
+    ROLE_NOT_FOUND(10021, "Role not found"),
+    SYSTEM_ERROR(9999, "system error" );
 
     private final Integer code;
     private final String message;

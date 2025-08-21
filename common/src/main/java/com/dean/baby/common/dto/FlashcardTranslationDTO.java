@@ -17,4 +17,17 @@ public class FlashcardTranslationDTO {
     private String frontText;   // 正面文字
     private String backText;    // 背面文字
     private String imageUrl;    // 圖片 URL
+
+    public static FlashcardTranslationDTO fromEntity(com.dean.baby.common.entity.FlashcardTranslation translation) {
+        if (translation == null) {
+            return null;
+        }
+        return FlashcardTranslationDTO.builder()
+                .id(translation.getId())
+                .languageCode(translation.getLanguageCode())
+                .frontText(translation.getFrontText())
+                .backText(translation.getBackText())
+                .imageUrl(translation.getImageUrl())
+                .build();
+    }
 }

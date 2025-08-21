@@ -14,8 +14,24 @@ import java.util.UUID;
 @Builder
 public class FlashcardDTO {
     private UUID id;
-    private UUID categoryId;                    // 分類
-    private UUID milestoneId;                   // 關聯的 Milestone ID
+    private CategoryDTO category;               // 改為 CategoryDTO 對象
+    private MilestoneDTO milestone;             // 改為 MilestoneDTO 對象
     private int ageInMonths;                    // 關聯的 Milestone 的月齡
     private List<FlashcardTranslationDTO> translations;
+
+    public static FlashcardDTO fromEntity(com.dean.baby.common.entity.Flashcard flashcard) {
+        if (flashcard == null) {
+            return null;
+        }
+        return FlashcardDTO.builder()
+                .id(flashcard.getId())
+                .category(CategoryDTO.fromEntity(flashcard.getCategory()))
+                .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
+                .ageInMonths(flashcard.getMilestone() != null ? flashcard.getMilestone().getAgeInMonths() : 0)
+                .translations(flashcard.getTranslations() != null ?
+                    flashcard.getTranslations().stream()
+                        .map(FlashcardTranslationDTO::fromEntity)
+                        .toList() : null)
+                .build();
+    }
 }

@@ -26,8 +26,8 @@ public class FlashCardController {
     public ResponseEntity<FlashcardDTO> createFlashcard(@RequestBody FlashcardDTO flashcardDTO) {
         List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
         FlashcardDTO createdFlashcard = flashCardService.createFlashcard(
-                flashcardDTO.getMilestoneId(),
-                flashcardDTO.getCategoryId(),
+                flashcardDTO.getMilestone().getId(),
+                flashcardDTO.getCategory().getId(),
                 translations
         );
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
@@ -60,7 +60,7 @@ public class FlashCardController {
         List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
         FlashcardDTO updatedFlashcard = flashCardService.updateFlashcard(
                 id,
-                flashcardDTO.getCategoryId(),
+                flashcardDTO.getCategory().getId(),
                 translations
         );
         return ResponseEntity.ok(updatedFlashcard);
