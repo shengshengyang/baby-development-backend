@@ -15,7 +15,6 @@ public class FlashcardLanguageDTO {
     private UUID id;
     private CategoryDTO category;               // 改為 CategoryDTO 對象
     private MilestoneDTO milestone;             // 改為 MilestoneDTO 對象
-    private int ageInMonths;                    // 關聯的 Milestone 的月齡
     private String languageCode; // 語言代碼，例如 "en" 或 "zh"
     private String frontText;   // 正面文字
     private String backText;    // 背面文字
@@ -30,7 +29,6 @@ public class FlashcardLanguageDTO {
                 .id(flashcard.getId())
                 .category(CategoryDTO.fromEntity(flashcard.getCategory()))
                 .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
-                .ageInMonths(flashcard.getMilestone() != null ? flashcard.getMilestone().getAgeInMonths() : 0)
                 .languageCode(translation != null ? translation.getLanguageCode() : null)
                 .frontText(translation != null ? translation.getFrontText() : null)
                 .backText(translation != null ? translation.getBackText() : null)
