@@ -27,6 +27,8 @@ public enum SysCode implements ErrorCode{
     BABY_NOT_FOUND(10019, "Baby not found"),
     REGISTER_FAILED(10020, "Register failed, please try again later"),
     ROLE_NOT_FOUND(10021, "Role not found"),
+    MILESTONE_NOT_FOUND(10022, "Milestone not found"),
+    CATEGORY_NOT_FOUND(10023, "Category not found"),
     SYSTEM_ERROR(9999, "system error" );
 
     private final Integer code;

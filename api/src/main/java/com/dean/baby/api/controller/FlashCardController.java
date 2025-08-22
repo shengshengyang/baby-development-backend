@@ -48,11 +48,7 @@ public class FlashCardController {
 
     // 讀取所有 Flashcard
 
-    @GetMapping("/open/flash-card")
-    public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashcards(@RequestHeader("Accept-Language") String language) {
-        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards(language);
-        return ResponseEntity.ok(flashcards);
-    }
+
 
     // 更新 Flashcard
     @PutMapping("/flash-card/{id}")

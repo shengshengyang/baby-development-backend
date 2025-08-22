@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone Details</title>
+    <link href="/css/theme.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>Milestone Details</h3>
+                    <div>
+                        <a th:href="@{/milestones/edit/{id}(id=${milestone.id})}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="/milestones" class="btn btn-secondary btn-sm">Back to List</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>ID:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <span th:text="${milestone.id}" class="text-muted"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Age in Months:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <span th:text="${milestone.ageInMonths}" class="badge bg-primary fs-6"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Category:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <span th:if="${milestone.category != null}"
+                                  th:text="${milestone.category.name != null ? milestone.category.name.get('TRADITIONAL_CHINESE') : 'No Name'}"
+                                  class="badge bg-secondary"></span>
+                            <span th:if="${milestone.category == null}" class="text-muted">No Category</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Translations:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <div th:if="${milestone.translations != null and !#lists.isEmpty(milestone.translations)}">
+                                <div th:each="translation : ${milestone.translations}" class="card mb-2">
+                                    <div class="card-body py-2">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <span class="badge bg-info" th:text="${translation.languageCode}"></span>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <p th:text="${translation.description}" class="mb-0"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${milestone.translations == null or #lists.isEmpty(milestone.translations)}"
+                                 class="text-muted">
+                                No translations available
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Actions:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="btn-group" role="group">
+                                <a th:href="@{/milestones/edit/{id}(id=${milestone.id})}"
+                                   class="btn btn-outline-warning">Edit Milestone</a>
+                                <form th:action="@{/milestones/delete/{id}(id=${milestone.id})}"
+                                      method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-outline-danger"
+                                            onclick="return confirm('Are you sure you want to delete this milestone?')">
+                                        Delete Milestone
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
