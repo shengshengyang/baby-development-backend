@@ -29,7 +29,7 @@ public class FlashcardLanguageDTO {
                 .id(flashcard.getId())
                 .category(CategoryDTO.fromEntity(flashcard.getCategory()))
                 .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
-                .languageCode(translation != null ? translation.getLanguageCode() : null)
+                .languageCode(translation != null && translation.getLanguageCode() != null ? translation.getLanguageCode().getCode() : null)
                 .frontText(translation != null ? translation.getFrontText() : null)
                 .backText(translation != null ? translation.getBackText() : null)
                 .imageUrl(translation != null ? translation.getImageUrl() : null)

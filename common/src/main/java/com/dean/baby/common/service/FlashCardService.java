@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import com.dean.baby.common.dto.enums.Language;
 
 @Service
 public class FlashCardService extends BaseService {
@@ -143,13 +144,7 @@ public class FlashCardService extends BaseService {
 
     private FlashcardDTO convertToDTO(Flashcard flashcard) {
         List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations().stream()
-                .map(translation -> new FlashcardTranslationDTO(
-                        translation.getId(),
-                        translation.getLanguageCode(),
-                        translation.getFrontText(),
-                        translation.getBackText(),
-                        translation.getImageUrl()
-                ))
+                .map(FlashcardTranslationDTO::fromEntity)
                 .toList();
 
         return FlashcardDTO.builder()
@@ -162,9 +157,10 @@ public class FlashCardService extends BaseService {
     }
 
     private FlashcardLanguageDTO convertToLanguageDTO(Flashcard flashcard, String language) {
+        Language lang = Language.fromCode(language);
         return flashcard.getTranslations()
                 .stream()
-                .filter(translation -> translation.getLanguageCode().equalsIgnoreCase(language))
+                .filter(translation -> translation.getLanguageCode() == lang)
                 .findFirst()
                 .map(translation -> FlashcardLanguageDTO.fromEntityWithLanguage(flashcard, translation))
                 .orElse(null);

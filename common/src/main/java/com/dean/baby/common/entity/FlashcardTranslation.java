@@ -1,10 +1,12 @@
 package com.dean.baby.common.entity;
 
 import lombok.*;
+import com.dean.baby.common.dto.enums.Language;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
+import com.dean.baby.common.util.LanguageConverter;
 
 @Entity
 @Getter
@@ -23,7 +25,8 @@ public class FlashcardTranslation {
     private Flashcard flashcard;
 
     @Column(name = "language_code")
-    private String languageCode;
+    @Convert(converter = LanguageConverter.class)
+    private Language languageCode;
 
     @Column(name = "front_text")
     private String frontText;

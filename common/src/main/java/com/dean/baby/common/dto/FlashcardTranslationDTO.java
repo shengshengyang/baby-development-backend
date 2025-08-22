@@ -1,5 +1,6 @@
 package com.dean.baby.common.dto;
 
+import com.dean.baby.common.dto.enums.Language;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Builder
 public class FlashcardTranslationDTO {
     private UUID id;
-    private String languageCode; // 語言代碼，例如 "en" 或 "zh"
+    private Language languageCode; // 語言代碼，例如 "en" 或 "zh"
     private String frontText;   // 正面文字
     private String backText;    // 背面文字
     private String imageUrl;    // 圖片 URL
@@ -24,7 +25,7 @@ public class FlashcardTranslationDTO {
         }
         return FlashcardTranslationDTO.builder()
                 .id(translation.getId())
-                .languageCode(translation.getLanguageCode())
+                .languageCode(translation.getLanguageCode() != null ? translation.getLanguageCode() : null)
                 .frontText(translation.getFrontText())
                 .backText(translation.getBackText())
                 .imageUrl(translation.getImageUrl())

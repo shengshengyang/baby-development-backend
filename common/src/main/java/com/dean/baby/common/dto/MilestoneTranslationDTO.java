@@ -22,7 +22,7 @@ public class MilestoneTranslationDTO {
         }
         return MilestoneTranslationDTO.builder()
                 .id(translation.getId())
-                .languageCode(translation.getLanguageCode())
+                .languageCode(translation.getLanguageCode() != null ? translation.getLanguageCode().getCode() : null)
                 .description(translation.getDescription())
                 .build();
     }

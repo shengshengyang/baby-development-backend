@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 public class CategoryDTO {
     private UUID id;
-    private Map<Language, String> name;
+    private String name;
 
     public static CategoryDTO fromEntity(com.dean.baby.common.entity.Category category) {
         if (category == null) {
@@ -23,7 +23,7 @@ public class CategoryDTO {
         }
         return CategoryDTO.builder()
                 .id(category.getId())
-                .name(category.getName())
+                .name(category.getName().get(Language.TRADITIONAL_CHINESE))
                 .build();
     }
 }

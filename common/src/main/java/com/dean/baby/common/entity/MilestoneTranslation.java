@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
+import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.common.util.LanguageConverter;
 
 @Entity
 @Data
@@ -19,7 +21,8 @@ public class MilestoneTranslation {
     private Milestone milestone;
 
     @Column(name = "language_code")
-    private String languageCode;
+    @Convert(converter = LanguageConverter.class)
+    private Language languageCode;
 
     private String description;
 }

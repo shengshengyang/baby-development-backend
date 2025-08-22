@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import com.dean.baby.common.dto.enums.Language;
 
 @Service
 public class MilestoneService extends BaseService {
@@ -55,7 +56,7 @@ public class MilestoneService extends BaseService {
                     .map(dto -> {
                         MilestoneTranslation translation = new MilestoneTranslation();
                         translation.setMilestone(savedMilestone);
-                        translation.setLanguageCode(dto.getLanguageCode());
+                        translation.setLanguageCode(Language.fromCode(dto.getLanguageCode()));
                         translation.setDescription(dto.getDescription());
                         return translation;
                     })
@@ -80,7 +81,8 @@ public class MilestoneService extends BaseService {
     }
 
     public List<MilestoneTranslationDTO> getMilestonesByAgeAndLanguage(int age, String language) {
-        return milestoneTranslationRepository.findByAgeAndLanguage(age, language).stream()
+        Language lang = Language.fromCode(language);
+        return milestoneTranslationRepository.findByAgeAndLanguage(age, lang).stream()
                 .map(MilestoneTranslationDTO::fromEntity)
                 .toList();
     }
@@ -110,7 +112,7 @@ public class MilestoneService extends BaseService {
                     .map(dto -> {
                         MilestoneTranslation translation = new MilestoneTranslation();
                         translation.setMilestone(milestone);
-                        translation.setLanguageCode(dto.getLanguageCode());
+                        translation.setLanguageCode(Language.fromCode(dto.getLanguageCode()));
                         translation.setDescription(dto.getDescription());
                         return translation;
                     })

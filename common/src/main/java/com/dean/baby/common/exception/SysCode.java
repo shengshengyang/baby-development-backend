@@ -29,6 +29,7 @@ public enum SysCode implements ErrorCode{
     ROLE_NOT_FOUND(10021, "Role not found"),
     MILESTONE_NOT_FOUND(10022, "Milestone not found"),
     CATEGORY_NOT_FOUND(10023, "Category not found"),
+    BAD_CREDENTIALS(10024, "Bad credentials"),
     SYSTEM_ERROR(9999, "system error" );
 
     private final Integer code;
