@@ -1,15 +1,12 @@
 package com.dean.baby.mvc.controller;
 
 import com.dean.baby.common.dto.CategoryForm;
-import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.entity.Category;
-import com.dean.baby.common.repository.CategoryRepository;
+import com.dean.baby.common.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,15 +15,15 @@ import java.util.UUID;
 public class CategoryController {
 
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("newCategory", new CategoryForm());
         return "category/list";
     }
@@ -34,19 +31,14 @@ public class CategoryController {
     @PostMapping
     public String addCategory(@RequestParam("zhTW") String zhTW,
                               @RequestParam("en") String en) {
-        Category category = new Category();
-        Map<Language, String> name = new HashMap<>();
-        name.put(Language.TRADITIONAL_CHINESE, zhTW);
-        name.put(Language.ENGLISH, en);
-        category.setName(name);
-        categoryRepository.save(category);
+        categoryService.create(zhTW, en);
         return "redirect:/categories";
     }
 
     // 3. 進入修改頁面 (edit.html)
     @GetMapping("/edit/{id}")
     public String editCategory(@PathVariable("id") UUID id, Model model) {
-        Optional<Category> categoryOpt = categoryRepository.findById(id);
+        Optional<Category> categoryOpt = categoryService.findById(id);
         if (categoryOpt.isPresent()) {
             model.addAttribute("category", categoryOpt.get());
             return "category/edit"; // 對應到 /templates/category/edit.html
@@ -60,25 +52,14 @@ public class CategoryController {
     public String updateCategory(@RequestParam("id") UUID id,
                                  @RequestParam("zhTW") String zhTW,
                                  @RequestParam("en") String en) {
-        Optional<Category> categoryOpt = categoryRepository.findById(id);
-        if (categoryOpt.isPresent()) {
-            Category category = categoryOpt.get();
-            Map<Language, String> name = category.getName();
-            if (name == null) {
-                name = new HashMap<>();
-            }
-            name.put(Language.TRADITIONAL_CHINESE, zhTW);
-            name.put(Language.ENGLISH, en);
-            category.setName(name);
-            categoryRepository.save(category);
-        }
+        categoryService.update(id, zhTW, en);
         return "redirect:/categories";
     }
 
 
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable UUID id) {
-        categoryRepository.deleteById(id);
+        categoryService.delete(id);
         return "redirect:/categories";
     }
 }

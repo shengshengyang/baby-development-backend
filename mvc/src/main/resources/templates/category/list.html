@@ -48,9 +48,9 @@
                 <tbody>
                 <tr th:each="category : ${categories}" class="border-b">
                     <td th:text="${category.id}" class="py-2"></td>
-                    <!-- 透過 Enum 常數取得 Map 中對應的值 -->
-                    <td th:text="${category.name[T(com.dean.baby.common.dto.enums.Language).TRADITIONAL_CHINESE]}"></td>
-                    <td th:text="${category.name[T(com.dean.baby.common.dto.enums.Language).ENGLISH]}"></td>
+                    <!-- LangFieldObject 直接使用屬性存取對應語言值 -->
+                    <td th:text="${category.name.tw}"></td>
+                    <td th:text="${category.name.en}"></td>
                     <td class="py-2">
                         <div class="flex space-x-2">
                             <!-- 修改按鈕：導向修改頁面 -->
