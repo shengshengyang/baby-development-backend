@@ -43,7 +43,8 @@
                                 <tr>
                                     <th>Age (Months)</th>
                                     <th>Category</th>
-                                    <th>Translations</th>
+                                    <th>Description</th>
+                                    <th>Video</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -52,14 +53,15 @@
                                     <td th:text="${milestone.ageInMonths}"></td>
                                     <td>
                                         <span th:if="${milestone.category != null}"
-                                              th:text="${milestone.category.name != null ? milestone.category.name.get('TRADITIONAL_CHINESE') : 'N/A'}"></span>
+                                              th:text="${milestone.category.name != null ? milestone.category.name : 'N/A'}"></span>
                                         <span th:if="${milestone.category == null}" class="text-muted">No Category</span>
                                     </td>
                                     <td>
-                                        <span th:if="${milestone.translations != null and !#lists.isEmpty(milestone.translations)}"
-                                              th:text="${#lists.size(milestone.translations)} + ' translations'"></span>
-                                        <span th:if="${milestone.translations == null or #lists.isEmpty(milestone.translations)}"
-                                              class="text-muted">No translations</span>
+                                        <span th:text="${milestone.description}" class="text-truncate" style="max-width: 240px; display: inline-block;"></span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${milestone.videoUrl != null and !#strings.isEmpty(milestone.videoUrl)}" class="badge bg-success">Yes</span>
+                                        <span th:if="${milestone.videoUrl == null or #strings.isEmpty(milestone.videoUrl)}" class="badge bg-secondary">No</span>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">

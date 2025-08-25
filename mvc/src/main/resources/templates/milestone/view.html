@@ -44,7 +44,7 @@
                         </div>
                         <div class="col-md-9">
                             <span th:if="${milestone.category != null}"
-                                  th:text="${milestone.category.name != null ? milestone.category.name.get('TRADITIONAL_CHINESE') : 'No Name'}"
+                                  th:text="${milestone.category.name != null ? milestone.category.name : 'No Name'}"
                                   class="badge bg-secondary"></span>
                             <span th:if="${milestone.category == null}" class="text-muted">No Category</span>
                         </div>
@@ -52,26 +52,23 @@
 
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <strong>Translations:</strong>
+                            <strong>Description:</strong>
                         </div>
                         <div class="col-md-9">
-                            <div th:if="${milestone.translations != null and !#lists.isEmpty(milestone.translations)}">
-                                <div th:each="translation : ${milestone.translations}" class="card mb-2">
-                                    <div class="card-body py-2">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <span class="badge bg-info" th:text="${translation.languageCode}"></span>
-                                            </div>
-                                            <div class="col-md-9">
-                                                <p th:text="${translation.description}" class="mb-0"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <p th:text="${milestone.description != null ? milestone.description : 'No description'}" class="mb-0"></p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Video:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <div th:if="${milestone.videoUrl != null and !#strings.isEmpty(milestone.videoUrl)}">
+                                <a th:href="${milestone.videoUrl}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mb-2">Open Video</a>
                             </div>
-                            <div th:if="${milestone.translations == null or #lists.isEmpty(milestone.translations)}"
-                                 class="text-muted">
-                                No translations available
+                            <div th:if="${milestone.videoUrl == null or #strings.isEmpty(milestone.videoUrl)}" class="text-muted">
+                                No video
                             </div>
                         </div>
                     </div>

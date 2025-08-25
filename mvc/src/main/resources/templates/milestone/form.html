@@ -40,56 +40,18 @@
                             </select>
                         </div>
 
-                        <!-- Translations Section -->
+                        <!-- Description (current locale) -->
                         <div class="mb-3">
-                            <label class="form-label">Translations</label>
-                            <div id="translations-container">
-                                <!-- Existing translations -->
-                                <div th:each="translation, iterStat : ${milestone.translations}"
-                                     class="translation-item border rounded p-3 mb-3">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label class="form-label">Language Code</label>
-                                            <input type="text" class="form-control"
-                                                   th:name="'translations[' + ${iterStat.index} + '].languageCode'"
-                                                   th:value="${translation.languageCode}" placeholder="e.g., zh-TW, en">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Description</label>
-                                            <textarea class="form-control" rows="2"
-                                                      th:name="'translations[' + ${iterStat.index} + '].description'"
-                                                      th:text="${translation.description}"
-                                                      placeholder="Enter milestone description"></textarea>
-                                        </div>
-                                        <div class="col-md-2 d-flex align-items-end">
-                                            <button type="button" class="btn btn-danger btn-sm remove-translation">Remove</button>
-                                        </div>
-                                    </div>
-                                </div>
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3"
+                                      th:field="*{description}" placeholder="Enter milestone description"></textarea>
+                            <div class="form-text">This saves the description in your current language. You can localize others later.</div>
+                        </div>
 
-                                <!-- Template for new translations (hidden) -->
-                                <div class="translation-item border rounded p-3 mb-3" id="translation-template" style="display: none;">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label class="form-label">Language Code</label>
-                                            <input type="text" class="form-control" name="translations[INDEX].languageCode"
-                                                   placeholder="e.g., zh-TW, en">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Description</label>
-                                            <textarea class="form-control" rows="2" name="translations[INDEX].description"
-                                                      placeholder="Enter milestone description"></textarea>
-                                        </div>
-                                        <div class="col-md-2 d-flex align-items-end">
-                                            <button type="button" class="btn btn-danger btn-sm remove-translation">Remove</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-translation">
-                                Add Translation
-                            </button>
+                        <!-- Video URL -->
+                        <div class="mb-3">
+                            <label for="videoUrl" class="form-label">Video URL</label>
+                            <input type="url" class="form-control" id="videoUrl" th:field="*{videoUrl}" placeholder="https://...">
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -106,34 +68,5 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let translationIndex = document.querySelectorAll('.translation-item:not(#translation-template)').length;
-
-    // Add translation functionality
-    document.getElementById('add-translation').addEventListener('click', function() {
-        const template = document.getElementById('translation-template');
-        const clone = template.cloneNode(true);
-        clone.style.display = 'block';
-        clone.id = '';
-
-        // Update field names with correct index
-        const inputs = clone.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            input.name = input.name.replace('INDEX', translationIndex);
-        });
-
-        template.parentNode.insertBefore(clone, template);
-        translationIndex++;
-    });
-
-    // Remove translation functionality
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-translation')) {
-            e.target.closest('.translation-item').remove();
-        }
-    });
-});
-</script>
 </body>
 </html>

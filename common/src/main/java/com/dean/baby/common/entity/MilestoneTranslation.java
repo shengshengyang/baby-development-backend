@@ -1,28 +1,19 @@
 package com.dean.baby.common.entity;
 
 import lombok.Data;
-import jakarta.persistence.*;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.util.LanguageConverter;
 
-@Entity
+/**
+ * Deprecated: 里程碑翻譯表已移除，改用 Milestone.description (LangFieldObject)。
+ * 本類保留作為兼容性的��料結構，不再標記為 JPA 實體。
+ */
+@Deprecated
 @Data
-@Table(name = "milestone_translations")
 public class MilestoneTranslation {
-    @Id
-    @UuidGenerator
     private UUID id;
-
-    @ManyToOne
-    @JoinColumn(name = "milestone_id")
     private Milestone milestone;
-
-    @Column(name = "language_code")
-    @Convert(converter = LanguageConverter.class)
     private Language languageCode;
-
     private String description;
 }

@@ -15,15 +15,4 @@ public class MilestoneTranslationDTO {
     private UUID id;
     private String languageCode;
     private String description;
-
-    public static MilestoneTranslationDTO fromEntity(com.dean.baby.common.entity.MilestoneTranslation translation) {
-        if (translation == null) {
-            return null;
-        }
-        return MilestoneTranslationDTO.builder()
-                .id(translation.getId())
-                .languageCode(translation.getLanguageCode() != null ? translation.getLanguageCode().getCode() : null)
-                .description(translation.getDescription())
-                .build();
-    }
 }

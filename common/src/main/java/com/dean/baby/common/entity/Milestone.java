@@ -6,6 +6,8 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.List;
 import java.util.UUID;
+import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.common.util.LangFieldObjectConverter;
 
 @Entity
 @Data
@@ -26,10 +28,16 @@ public class Milestone {
     @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Flashcard> flashcards;
 
-    @OneToMany(mappedBy = "milestone")
-    private List<MilestoneTranslation> translations;
+    // 新增：里程碑描述（多語）
+    @Column(name = "description", columnDefinition = "json", nullable = false)
+    @Convert(converter = LangFieldObjectConverter.class)
+    private LangFieldObject description;
 
-    // 为了向后兼容，添加便利方法
+    // 新增：影片連結
+    @Column(name = "video_url")
+    private String videoUrl;
+
+    // 為了向后兼容，添加便利方法
     public int getAgeInMonths() {
         return age != null ? age.getMonth() : 0;
     }

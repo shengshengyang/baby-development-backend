@@ -27,9 +27,12 @@
                                 <label for="language" class="form-label">Language Code</label>
                                 <select class="form-select" id="language" name="language">
                                     <option value="">Select language</option>
-                                    <option value="zh-TW" th:selected="${searchLanguage == 'zh-TW'}">Traditional Chinese (zh-TW)</option>
                                     <option value="en" th:selected="${searchLanguage == 'en'}">English (en)</option>
-                                    <option value="zh-CN" th:selected="${searchLanguage == 'zh-CN'}">Simplified Chinese (zh-CN)</option>
+                                    <option value="tw" th:selected="${searchLanguage == 'tw'}">Traditional Chinese (tw)</option>
+                                    <option value="cn" th:selected="${searchLanguage == 'cn'}">Simplified Chinese (cn)</option>
+                                    <option value="ja" th:selected="${searchLanguage == 'ja'}">Japanese (ja)</option>
+                                    <option value="ko" th:selected="${searchLanguage == 'ko'}">Korean (ko)</option>
+                                    <option value="vi" th:selected="${searchLanguage == 'vi'}">Vietnamese (vi)</option>
                                 </select>
                             </div>
                             <div class="col-md-4 d-flex align-items-end">
@@ -60,7 +63,7 @@
                                 <tr>
                                     <th>Language</th>
                                     <th>Description</th>
-                                    <th>Milestone ID</th>
+                                    <th>Milestone</th>
                                 </tr>
                             </thead>
                             <tbody>
