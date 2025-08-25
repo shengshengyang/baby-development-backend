@@ -159,14 +159,14 @@ public class MilestoneService extends BaseService {
         Age age = new Age();
         age.setMonth(month);
 
-        // 创建默认的多语言显示名称
+        // 创建默认的多语言显示名称 - 基于Language枚举
         com.dean.baby.common.dto.common.LangFieldObject displayName = new com.dean.baby.common.dto.common.LangFieldObject();
-        displayName.setEn(month + " Months");
-        displayName.setTw(month + "個月");
-        displayName.setCn(month + "个月");
-        displayName.setJa(month + "ヶ月");
-        displayName.setKo(month + "개월");
-        displayName.setVi(month + " tháng");
+        displayName.setLang(Language.ENGLISH.getCode(), month + " Months");
+        displayName.setLang(Language.TRADITIONAL_CHINESE.getCode(), month + "個月");
+        displayName.setLang(Language.SIMPLIFIED_CHINESE.getCode(), month + "个月");
+        displayName.setLang(Language.JAPANESE.getCode(), month + "ヶ月");
+        displayName.setLang(Language.KOREAN.getCode(), month + "개월");
+        displayName.setLang(Language.VIETNAMESE.getCode(), month + " tháng");
 
         age.setDisplayName(displayName);
         return ageRepository.save(age);
