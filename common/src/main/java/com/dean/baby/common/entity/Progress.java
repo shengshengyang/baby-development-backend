@@ -27,8 +27,9 @@ public class Progress implements Serializable {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(name = "age_in_months")
-    private int ageInMonths;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "age_id")
+    private Age age;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")
@@ -46,6 +47,11 @@ public class Progress implements Serializable {
     @ManyToOne
     @JoinColumn(name = "flashcard_id", nullable = false)
     private Flashcard flashcard;
+
+    // 为了向后兼容，添加便利方法
+    public int getAgeInMonths() {
+        return age != null ? age.getMonth() : 0;
+    }
 
     @Override
     public final boolean equals(Object o) {

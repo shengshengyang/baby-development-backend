@@ -30,10 +30,10 @@ VALUES (@baby1_id, '小寶', '2025-02-15', @user1_id), -- 約 6 個月大
 
 -- -- 類別 (Categories) - 使用 JSON 格式儲存多語系名稱
 INSERT INTO categories (id, name)
-VALUES (@cat_motor_id, JSON_OBJECT('en', 'Motor Skills', 'zh_TW', '動作發展')),
-       (@cat_cognitive_id, JSON_OBJECT('en', 'Cognitive', 'zh_TW', '認知發展')),
-       (@cat_language_id, JSON_OBJECT('en', 'Language & Communication', 'zh_TW', '語言溝通')),
-       (@cat_social_id, JSON_OBJECT('en', 'Social & Emotional', 'zh_TW', '社會與情感'));
+VALUES (@cat_motor_id, JSON_OBJECT('en', 'Motor Skills', 'tw', '動作發展')),
+       (@cat_cognitive_id, JSON_OBJECT('en', 'Cognitive', 'tw', '認知發展')),
+       (@cat_language_id, JSON_OBJECT('en', 'Language & Communication', 'tw', '語言溝通')),
+       (@cat_social_id, JSON_OBJECT('en', 'Social & Emotional', 'tw', '社會與情感'));
 
 
 -- ===============================================
@@ -46,20 +46,20 @@ SET @milestone_motor_2m_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO milestones (id, age_in_months, category_id) VALUES (@milestone_motor_2m_id, 2, @cat_motor_id);
 INSERT INTO milestone_translations (id, milestone_id, language_code, description)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @milestone_motor_2m_id, 'en', 'Lifts head and chest when on tummy'),
-       (UNHEX(REPLACE(UUID(),'-','')), @milestone_motor_2m_id, 'zh_TW', '俯臥時能抬起頭和胸');
+       (UNHEX(REPLACE(UUID(),'-','')), @milestone_motor_2m_id, 'tw', '俯臥時能抬起頭和胸');
 
 SET @milestone_motor_6m_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO milestones (id, age_in_months, category_id) VALUES (@milestone_motor_6m_id, 6, @cat_motor_id);
 INSERT INTO milestone_translations (id, milestone_id, language_code, description)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @milestone_motor_6m_id, 'en', 'Rolls over in both directions'),
-       (UNHEX(REPLACE(UUID(),'-','')), @milestone_motor_6m_id, 'zh_TW', '可以雙向翻身');
+       (UNHEX(REPLACE(UUID(),'-','')), @milestone_motor_6m_id, 'tw', '可以雙向翻身');
 
 -- --- 認知發展 (Cognitive) ---
 SET @milestone_cognitive_2m_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO milestones (id, age_in_months, category_id) VALUES (@milestone_cognitive_2m_id, 2, @cat_cognitive_id);
 INSERT INTO milestone_translations (id, milestone_id, language_code, description)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @milestone_cognitive_2m_id, 'en', 'Pays attention to faces'),
-       (UNHEX(REPLACE(UUID(),'-','')), @milestone_cognitive_2m_id, 'zh_TW', '會注意人臉');
+       (UNHEX(REPLACE(UUID(),'-','')), @milestone_cognitive_2m_id, 'tw', '會注意人臉');
 
 
 -- -- 閃卡與翻譯 (Flashcards & Translations)
@@ -68,33 +68,33 @@ SET @flashcard1_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO flashcards (id, category_id, milestone_id) VALUES (@flashcard1_id, @cat_motor_id, @milestone_motor_2m_id);
 INSERT INTO flashcard_translations (id, flashcard_id, language_code, front_text, back_text, image_url)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @flashcard1_id, 'en', 'Can they lift their head 45 degrees?', 'When on their tummy, your baby should be able to briefly lift their head.', 'https://example.com/images/head_lift.png'),
-       (UNHEX(REPLACE(UUID(),'-','')), @flashcard1_id, 'zh_TW', '趴著時，頭可以抬起45度嗎？', '寶寶俯臥時，應該能夠短暫地抬起頭部。', 'https://example.com/images/head_lift.png');
+       (UNHEX(REPLACE(UUID(),'-','')), @flashcard1_id, 'tw', '趴著時，頭可以抬起45度嗎？', '寶寶俯臥時，應該能夠短暫地抬起頭部。', 'https://example.com/images/head_lift.png');
 
 SET @flashcard2_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO flashcards (id, category_id, milestone_id) VALUES (@flashcard2_id, @cat_motor_id, @milestone_motor_2m_id);
 INSERT INTO flashcard_translations (id, flashcard_id, language_code, front_text, back_text, image_url)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @flashcard2_id, 'en', 'Smoother arm and leg movements?', 'Jerky movements start to become more fluid and circular.', 'https://example.com/images/smooth_move.png'),
-       (UNHEX(REPLACE(UUID(),'-','')), @flashcard2_id, 'zh_TW', '手腳的動作是否變得更流暢？', '寶寶不協調的動作會開始變得更平順、更有連續性。', 'https://example.com/images/smooth_move.png');
+       (UNHEX(REPLACE(UUID(),'-','')), @flashcard2_id, 'tw', '手腳的動作是否變得更流暢？', '寶寶不協調的動作會開始變得更平順、更有連續性。', 'https://example.com/images/smooth_move.png');
 
 -- --- 6個月動作發展閃卡 ---
 SET @flashcard3_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO flashcards (id, category_id, milestone_id) VALUES (@flashcard3_id, @cat_motor_id, @milestone_motor_6m_id);
 INSERT INTO flashcard_translations (id, flashcard_id, language_code, front_text, back_text, image_url)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @flashcard3_id, 'en', 'Can they roll from tummy to back?', 'Place a toy nearby to encourage them to roll over.', 'https://example.com/images/roll_over.png'),
-       (UNHEX(REPLACE(UUID(),'-','')), @flashcard3_id, 'zh_TW', '可以從趴姿翻到仰躺嗎？', '在旁邊放個玩具，鼓勵寶寶翻身去拿。', 'https://example.com/images/roll_over.png');
+       (UNHEX(REPLACE(UUID(),'-','')), @flashcard3_id, 'tw', '可以從趴姿翻到仰躺嗎？', '在旁邊放個玩具，鼓勵寶寶翻身去拿。', 'https://example.com/images/roll_over.png');
 
 -- -- 文章與翻譯 (Articles & Translations)
 SET @article1_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO articles (id, category_id) VALUES (@article1_id, @cat_motor_id);
 INSERT INTO article_translations (id, article_id, language_code, title, content)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @article1_id, 'en', 'Understanding Tummy Time', 'Tummy time is crucial for developing strong neck and shoulder muscles...'),
-       (UNHEX(REPLACE(UUID(),'-','')), @article1_id, 'zh_TW', 'Tummy Time 的重要性', '「Tummy Time」(俯臥時間) 對於寶寶頸部與肩部肌肉的發展至關重要...');
+       (UNHEX(REPLACE(UUID(),'-','')), @article1_id, 'tw', 'Tummy Time 的重要性', '「Tummy Time」(俯臥時間) 對於寶寶頸部與肩部肌肉的發展至關重要...');
 
 SET @article2_id = UNHEX(REPLACE(UUID(),'-',''));
 INSERT INTO articles (id, category_id) VALUES (@article2_id, @cat_social_id);
 INSERT INTO article_translations (id, article_id, language_code, title, content)
 VALUES (UNHEX(REPLACE(UUID(),'-','')), @article2_id, 'en', 'The Power of a Smile', 'Your baby\'s first social smile is a major milestone...'),
-       (UNHEX(REPLACE(UUID(),'-','')), @article2_id, 'zh_TW', '微笑的力量', '寶寶的第一個社交微笑是一個重要的發展里程碑...');
+       (UNHEX(REPLACE(UUID(),'-','')), @article2_id, 'tw', '微笑的力量', '寶寶的第一個社交微笑是一個重要的發展里程碑...');
 
 
 -- ===============================================

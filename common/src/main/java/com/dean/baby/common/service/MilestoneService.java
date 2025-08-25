@@ -2,11 +2,13 @@ package com.dean.baby.common.service;
 
 import com.dean.baby.common.dto.MilestoneDTO;
 import com.dean.baby.common.dto.MilestoneTranslationDTO;
+import com.dean.baby.common.entity.Age;
 import com.dean.baby.common.entity.Category;
 import com.dean.baby.common.entity.Milestone;
 import com.dean.baby.common.entity.MilestoneTranslation;
 import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
+import com.dean.baby.common.repository.AgeRepository;
 import com.dean.baby.common.repository.CategoryRepository;
 import com.dean.baby.common.repository.MilestoneRepository;
 import com.dean.baby.common.repository.MilestoneTranslationRepository;
@@ -25,15 +27,18 @@ public class MilestoneService extends BaseService {
     private final MilestoneRepository milestoneRepository;
     private final MilestoneTranslationRepository milestoneTranslationRepository;
     private final CategoryRepository categoryRepository;
+    private final AgeRepository ageRepository;
 
     public MilestoneService(UserRepository userRepository,
                            MilestoneRepository milestoneRepository,
                            MilestoneTranslationRepository milestoneTranslationRepository,
-                           CategoryRepository categoryRepository) {
+                           CategoryRepository categoryRepository,
+                           AgeRepository ageRepository) {
         super(userRepository);
         this.milestoneRepository = milestoneRepository;
         this.milestoneTranslationRepository = milestoneTranslationRepository;
         this.categoryRepository = categoryRepository;
+        this.ageRepository = ageRepository;
     }
 
     @Transactional
@@ -42,9 +47,13 @@ public class MilestoneService extends BaseService {
         Category category = categoryRepository.findById(milestoneDTO.getCategory().getId())
                 .orElseThrow(() -> new ApiException(SysCode.CATEGORY_NOT_FOUND));
 
+        // 查找或创建Age实体
+        Age age = ageRepository.findByMonth(milestoneDTO.getAgeInMonths())
+                .orElseGet(() -> createAgeIfNotExists(milestoneDTO.getAgeInMonths()));
+
         // 创建 Milestone Entity
         Milestone milestone = new Milestone();
-        milestone.setAgeInMonths(milestoneDTO.getAgeInMonths());
+        milestone.setAge(age);
         milestone.setCategory(category);
 
         // 保存 Milestone
@@ -97,8 +106,12 @@ public class MilestoneService extends BaseService {
         Category category = categoryRepository.findById(milestoneDTO.getCategory().getId())
                 .orElseThrow(() -> new ApiException(SysCode.CATEGORY_NOT_FOUND));
 
+        // 查找或创建Age实体
+        Age age = ageRepository.findByMonth(milestoneDTO.getAgeInMonths())
+                .orElseGet(() -> createAgeIfNotExists(milestoneDTO.getAgeInMonths()));
+
         // 更新基本属性
-        milestone.setAgeInMonths(milestoneDTO.getAgeInMonths());
+        milestone.setAge(age);
         milestone.setCategory(category);
 
         // 删除旧的翻译
@@ -140,5 +153,22 @@ public class MilestoneService extends BaseService {
 
         // 删除 Milestone
         milestoneRepository.delete(milestone);
+    }
+
+    private Age createAgeIfNotExists(int month) {
+        Age age = new Age();
+        age.setMonth(month);
+
+        // 创建默认的多语言显示名称
+        com.dean.baby.common.dto.common.LangFieldObject displayName = new com.dean.baby.common.dto.common.LangFieldObject();
+        displayName.setEn(month + " Months");
+        displayName.setTw(month + "個月");
+        displayName.setCn(month + "个月");
+        displayName.setJa(month + "ヶ月");
+        displayName.setKo(month + "개월");
+        displayName.setVi(month + " tháng");
+
+        age.setDisplayName(displayName);
+        return ageRepository.save(age);
     }
 }

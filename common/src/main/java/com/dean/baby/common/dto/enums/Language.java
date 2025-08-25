@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 @Getter
 public enum Language {
     ENGLISH("en"),
-    TRADITIONAL_CHINESE("zh_TW");
+    TRADITIONAL_CHINESE("tw");
 
     private final String code;
 

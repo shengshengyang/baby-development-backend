@@ -11,6 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface MilestoneTranslationRepository extends JpaRepository<MilestoneTranslation, UUID> {
-    @Query("SELECT mt FROM MilestoneTranslation mt WHERE mt.milestone.ageInMonths = :age AND mt.languageCode = :language")
+    @Query("SELECT mt FROM MilestoneTranslation mt WHERE mt.milestone.age.month = :age AND mt.languageCode = :language")
     List<MilestoneTranslation> findByAgeAndLanguage(int age, Language language);
 }

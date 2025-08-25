@@ -8,7 +8,6 @@ import com.dean.baby.common.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,14 +22,16 @@ public class FlashCardService extends BaseService {
     private final MilestoneRepository milestoneRepository;
     private final ProgressRepository progressRepository;
     private final BabyService babyService;
+    private final AgeRepository ageRepository;
 
-    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository, ProgressRepository progressRepository, BabyService babyService) {
+    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository, ProgressRepository progressRepository, BabyService babyService, AgeRepository ageRepository) {
         super(userRepository);
         this.flashcardRepository = flashcardRepository;
         this.translationRepository = translationRepository;
         this.milestoneRepository = milestoneRepository;
         this.progressRepository = progressRepository;
         this.babyService = babyService;
+        this.ageRepository = ageRepository;
     }
 
     @Transactional
@@ -128,14 +129,13 @@ public class FlashCardService extends BaseService {
             throw new ApiException(SysCode.NOT_YOUR_BABY);
         }
         Progress progress = progressRepository.findByBabyIdAndFlashcardId(vo.babyId(), vo.flashcardId())
-                .orElseGet(() -> Progress.builder()
-                        .baby(Baby.builder().id(vo.babyId()).build())
-                        .flashcard(Flashcard.builder().id(vo.flashcardId()).build())
-                        .achieved(false)
-                        .build());
+                .orElseGet(() -> {
+                    Progress newProgress = new Progress();
+                    newProgress.setBaby(new Baby());
+                    newProgress.setFlashcard(new Flashcard());
+                    return newProgress;
+                });
 
-        progress.setAchieved(!progress.isAchieved());
-        progress.setDateAchieved(progress.isAchieved() ? LocalDate.now() : null);
 
         progressRepository.save(progress);
 

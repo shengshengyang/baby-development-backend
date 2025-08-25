@@ -30,6 +30,7 @@ public enum SysCode implements ErrorCode{
     MILESTONE_NOT_FOUND(10022, "Milestone not found"),
     CATEGORY_NOT_FOUND(10023, "Category not found"),
     BAD_CREDENTIALS(10024, "Bad credentials"),
+    FLASHCARD_NOT_FOUND(10025, "Flashcard not found"),
     SYSTEM_ERROR(9999, "system error" );
 
     private final Integer code;

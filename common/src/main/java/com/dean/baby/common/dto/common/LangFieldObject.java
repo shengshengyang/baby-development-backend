@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonSerialize(using = LangFieldObjectSerializer.class)
 public class LangFieldObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,12 +33,12 @@ public class LangFieldObject implements Serializable {
     public String ja;
 
     @Schema(description = "中文(簡體)", example = "栏位")
-    @JsonProperty("zh-CN")
-    public String zh_cn;
+    @JsonProperty("cn")
+    public String cn;
 
     @Schema(description = "中文(繁體)", example = "欄位")
-    @JsonProperty("zh-TW")
-    public String zh_tw;
+    @JsonProperty("tw")
+    public String tw;
 
     @Schema(description = "韓文", example = "필드")
     @JsonProperty("ko")
@@ -71,9 +70,9 @@ public class LangFieldObject implements Serializable {
                     return f.get(this).toString();
             }
         } catch (Exception e) {
-            return this.zh_tw;
+            return this.tw;
         }
-        return this.zh_tw;
+        return this.tw;
     }
 
     @JsonIgnore
