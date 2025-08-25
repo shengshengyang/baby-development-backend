@@ -33,7 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/open/**",
+                        .requestMatchers("/", "/auth/**", "/open/**",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
                                 "/swagger-resources/**", "/webjars/**").permitAll()
                         .anyRequest().authenticated()
