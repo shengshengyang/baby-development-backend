@@ -26,12 +26,7 @@ public class FlashCardController {
     // 創建 Flashcard
     @PostMapping("/flash-card")
     public ResponseEntity<FlashcardDTO> createFlashcard(@RequestBody FlashcardDTO flashcardDTO) {
-        List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
-        FlashcardDTO createdFlashcard = flashCardService.createFlashcard(
-                flashcardDTO.getMilestone().getId(),
-                flashcardDTO.getCategory().getId(),
-                translations
-        );
+        FlashcardDTO createdFlashcard = flashCardService.createFlashcard(flashcardDTO);
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
     }
 
@@ -58,12 +53,7 @@ public class FlashCardController {
     // 更新 Flashcard
     @PutMapping("/flash-card/{id}")
     public ResponseEntity<FlashcardDTO> updateFlashcard(@PathVariable UUID id, @RequestBody FlashcardDTO flashcardDTO) {
-        List<FlashcardTranslationDTO> translations = flashcardDTO.getTranslations();
-        FlashcardDTO updatedFlashcard = flashCardService.updateFlashcard(
-                id,
-                flashcardDTO.getCategory().getId(),
-                translations
-        );
+        FlashcardDTO updatedFlashcard = flashCardService.updateFlashcard(id, flashcardDTO);
         return ResponseEntity.ok(updatedFlashcard);
     }
 

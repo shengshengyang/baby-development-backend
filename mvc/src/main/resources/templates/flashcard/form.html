@@ -69,63 +69,105 @@
                 <div class="border-t pt-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">翻譯內容</h3>
 
-                    <!-- 預設使用第一個translation或創建新的 -->
-                    <div th:with="translation=${!#lists.isEmpty(flashcard.translations) ? flashcard.translations[0] : null}">
-                        <div class="grid grid-cols-1 gap-6">
-                            <!-- 語言代碼 -->
-                            <div class="space-y-2">
-                                <label for="languageCode" class="block text-sm font-medium text-gray-700">
-                                    語言代碼 <span class="text-red-500">*</span>
-                                </label>
-                                <select id="languageCode" name="translations[0].languageCode" required
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                    <option value="">請選擇語言</option>
-                                    <option value="zh_TW" th:selected="${translation?.languageCode == 'zh_TW'}">繁體中文 (zh_TW)</option>
-                                    <option value="zh_CN" th:selected="${translation?.languageCode == 'zh_CN'}">簡體中文 (zh_CN)</option>
-                                    <option value="en" th:selected="${translation?.languageCode == 'en'}">英文 (en)</option>
-                                    <option value="ja" th:selected="${translation?.languageCode == 'ja'}">日文 (ja)</option>
-                                    <option value="ko" th:selected="${translation?.languageCode == 'ko'}">韓文 (ko)</option>
-                                </select>
-                            </div>
-
-                            <!-- 正面文字 -->
-                            <div class="space-y-2">
-                                <label for="frontText" class="block text-sm font-medium text-gray-700">
-                                    正面文字 <span class="text-red-500">*</span>
-                                </label>
-                                <textarea id="frontText" name="translations[0].frontText" rows="3" required
-                                          th:text="${translation?.frontText}"
-                                          placeholder="請輸入卡片正面顯示的文字"
-                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
-                            </div>
-
-                            <!-- 背面文字 -->
-                            <div class="space-y-2">
-                                <label for="backText" class="block text-sm font-medium text-gray-700">
-                                    背面文字 <span class="text-red-500">*</span>
-                                </label>
-                                <textarea id="backText" name="translations[0].backText" rows="3" required
-                                          th:text="${translation?.backText}"
-                                          placeholder="請輸入卡片背面顯示的文字"
-                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
-                            </div>
-
-                            <!-- 圖片URL -->
-                            <div class="space-y-2">
-                                <label for="imageUrl" class="block text-sm font-medium text-gray-700">
-                                    圖片URL
-                                </label>
-                                <input type="url" id="imageUrl" name="translations[0].imageUrl"
-                                       th:value="${translation?.imageUrl}"
-                                       placeholder="https://example.com/image.jpg"
+                    <!-- Subject (正面文字) - 使用 LangFieldObject -->
+                    <div class="space-y-2 mb-6">
+                        <label class="block text-sm font-medium text-gray-700">
+                            主題/正面文字 <span class="text-red-500">*</span>
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="subjectTw" class="block text-xs text-gray-600 mb-1">繁體中文</label>
+                                <input type="text" id="subjectTw" name="subject.tw" required
+                                       th:value="${flashcard.subject?.tw}"
+                                       placeholder="請輸入繁體中文主題"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                            </div>
+                            <div>
+                                <label for="subjectEn" class="block text-xs text-gray-600 mb-1">英文</label>
+                                <input type="text" id="subjectEn" name="subject.en"
+                                       th:value="${flashcard.subject?.en}"
+                                       placeholder="請輸入英文主題"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                            </div>
+                        </div>
+                    </div>
 
-                                <!-- 圖片預覽 -->
-                                <div id="imagePreview" class="mt-2" style="display: none;">
-                                    <img id="previewImg" src="" alt="圖片預覽" class="max-w-xs max-h-32 object-cover rounded border">
+                    <!-- 圖片URL - 移到 Flashcard 層級 -->
+                    <div class="space-y-2 mb-6">
+                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">
+                            圖片URL
+                        </label>
+                        <input type="url" id="imageUrl" name="imageUrl"
+                               th:value="${flashcard.imageUrl}"
+                               placeholder="https://example.com/image.jpg"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+
+                        <!-- 圖片預覽 -->
+                        <div id="imagePreview" class="mt-2" style="display: none;">
+                            <img id="previewImg" src="" alt="圖片預覽" class="max-w-xs max-h-32 object-cover rounded border">
+                        </div>
+                    </div>
+
+                    <!-- Description (背面文字) - 保持多語言模式 -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">
+                            描述/背面文字 <span class="text-red-500">*</span>
+                        </label>
+
+                        <!-- 語言選擇器 -->
+                        <div class="mb-4">
+                            <select id="languageSelector"
+                                    class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="TRADITIONAL_CHINESE">繁體中文</option>
+                                <option value="SIMPLIFIED_CHINESE">簡體中文</option>
+                                <option value="ENGLISH">英文</option>
+                                <option value="JAPANESE">日文</option>
+                                <option value="KOREAN">韓文</option>
+                            </select>
+                        </div>
+
+                        <!-- 動態翻譯區域 -->
+                        <div id="translationContainer">
+                            <!-- 如果是編輯模式且有現有翻譯，顯示所有翻譯 -->
+                            <div th:if="${flashcard.id != null and !#lists.isEmpty(flashcard.translations)}">
+                                <div th:each="translation, iterStat : ${flashcard.translations}"
+                                     class="translation-item"
+                                     th:data-lang="${translation.languageCode.name()}"
+                                     th:style="${iterStat.index == 0 ? 'display: block;' : 'display: none;'}">
+                                    <label class="block text-xs text-gray-600 mb-1"
+                                           th:text="${translation.languageCode.displayName} + '描述'"></label>
+                                    <textarea th:name="'translations[' + ${iterStat.index} + '].description'"
+                                              rows="4"
+                                              th:required="${iterStat.index == 0}"
+                                              th:text="${translation.description}"
+                                              th:placeholder="'請輸入' + ${translation.languageCode.displayName} + '描述'"
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                                    <input type="hidden"
+                                           th:name="'translations[' + ${iterStat.index} + '].languageCode'"
+                                           th:value="${translation.languageCode.name()}">
+                                    <input type="hidden"
+                                           th:name="'translations[' + ${iterStat.index} + '].id'"
+                                           th:value="${translation.id}">
+                                </div>
+                            </div>
+
+                            <!-- 如果是新增模式，只顯示預設的繁體中文翻譯 -->
+                            <div th:if="${flashcard.id == null or #lists.isEmpty(flashcard.translations)}">
+                                <div class="translation-item" data-lang="TRADITIONAL_CHINESE">
+                                    <label class="block text-xs text-gray-600 mb-1">繁體中文描述</label>
+                                    <textarea name="translations[0].description" rows="4" required
+                                              placeholder="請輸入繁體中文描述"
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                                    <input type="hidden" name="translations[0].languageCode" value="TRADITIONAL_CHINESE">
                                 </div>
                             </div>
                         </div>
+
+                        <!-- 新增翻譯按鈕 -->
+                        <button type="button" id="addTranslationBtn"
+                                class="mt-2 px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors text-sm">
+                            + 新增其他語言翻譯
+                        </button>
                     </div>
                 </div>
 
@@ -213,8 +255,9 @@
 
         // 預覽Modal功能
         document.getElementById('previewBtn').addEventListener('click', function() {
-            const frontText = document.getElementById('frontText').value;
-            const backText = document.getElementById('backText').value;
+            const frontText = document.getElementById('subjectTw').value || document.getElementById('subjectEn').value;
+            const backText = document.querySelector('.translation-item[style*="block"] textarea')?.value ||
+                           document.querySelector('.translation-item textarea').value;
             const imageUrl = document.getElementById('imageUrl').value;
 
             document.getElementById('previewFront').textContent = frontText || '（無內容）';
@@ -251,6 +294,75 @@
             const imageUrl = document.getElementById('imageUrl').value;
             if (imageUrl) {
                 document.getElementById('imageUrl').dispatchEvent(new Event('input'));
+            }
+        });
+
+        // 語言切換功能
+        document.getElementById('languageSelector').addEventListener('change', function() {
+            const selectedLang = this.value;
+            const translationItems = document.querySelectorAll('.translation-item');
+
+            translationItems.forEach(item => {
+                item.style.display = 'none';
+                if (item.getAttribute('data-lang') === selectedLang) {
+                    item.style.display = 'block';
+                }
+            });
+        });
+
+        // 新增翻譯功能
+        document.getElementById('addTranslationBtn').addEventListener('click', function() {
+            const translationContainer = document.getElementById('translationContainer');
+            const translationItems = translationContainer.querySelectorAll('.translation-item');
+
+            // 取得目前所有語言代碼
+            const existingLangs = Array.from(translationItems).map(item => item.getAttribute('data-lang'));
+
+            // 定義語言順序 - 使用 Language 枚舉名稱
+            const langOrder = ['TRADITIONAL_CHINESE', 'SIMPLIFIED_CHINESE', 'ENGLISH', 'JAPANESE', 'KOREAN'];
+            const langDisplayNames = {
+                'TRADITIONAL_CHINESE': '繁體中文',
+                'SIMPLIFIED_CHINESE': '簡體中文',
+                'ENGLISH': '英文',
+                'JAPANESE': '日文',
+                'KOREAN': '韓文'
+            };
+
+            let nextLang = null;
+
+            // 找到下一個可用的語言
+            for (let i = 0; i < langOrder.length; i++) {
+                if (!existingLangs.includes(langOrder[i])) {
+                    nextLang = langOrder[i];
+                    break;
+                }
+            }
+
+            if (nextLang) {
+                const nextIndex = translationItems.length;
+
+                // 創建新的翻譯區塊
+                const newItem = document.createElement('div');
+                newItem.className = 'translation-item';
+                newItem.setAttribute('data-lang', nextLang);
+                newItem.style.display = 'none';
+
+                newItem.innerHTML = `
+                    <label class="block text-xs text-gray-600 mb-1">${langDisplayNames[nextLang]}描述</label>
+                    <textarea name="translations[${nextIndex}].description" rows="4"
+                              placeholder="請輸入${langDisplayNames[nextLang]}描述"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                    <input type="hidden" name="translations[${nextIndex}].languageCode" value="${nextLang}">
+                `;
+
+                translationContainer.appendChild(newItem);
+
+                // 更新語言選擇器以顯示新增的語言
+                const languageSelector = document.getElementById('languageSelector');
+                languageSelector.value = nextLang;
+                languageSelector.dispatchEvent(new Event('change'));
+            } else {
+                alert('已達到最大語言數量，無法新增更多翻譯。');
             }
         });
     </script>

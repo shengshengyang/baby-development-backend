@@ -6,6 +6,8 @@ import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.common.util.LangFieldObjectConverter;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,13 @@ public class Flashcard {
     @ManyToOne
     @JoinColumn(name = "milestone_id", nullable = false)
     private Milestone milestone;
+
+    @Column(name = "subject")
+    @Convert(converter = LangFieldObjectConverter.class)
+    private LangFieldObject subject;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @OneToMany(mappedBy = "flashcard")
     private List<FlashcardTranslation> translations;

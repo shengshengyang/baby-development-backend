@@ -28,12 +28,6 @@ public class FlashcardTranslation {
     @Convert(converter = LanguageConverter.class)
     private Language languageCode;
 
-    @Column(name = "front_text")
-    private String frontText;
-
-    @Column(name = "back_text")
-    private String backText;
-
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 }
