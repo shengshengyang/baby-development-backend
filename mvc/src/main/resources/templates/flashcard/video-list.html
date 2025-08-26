@@ -82,8 +82,20 @@
                                 </td>
                                 <td>
                                     <div th:if="${video.description != null}">
+                                        <div><strong>繁中:</strong> <span th:text="${video.description.tw}"></span></div>
                                         <div><strong>EN:</strong> <span th:text="${video.description.en}"></span></div>
-                                        <div><strong>中文:</strong> <span th:text="${video.description.zhTw}"></span></div>
+                                        <div th:if="${video.description.cn != null and !video.description.cn.isEmpty()}">
+                                            <strong>简中:</strong> <span th:text="${video.description.cn}"></span>
+                                        </div>
+                                        <div th:if="${video.description.ja != null and !video.description.ja.isEmpty()}">
+                                            <strong>日本語:</strong> <span th:text="${video.description.ja}"></span>
+                                        </div>
+                                        <div th:if="${video.description.ko != null and !video.description.ko.isEmpty()}">
+                                            <strong>한국어:</strong> <span th:text="${video.description.ko}"></span>
+                                        </div>
+                                        <div th:if="${video.description.vi != null and !video.description.vi.isEmpty()}">
+                                            <strong>Tiếng Việt:</strong> <span th:text="${video.description.vi}"></span>
+                                        </div>
                                     </div>
                                     <span th:if="${video.description == null}" class="text-muted">無描述</span>
                                 </td>

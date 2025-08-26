@@ -29,9 +29,9 @@ public class CategoryController {
     }
 
     @PostMapping
-    public String addCategory(@RequestParam("zhTW") String zhTW,
+    public String addCategory(@RequestParam("tw") String tw,
                               @RequestParam("en") String en) {
-        categoryService.create(zhTW, en);
+        categoryService.create(tw, en);
         return "redirect:/categories";
     }
 

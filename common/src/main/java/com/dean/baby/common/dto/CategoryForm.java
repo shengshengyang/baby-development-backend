@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CategoryForm {
-    private String zhTW;
+    private String tw;
     private String en;
 }

@@ -51,8 +51,7 @@ public class FlashCardController {
     // 讀取所有 Flashcard (支援多語言，自動從LocaleContextHolder獲取語言設置)
     @GetMapping("/open/flash-cards")
     public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashCards() {
-        Language language = LanguageUtil.getLanguageFromLocale();
-        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards(language);
+        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards();
         return ResponseEntity.ok(flashcards);
     }
 

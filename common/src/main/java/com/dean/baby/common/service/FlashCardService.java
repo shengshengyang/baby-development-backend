@@ -5,6 +5,7 @@ import com.dean.baby.common.entity.*;
 import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.*;
+import com.dean.baby.common.util.LanguageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +71,8 @@ public class FlashCardService extends BaseService {
                 .map(this::convertToDTO);
     }
 
-    public List<FlashcardLanguageDTO> getAllFlashcards(Language language) {
+    public List<FlashcardLanguageDTO> getAllFlashcards() {
+        Language language = LanguageUtil.getLanguageFromLocale();
         return flashcardRepository.findAll().stream()
                 .map(flashcard -> convertToLanguageDTO(flashcard, language))
                 .filter(Objects::nonNull)

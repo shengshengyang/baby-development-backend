@@ -27,10 +27,10 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category create(String zhTW, String en) {
+    public Category create(String tw, String en) {
         Category category = new Category();
         LangFieldObject name = new LangFieldObject();
-        if (zhTW != null) name.setTw(zhTW);
+        if (tw != null) name.setTw(tw);
         if (en != null) name.setEn(en);
         // 以目前語系的值填滿其餘為空的欄位，避免空字串
         name.setDefaultBeforeInsert();
@@ -39,13 +39,13 @@ public class CategoryService {
     }
 
     @Transactional
-    public Optional<Category> update(UUID id, String zhTW, String en) {
+    public Optional<Category> update(UUID id, String tw, String en) {
         return categoryRepository.findById(id).map(existing -> {
             LangFieldObject name = existing.getName();
             if (name == null) {
                 name = new LangFieldObject();
             }
-            if (zhTW != null) name.setTw(zhTW);
+            if (tw != null) name.setTw(tw);
             if (en != null) name.setEn(en);
             existing.setName(name);
             return categoryRepository.save(existing);

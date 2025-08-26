@@ -25,8 +25,7 @@ public class OpenController {
 
     @GetMapping("/flash-card")
     public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashcards() {
-        Language language = LanguageUtil.getLanguageFromLocale();
-        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards(language);
+        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards();
         return ResponseEntity.ok(flashcards);
     }
 }

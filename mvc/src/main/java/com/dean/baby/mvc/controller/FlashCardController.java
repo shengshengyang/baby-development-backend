@@ -3,8 +3,8 @@ package com.dean.baby.mvc.controller;
 import com.dean.baby.common.entity.*;
 import com.dean.baby.common.repository.*;
 import com.dean.baby.common.dto.VideoDto;
+import com.dean.baby.common.dto.VideoFormDto;
 import com.dean.baby.common.service.VideoService;
-import com.dean.baby.common.dto.common.LangFieldObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +18,18 @@ import java.util.UUID;
 @RequestMapping("/flashcard")
 public class FlashCardController {
 
-
     private final FlashcardRepository flashcardRepository;
     private final CategoryRepository categoryRepository;
     private final MilestoneRepository milestoneRepository;
-    private final VideoRepository videoRepository;
     private final VideoService videoService;
 
-    public FlashCardController(FlashcardRepository flashcardRepository, CategoryRepository categoryRepository, MilestoneRepository milestoneRepository, VideoRepository videoRepository, VideoService videoService) {
+    public FlashCardController(FlashcardRepository flashcardRepository,
+                              CategoryRepository categoryRepository,
+                              MilestoneRepository milestoneRepository,
+                              VideoService videoService) {
         this.flashcardRepository = flashcardRepository;
         this.categoryRepository = categoryRepository;
         this.milestoneRepository = milestoneRepository;
-        this.videoRepository = videoRepository;
         this.videoService = videoService;
     }
 
@@ -70,7 +70,7 @@ public class FlashCardController {
             flashcard.getTranslations().forEach(t -> t.setFlashcard(flashcard));
         }
         flashcardRepository.save(flashcard);
-        return "redirect:/flashcards";
+        return "redirect:/flashcard";
     }
 
     // 編輯頁面：顯示編輯 Flashcard 表單
@@ -83,7 +83,7 @@ public class FlashCardController {
             model.addAttribute("milestones", milestoneRepository.findAll());
             return "flashcard/form";
         }
-        return "redirect:/flashcards";
+        return "redirect:/flashcard";
     }
 
     // 處理更新 Flashcard
@@ -101,7 +101,7 @@ public class FlashCardController {
             flashcard.getTranslations().forEach(t -> t.setFlashcard(flashcard));
         }
         flashcardRepository.save(flashcard);
-        return "redirect:/flashcards";
+        return "redirect:/flashcard";
     }
 
     // 刪除 Flashcard
@@ -136,7 +136,7 @@ public class FlashCardController {
         Optional<Flashcard> flashcardOpt = flashcardRepository.findById(flashcardId);
         if (flashcardOpt.isPresent()) {
             model.addAttribute("flashcard", flashcardOpt.get());
-            model.addAttribute("videoForm", new VideoForm());
+            model.addAttribute("videoForm", new VideoFormDto());
             return "flashcard/video-form";
         }
         return "redirect:/flashcard";
@@ -146,20 +146,9 @@ public class FlashCardController {
      * 處理新增Video
      */
     @PostMapping("/{flashcardId}/videos/add")
-    public String addVideo(@PathVariable UUID flashcardId, @ModelAttribute VideoForm videoForm) {
+    public String addVideo(@PathVariable UUID flashcardId, @ModelAttribute VideoFormDto videoForm) {
         try {
-            // 創建LangFieldObject
-            LangFieldObject description = new LangFieldObject();
-            description.setEn(videoForm.getDescriptionEn());
-            description.setZhTw(videoForm.getDescriptionZhTw());
-
-            videoService.createVideoForFlashcard(
-                flashcardId,
-                description,
-                videoForm.getVideoUrl(),
-                videoForm.getDurationSeconds(),
-                videoForm.getThumbnailUrl()
-            );
+            videoService.createVideoForFlashcardWithForm(flashcardId, videoForm);
             return "redirect:/flashcard/" + flashcardId + "/videos";
         } catch (Exception e) {
             return "redirect:/flashcard/" + flashcardId + "/videos?error=true";
@@ -172,22 +161,13 @@ public class FlashCardController {
     @GetMapping("/{flashcardId}/videos/edit/{videoId}")
     public String editVideoForm(@PathVariable UUID flashcardId, @PathVariable UUID videoId, Model model) {
         Optional<Flashcard> flashcardOpt = flashcardRepository.findById(flashcardId);
-        Optional<VideoDto> videoOpt = videoService.getVideoById(videoId);
 
-        if (flashcardOpt.isPresent() && videoOpt.isPresent()) {
-            VideoDto video = videoOpt.get();
-            VideoForm videoForm = new VideoForm();
-            videoForm.setVideoUrl(video.getVideoUrl());
-            videoForm.setDurationSeconds(video.getDurationSeconds());
-            videoForm.setThumbnailUrl(video.getThumbnailUrl());
-
-            if (video.getDescription() != null) {
-                videoForm.setDescriptionEn(video.getDescription().getEn());
-                videoForm.setDescriptionZhTw(video.getDescription().getZhTw());
-            }
+        if (flashcardOpt.isPresent()) {
+            VideoFormDto videoForm = videoService.prepareVideoFormForEdit(videoId);
+            Optional<VideoDto> videoOpt = videoService.getVideoById(videoId);
 
             model.addAttribute("flashcard", flashcardOpt.get());
-            model.addAttribute("video", video);
+            model.addAttribute("video", videoOpt.orElse(null));
             model.addAttribute("videoForm", videoForm);
             return "flashcard/video-form";
         }
@@ -198,20 +178,9 @@ public class FlashCardController {
      * 處理更新Video
      */
     @PostMapping("/{flashcardId}/videos/edit/{videoId}")
-    public String updateVideo(@PathVariable UUID flashcardId, @PathVariable UUID videoId, @ModelAttribute VideoForm videoForm) {
+    public String updateVideo(@PathVariable UUID flashcardId, @PathVariable UUID videoId, @ModelAttribute VideoFormDto videoForm) {
         try {
-            // 創建LangFieldObject
-            LangFieldObject description = new LangFieldObject();
-            description.setEn(videoForm.getDescriptionEn());
-            description.setZhTw(videoForm.getDescriptionZhTw());
-
-            videoService.updateVideo(
-                videoId,
-                description,
-                videoForm.getVideoUrl(),
-                videoForm.getDurationSeconds(),
-                videoForm.getThumbnailUrl()
-            );
+            videoService.updateVideoWithForm(videoId, videoForm);
             return "redirect:/flashcard/" + flashcardId + "/videos";
         } catch (Exception e) {
             return "redirect:/flashcard/" + flashcardId + "/videos?error=true";
@@ -229,32 +198,5 @@ public class FlashCardController {
         } catch (Exception e) {
             return "redirect:/flashcard/" + flashcardId + "/videos?error=true";
         }
-    }
-
-    /**
-     * Video表單的DTO類
-     */
-    public static class VideoForm {
-        private String descriptionEn;
-        private String descriptionZhTw;
-        private String videoUrl;
-        private Integer durationSeconds;
-        private String thumbnailUrl;
-
-        // Getters and Setters
-        public String getDescriptionEn() { return descriptionEn; }
-        public void setDescriptionEn(String descriptionEn) { this.descriptionEn = descriptionEn; }
-
-        public String getDescriptionZhTw() { return descriptionZhTw; }
-        public void setDescriptionZhTw(String descriptionZhTw) { this.descriptionZhTw = descriptionZhTw; }
-
-        public String getVideoUrl() { return videoUrl; }
-        public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
-
-        public Integer getDurationSeconds() { return durationSeconds; }
-        public void setDurationSeconds(Integer durationSeconds) { this.durationSeconds = durationSeconds; }
-
-        public String getThumbnailUrl() { return thumbnailUrl; }
-        public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
     }
 }

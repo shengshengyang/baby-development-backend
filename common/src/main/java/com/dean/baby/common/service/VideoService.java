@@ -1,6 +1,7 @@
 package com.dean.baby.common.service;
 
 import com.dean.baby.common.dto.VideoDto;
+import com.dean.baby.common.dto.VideoFormDto;
 import com.dean.baby.common.dto.common.LangFieldObject;
 import com.dean.baby.common.entity.*;
 import com.dean.baby.common.exception.ApiException;
@@ -167,5 +168,44 @@ public class VideoService extends BaseService {
     public List<VideoDto> getAllVideos() {
         List<Video> videos = videoRepository.findAll();
         return VideoDto.fromEntities(videos);
+    }
+
+    /**
+     * 使用VideoFormDto創建FlashCard的Video
+     */
+    public VideoDto createVideoForFlashcardWithForm(UUID flashcardId, VideoFormDto videoForm) {
+        LangFieldObject description = videoForm.toDescription();
+        return createVideoForFlashcard(
+            flashcardId,
+            description,
+            videoForm.getVideoUrl(),
+            videoForm.getDurationSeconds(),
+            videoForm.getThumbnailUrl()
+        );
+    }
+
+    /**
+     * 使用VideoFormDto更新Video
+     */
+    public VideoDto updateVideoWithForm(UUID videoId, VideoFormDto videoForm) {
+        LangFieldObject description = videoForm.toDescription();
+        return updateVideo(
+            videoId,
+            description,
+            videoForm.getVideoUrl(),
+            videoForm.getDurationSeconds(),
+            videoForm.getThumbnailUrl()
+        );
+    }
+
+    /**
+     * 為編輯準備VideoFormDto
+     */
+    public VideoFormDto prepareVideoFormForEdit(UUID videoId) {
+        Optional<VideoDto> videoOpt = getVideoById(videoId);
+        if (videoOpt.isPresent()) {
+            return VideoFormDto.fromVideoDto(videoOpt.get());
+        }
+        return new VideoFormDto();
     }
 }
