@@ -1,7 +1,9 @@
 package com.dean.baby.api.controller;
 
 import com.dean.baby.common.dto.FlashcardLanguageDTO;
+import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.service.FlashCardService;
+import com.dean.baby.common.util.LanguageUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,7 +24,8 @@ public class OpenController {
 
 
     @GetMapping("/flash-card")
-    public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashcards(@RequestHeader("Accept-Language") String language) {
+    public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashcards() {
+        Language language = LanguageUtil.getLanguageFromLocale();
         List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards(language);
         return ResponseEntity.ok(flashcards);
     }

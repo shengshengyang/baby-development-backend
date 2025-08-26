@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashCard Videos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- 導航麵包屑 -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/flashcard}">FlashCards</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${flashcard.id}">FlashCard Videos</li>
+            </ol>
+        </nav>
+
+        <!-- 頁面標題 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>FlashCard Videos 管理</h2>
+            <a th:href="@{'/flashcard/' + ${flashcard.id} + '/videos/add'}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> 新增 Video
+            </a>
+        </div>
+
+        <!-- FlashCard 資訊 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">FlashCard 資訊</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>ID:</strong> <span th:text="${flashcard.id}"></span></p>
+                <p><strong>Category:</strong>
+                    <span th:text="${flashcard.category != null ? flashcard.category.name : 'N/A'}"></span>
+                </p>
+                <p><strong>Milestone:</strong>
+                    <span th:text="${flashcard.milestone != null ? flashcard.milestone.description : 'N/A'}"></span>
+                </p>
+            </div>
+        </div>
+
+        <!-- 錯誤訊息 -->
+        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            操作失敗，請稍後再試。
+        </div>
+
+        <!-- Videos 列表 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Videos 列表</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(videos)}" class="text-center py-4">
+                    <p class="text-muted">目前沒有任何 Video</p>
+                    <a th:href="@{'/flashcard/' + ${flashcard.id} + '/videos/add'}" class="btn btn-primary">
+                        新增第一個 Video
+                    </a>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(videos)}" class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>縮圖</th>
+                                <th>描述</th>
+                                <th>Video URL</th>
+                                <th>時長</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="video : ${videos}">
+                                <td>
+                                    <img th:if="${video.thumbnailUrl != null and !video.thumbnailUrl.isEmpty()}"
+                                         th:src="${video.thumbnailUrl}"
+                                         alt="Video Thumbnail"
+                                         class="img-thumbnail"
+                                         style="width: 80px; height: 60px; object-fit: cover;">
+                                    <span th:if="${video.thumbnailUrl == null or video.thumbnailUrl.isEmpty()}"
+                                          class="text-muted">無縮圖</span>
+                                </td>
+                                <td>
+                                    <div th:if="${video.description != null}">
+                                        <div><strong>EN:</strong> <span th:text="${video.description.en}"></span></div>
+                                        <div><strong>中文:</strong> <span th:text="${video.description.zhTw}"></span></div>
+                                    </div>
+                                    <span th:if="${video.description == null}" class="text-muted">無描述</span>
+                                </td>
+                                <td>
+                                    <a th:href="${video.videoUrl}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-play"></i> 播放
+                                    </a>
+                                </td>
+                                <td>
+                                    <span th:if="${video.durationSeconds != null}"
+                                          th:text="${video.durationSeconds + ' 秒'}"></span>
+                                    <span th:if="${video.durationSeconds == null}" class="text-muted">未設定</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/flashcard/' + ${flashcard.id} + '/videos/edit/' + ${video.id}}"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i> 編輯
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal"
+                                                th:data-bs-target="'#deleteModal' + ${video.id}">
+                                            <i class="fas fa-trash"></i> 刪除
+                                        </button>
+                                    </div>
+
+                                    <!-- 刪除確認 Modal -->
+                                    <div class="modal fade" th:id="'deleteModal' + ${video.id}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">確認刪除</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    確定要刪除這個 Video 嗎？此操作無法復原。
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                                    <form th:action="@{'/flashcard/' + ${flashcard.id} + '/videos/delete/' + ${video.id}}"
+                                                          method="post" style="display: inline;">
+                                                        <button type="submit" class="btn btn-danger">確認刪除</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</body>
+</html>

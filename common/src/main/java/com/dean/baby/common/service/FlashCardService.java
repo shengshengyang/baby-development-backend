@@ -70,7 +70,7 @@ public class FlashCardService extends BaseService {
                 .map(this::convertToDTO);
     }
 
-    public List<FlashcardLanguageDTO> getAllFlashcards(String language) {
+    public List<FlashcardLanguageDTO> getAllFlashcards(Language language) {
         return flashcardRepository.findAll().stream()
                 .map(flashcard -> convertToLanguageDTO(flashcard, language))
                 .filter(Objects::nonNull)
@@ -156,8 +156,7 @@ public class FlashCardService extends BaseService {
                 .build();
     }
 
-    private FlashcardLanguageDTO convertToLanguageDTO(Flashcard flashcard, String language) {
-        Language lang = Language.fromCode(language);
+    private FlashcardLanguageDTO convertToLanguageDTO(Flashcard flashcard, Language lang) {
         return flashcard.getTranslations()
                 .stream()
                 .filter(translation -> translation.getLanguageCode() == lang)

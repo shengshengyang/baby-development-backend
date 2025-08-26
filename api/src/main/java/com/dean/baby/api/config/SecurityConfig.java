@@ -32,11 +32,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/auth/**", "/open/**",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
-                                "/swagger-resources/**", "/webjars/**").permitAll()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(
+//                        auth -> auth
+//                        .requestMatchers("/", "/auth/**", "/open/**",
+//                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
+//                                "/swagger-resources/**", "/webjars/**").permitAll()
+//                        .anyRequest().authenticated()
+                        auth -> auth
+                        // 目前無特別需要保護之url，登入主要為取的個人資訊
+                        .requestMatchers("/**").permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

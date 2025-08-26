@@ -22,35 +22,64 @@ import java.util.UUID;
 public class Progress implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @UuidGenerator
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "age_id")
-    private Age age;
+    @JoinColumn(name = "baby_id")
+    private Baby baby;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @ManyToOne
+    @JoinColumn(name = "flashcard_id")
+    private Flashcard flashcard;
 
+    @ManyToOne
+    @JoinColumn(name = "milestone_id")
+    private Milestone milestone;
+
+    @ManyToOne
+    @JoinColumn(name = "video_id")
+    private Video video;
+
+    @Column(name = "achieved", nullable = false)
     private boolean achieved;
 
     @Column(name = "date_achieved")
     private LocalDate dateAchieved;
 
-    @ManyToOne
-    @JoinColumn(name = "baby_id")
-    private Baby baby;
+    @Column(name = "progress_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProgressType progressType;
 
-    @ManyToOne
-    @JoinColumn(name = "flashcard_id", nullable = false)
-    private Flashcard flashcard;
-
-    // 为了向后兼容，添加便利方法
+    // 便利方法獲取年齡
     public int getAgeInMonths() {
-        return age != null ? age.getMonth() : 0;
+        if (flashcard != null && flashcard.getMilestone() != null && flashcard.getMilestone().getAge() != null) {
+            return flashcard.getMilestone().getAge().getMonth();
+        }
+        if (milestone != null && milestone.getAge() != null) {
+            return milestone.getAge().getMonth();
+        }
+        if (video != null && video.getMilestone() != null && video.getMilestone().getAge() != null) {
+            return video.getMilestone().getAge().getMonth();
+        }
+        return 0;
+    }
+
+    // 獲取Category
+    public Category getCategory() {
+        if (flashcard != null) {
+            return flashcard.getCategory();
+        }
+        if (milestone != null) {
+            return milestone.getCategory();
+        }
+        if (video != null && video.getMilestone() != null) {
+            return video.getMilestone().getCategory();
+        }
+        return null;
     }
 
     @Override

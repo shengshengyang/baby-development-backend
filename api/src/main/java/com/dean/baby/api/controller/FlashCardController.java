@@ -1,7 +1,9 @@
 package com.dean.baby.api.controller;
 
 import com.dean.baby.common.dto.*;
+import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.service.FlashCardService;
+import com.dean.baby.common.util.LanguageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,9 +48,13 @@ public class FlashCardController {
         return ResponseEntity.ok(flashCardService.checkProgress(vo));
     }
 
-    // 讀取所有 Flashcard
-
-
+    // 讀取所有 Flashcard (支援多語言，自動從LocaleContextHolder獲取語言設置)
+    @GetMapping("/open/flash-cards")
+    public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashCards() {
+        Language language = LanguageUtil.getLanguageFromLocale();
+        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards(language);
+        return ResponseEntity.ok(flashcards);
+    }
 
     // 更新 Flashcard
     @PutMapping("/flash-card/{id}")
