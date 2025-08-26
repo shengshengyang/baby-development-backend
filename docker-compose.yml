@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: baby-dev-api
+    ports:
+      - "8085:8085"
+    # Override server.port to 8085
+    command: ["--server.port=8085"]
+    environment:
+      # Let the container talk to Redis running on the host (Docker Desktop supports this DNS name)
+      - SPRING_DATA_REDIS_HOST=host.docker.internal
+      - SPRING_DATA_REDIS_PORT=6379
+    restart: unless-stopped
+
+  mvc:
+    build:
+      context: .
+      dockerfile: mvc/Dockerfile
+    container_name: baby-dev-mvc
+    ports:
+      - "8084:8084"
+    # Override server.port from 8081 -> 8084
+    command: ["--server.port=8084"]
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  default:
+    name: baby-dev-network
+
