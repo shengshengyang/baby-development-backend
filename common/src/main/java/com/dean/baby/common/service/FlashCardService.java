@@ -199,4 +199,13 @@ public class FlashCardService extends BaseService {
                 .map(translation -> FlashcardLanguageDTO.fromEntityWithLanguage(flashcard, translation))
                 .orElse(null);
     }
+
+    /**
+     * 根據年齡 ID 查找對應的 FlashCard
+     */
+    public List<FlashcardDTO> getFlashcardsByAgeId(UUID ageId) {
+        return flashcardRepository.findByAgeId(ageId).stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
 }

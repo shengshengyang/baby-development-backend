@@ -1,7 +1,6 @@
 package com.dean.baby.api.controller;
 
 import com.dean.baby.common.dto.MilestoneDTO;
-import com.dean.baby.common.dto.MilestoneTranslationDTO;
 import com.dean.baby.common.service.MilestoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,12 +44,10 @@ public class MilestoneController {
         return ResponseEntity.ok(milestones);
     }
 
-    // 根據年齡和語言查詢 Milestones
-    @GetMapping("/milestone/by-age")
-    public ResponseEntity<List<MilestoneTranslationDTO>> getMilestonesByAgeAndLanguage(
-            @RequestParam int age,
-            @RequestParam String language) {
-        List<MilestoneTranslationDTO> milestones = milestoneService.getMilestonesByAgeAndLanguage(age, language);
+    // 根據年齡 UUID 查詢 Milestones（使用當前語言環境）
+    @GetMapping("/milestone/by-age/{ageId}")
+    public ResponseEntity<List<MilestoneDTO>> getMilestonesByAgeId(@PathVariable UUID ageId) {
+        List<MilestoneDTO> milestones = milestoneService.getMilestonesByAgeId(ageId);
         return ResponseEntity.ok(milestones);
     }
 
@@ -68,27 +65,5 @@ public class MilestoneController {
     public ResponseEntity<Void> deleteMilestone(@PathVariable UUID id) {
         milestoneService.deleteMilestone(id);
         return ResponseEntity.noContent().build();
-    }
-
-    // 公開接口 - 不需要驗證的查詢接口
-    @GetMapping("/open/milestone")
-    public ResponseEntity<List<MilestoneDTO>> getAllMilestonesPublic() {
-        List<MilestoneDTO> milestones = milestoneService.getAllMilestones();
-        return ResponseEntity.ok(milestones);
-    }
-
-    @GetMapping("/open/milestone/{id}")
-    public ResponseEntity<MilestoneDTO> getMilestoneByIdPublic(@PathVariable UUID id) {
-        Optional<MilestoneDTO> milestoneDTO = milestoneService.getMilestoneById(id);
-        return milestoneDTO.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/open/milestone/by-age")
-    public ResponseEntity<List<MilestoneTranslationDTO>> getMilestonesByAgeAndLanguagePublic(
-            @RequestParam int age,
-            @RequestParam String language) {
-        List<MilestoneTranslationDTO> milestones = milestoneService.getMilestonesByAgeAndLanguage(age, language);
-        return ResponseEntity.ok(milestones);
     }
 }

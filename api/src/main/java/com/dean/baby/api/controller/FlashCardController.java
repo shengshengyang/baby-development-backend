@@ -23,31 +23,17 @@ public class FlashCardController {
         this.flashCardService = flashCardService;
     }
 
-    // 創建 Flashcard
+    // 創�� Flashcard
     @PostMapping("/flash-card")
     public ResponseEntity<FlashcardDTO> createFlashcard(@RequestBody FlashcardDTO flashcardDTO) {
         FlashcardDTO createdFlashcard = flashCardService.createFlashcard(flashcardDTO);
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
     }
 
-    // 讀取單個 Flashcard
-    @GetMapping("/open/flash-card/{id}")
-    public ResponseEntity<FlashcardDTO> getFlashcardById(@PathVariable UUID id) {
-        Optional<FlashcardDTO> flashcardDTO = flashCardService.getFlashcardById(id);
-        return flashcardDTO.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
 
     @PostMapping("/flash-card/check-progress")
     public ResponseEntity<BabyDto> checkProgress(@RequestBody CheckProgressRequestVo vo) {
         return ResponseEntity.ok(flashCardService.checkProgress(vo));
-    }
-
-    // 讀取所有 Flashcard (支援多語言，自動從LocaleContextHolder獲取語言設置)
-    @GetMapping("/open/flash-cards")
-    public ResponseEntity<List<FlashcardLanguageDTO>> getAllFlashCards() {
-        List<FlashcardLanguageDTO> flashcards = flashCardService.getAllFlashcards();
-        return ResponseEntity.ok(flashcards);
     }
 
     // 更新 Flashcard
@@ -62,5 +48,12 @@ public class FlashCardController {
     public ResponseEntity<Void> deleteFlashcard(@PathVariable UUID id) {
         flashCardService.deleteFlashcard(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 根據年齡 ID 查找對應的 FlashCard
+    @GetMapping("/flash-card/by-age/{ageId}")
+    public ResponseEntity<List<FlashcardDTO>> getFlashcardsByAgeId(@PathVariable UUID ageId) {
+        List<FlashcardDTO> flashcards = flashCardService.getFlashcardsByAgeId(ageId);
+        return ResponseEntity.ok(flashcards);
     }
 }

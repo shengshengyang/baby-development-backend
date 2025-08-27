@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 public class MilestoneDTO {
     private UUID id;
-    private int ageInMonths;
+    private AgeDto age;
     private CategoryDTO category;
 
     // 新增：多語描述（提供目前語系字串與完整物件）
@@ -32,7 +32,7 @@ public class MilestoneDTO {
         }
         return MilestoneDTO.builder()
                 .id(milestone.getId())
-                .ageInMonths(milestone.getAgeInMonths())
+                .age(AgeDto.fromEntity(milestone.getAge()))
                 .category(CategoryDTO.fromEntity(milestone.getCategory()))
                 .description(milestone.getDescription() != null ? milestone.getDescription().getLangByLocaleName() : "")
                 .descriptionObject(milestone.getDescription())

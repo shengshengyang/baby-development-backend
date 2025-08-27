@@ -1,6 +1,6 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.api.dto.OptionItem;
+import com.dean.baby.api.dto.StringOptionItem;
 import com.dean.baby.api.service.OptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +19,14 @@ public class OptionController {
         this.optionService = optionService;
     }
 
-    // 受保護路徑（目前全開放），給前端取用的年齡選項
     @GetMapping("/options/ages")
-    public ResponseEntity<List<OptionItem>> getAgeOptions() {
+    public ResponseEntity<List<StringOptionItem>> getAgeOptions() {
         return ResponseEntity.ok(optionService.getAgeOptions());
     }
+
+    @GetMapping("/options/categories")
+    public ResponseEntity<List<StringOptionItem>> getCategoryOptions() {
+        return ResponseEntity.ok(optionService.getCategoryOptions());
+    }
 }
+
