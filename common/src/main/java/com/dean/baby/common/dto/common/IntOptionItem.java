@@ -1,4 +1,4 @@
-package com.dean.baby.api.dto;
+package com.dean.baby.common.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StringOptionItem {
+public class IntOptionItem {
     private String label;
-    private String value;
+    private int value;
 }
 

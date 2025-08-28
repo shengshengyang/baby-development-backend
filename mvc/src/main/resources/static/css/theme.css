@@ -1,26 +1,198 @@
-:root {
-    --bg-image: url('https://source.unsplash.com/1600x900/?children,colorful,playground');
-}
-:root.dark {
-    --bg-image: url('https://source.unsplash.com/1600x900/?children,dark,night');
-}
+/* 全域暗色模式樣式 */
 body {
-    background-image: var(--bg-image);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
-/* 暗黑模式下常見元素覆寫（搭配 Tailwind 類） */
-html.dark .bg-white { background-color: rgba(31, 41, 55, 0.85) !important; }
-html.dark .bg-white\/70 { background-color: rgba(31, 41, 55, 0.8) !important; }
-html.dark .text-primary { color: #FFCE51 !important; }
-html.dark .border-pastel-blue { border-color: #374151 !important; }
-html.dark .text-gray-700 { color: #e5e7eb !important; }
-html.dark .border-gray-300 { border-color: #374151 !important; }
-html.dark .bg-pastel\.green { background-color: #1f2937 !important; }
 
-/* 修正暗黑模式下最外層 min-h-screen 背景色 */
-html.dark .min-h-screen {
-    background-color: rgba(31, 41, 55, 0.7) !important;
+/* 確保背景完全覆蓋 */
+html,
+body {
+    min-height: 100vh;
+    background-color: white;
+}
+
+html.dark,
+html.dark body {
+    background-color: #1f2937; /* gray-800 */
+    color: #f3f4f6; /* gray-100 */
+}
+
+/* 側邊欄背景修正 */
+.sidebar-bg {
+    background-color: #B2DBC5; /* pastel-green */
+}
+
+html.dark .sidebar-bg {
+    background-color: #374151; /* gray-700 */
+}
+
+/* 卡片背景修正 */
+.card-bg {
+    background-color: white;
+    transition: background-color 0.3s ease;
+}
+
+html.dark .card-bg {
+    background-color: #374151; /* gray-700 */
+}
+
+/* 表格標頭背景修正 */
+.table-header-bg {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+html.dark .table-header-bg {
+    background-color: #4b5563; /* gray-600 */
+}
+
+/* 表格行 hover 效果 */
+.table-row-hover:hover {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+html.dark .table-row-hover:hover {
+    background-color: #4b5563; /* gray-600 */
+}
+
+/* 輸入框背景修正 */
+.input-bg {
+    background-color: white;
+    border-color: #d1d5db; /* gray-300 */
+}
+
+html.dark .input-bg {
+    background-color: #374151; /* gray-700 */
+    border-color: #4b5563; /* gray-600 */
+    color: #f3f4f6; /* gray-100 */
+}
+
+/* 選擇框背景修正 */
+.select-bg {
+    background-color: white;
+    border-color: #d1d5db; /* gray-300 */
+}
+
+html.dark .select-bg {
+    background-color: #374151; /* gray-700 */
+    border-color: #4b5563; /* gray-600 */
+    color: #f3f4f6; /* gray-100 */
+}
+
+/* 文字區域背景修正 */
+.textarea-bg {
+    background-color: white;
+    border-color: #d1d5db; /* gray-300 */
+}
+
+html.dark .textarea-bg {
+    background-color: #374151; /* gray-700 */
+    border-color: #4b5563; /* gray-600 */
+    color: #f3f4f6; /* gray-100 */
+}
+
+/* 提示文字顏色修正 */
+.help-text {
+    color: #6b7280; /* gray-500 */
+}
+
+html.dark .help-text {
+    color: #9ca3af; /* gray-400 */
+}
+
+/* 標籤文字顏色修正 */
+.label-text {
+    color: #374151; /* gray-700 */
+}
+
+html.dark .label-text {
+    color: #d1d5db; /* gray-300 */
+}
+
+/* 邊框顏色修正 */
+.border-custom {
+    border-color: #e5e7eb; /* gray-200 */
+}
+
+html.dark .border-custom {
+    border-color: #4b5563; /* gray-600 */
+}
+
+/* 導航連結 hover 效果 */
+.nav-link:hover {
+    background-color: #4ABBB9; /* primary */
+    color: white;
+}
+
+/* 空狀態背景修正 */
+.empty-state-bg {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+html.dark .empty-state-bg {
+    background-color: #4b5563; /* gray-600 */
+}
+
+/* 圖片佔位符背景修正 */
+.image-placeholder {
+    background-color: #e5e7eb; /* gray-200 */
+}
+
+html.dark .image-placeholder {
+    background-color: #4b5563; /* gray-600 */
+}
+
+/* 成功訊息背景修正 */
+.success-bg {
+    background-color: #ecfdf5; /* green-50 */
+    border-color: #bbf7d0; /* green-200 */
+}
+
+html.dark .success-bg {
+    background-color: #064e3b; /* green-900/20 */
+    border-color: #065f46; /* green-800 */
+}
+
+.success-text {
+    color: #166534; /* green-800 */
+}
+
+html.dark .success-text {
+    color: #bbf7d0; /* green-200 */
+}
+
+/* 錯誤訊息背景修正 */
+.error-bg {
+    background-color: #fef2f2; /* red-50 */
+    border-color: #fecaca; /* red-200 */
+}
+
+html.dark .error-bg {
+    background-color: #7f1d1d; /* red-900/20 */
+    border-color: #991b1b; /* red-800 */
+}
+
+.error-text {
+    color: #dc2626; /* red-600 */
+}
+
+html.dark .error-text {
+    color: #fca5a5; /* red-300 */
+}
+
+/* 資訊提示背景修正 */
+.info-bg {
+    background-color: #eff6ff; /* blue-50 */
+    border-color: #dbeafe; /* blue-200 */
+}
+
+html.dark .info-bg {
+    background-color: #1e3a8a; /* blue-900/20 */
+    border-color: #1d4ed8; /* blue-700 */
+}
+
+.info-text {
+    color: #1d4ed8; /* blue-700 */
+}
+
+html.dark .info-text {
+    color: #93c5fd; /* blue-300 */
 }

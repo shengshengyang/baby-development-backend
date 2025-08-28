@@ -1,6 +1,7 @@
 package com.dean.baby.mvc.controller;
 
 import com.dean.baby.common.dto.MilestoneDTO;
+import com.dean.baby.common.dto.common.LangFieldObject;
 import com.dean.baby.common.repository.CategoryRepository;
 import com.dean.baby.common.repository.AgeRepository;
 import com.dean.baby.common.service.MilestoneService;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -118,16 +120,65 @@ public class MilestoneController {
         return "redirect:/milestones";
     }
 
-    // 顯示 Milestone 詳細資訊
+    /**
+     * 查看 Milestone 詳情（包含編輯功能）
+     */
     @GetMapping("/view/{id}")
-    public String viewMilestone(@PathVariable UUID id, Model model, RedirectAttributes redirectAttributes) {
+    public String viewMilestone(@PathVariable UUID id,
+                               @RequestParam(value = "edit", defaultValue = "false") boolean editMode,
+                               Model model, RedirectAttributes redirectAttributes) {
         Optional<MilestoneDTO> milestoneOpt = milestoneService.getMilestoneById(id);
         if (milestoneOpt.isPresent()) {
-            model.addAttribute("milestone", milestoneOpt.get());
+            MilestoneDTO milestone = milestoneOpt.get();
+            model.addAttribute("milestone", milestone);
+
+            if (editMode) {
+                // 編輯模式 - 載入表單需要的數據
+                model.addAttribute("categories", categoryRepository.findAll());
+                model.addAttribute("ages", ageRepository.findAll());
+            }
+
+            model.addAttribute("editMode", editMode);
             return "milestone/view";
         } else {
             redirectAttributes.addFlashAttribute("error", "Milestone not found!");
             return "redirect:/milestones";
+        }
+    }
+
+    /**
+     * 處理更新 Milestone（從查看頁面提交）
+     */
+    @PostMapping("/view/{id}")
+    public String updateMilestoneFromView(@PathVariable UUID id,
+                                         @ModelAttribute MilestoneDTO milestoneDTO,
+                                         @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                                         @RequestParam Map<String, String> allParams,
+                                         RedirectAttributes redirectAttributes) {
+        try {
+            // 處理圖片上傳
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String base64Image = convertToBase64(imageFile);
+                milestoneDTO.setImageBase64(base64Image);
+            }
+
+            // 處理多語言描述
+            LangFieldObject description = new LangFieldObject();
+            description.setTw(allParams.get("description.tw"));
+            description.setEn(allParams.get("description.en"));
+            description.setCn(allParams.get("description.cn"));
+            description.setJa(allParams.get("description.ja"));
+            description.setKo(allParams.get("description.ko"));
+            description.setVi(allParams.get("description.vi"));
+
+            milestoneDTO.setDescriptionObject(description);
+
+            milestoneService.updateMilestone(id, milestoneDTO);
+            redirectAttributes.addFlashAttribute("success", "Milestone updated successfully!");
+            return "redirect:/milestones/view/" + id;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update milestone: " + e.getMessage());
+            return "redirect:/milestones/view/" + id + "?edit=true";
         }
     }
 

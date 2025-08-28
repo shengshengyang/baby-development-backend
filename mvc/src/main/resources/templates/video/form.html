@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboardLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${video != null ? 'Edit Video' : 'Add Video'}">Video 表單</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="max-w-4xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6 text-primary"
+            th:text="${video != null ? '編輯 Video' : '新增 Video'}">Video 表單</h1>
+
+        <!-- 返回列表按鈕 -->
+        <div class="mb-6">
+            <a th:href="@{/video}"
+               class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                返回列表
+            </a>
+        </div>
+
+        <!-- 表單 -->
+        <div class="card-bg p-6 rounded-lg shadow-md">
+            <form th:action="${video != null ? '/video/edit/' + video.id : '/video/add'}"
+                  method="post" th:object="${videoForm}">
+
+                <!-- 基本資訊 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Video URL -->
+                    <div class="md:col-span-2">
+                        <label for="videoUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Video URL <span class="text-red-500">*</span>
+                        </label>
+                        <input type="url"
+                               id="videoUrl"
+                               th:field="*{videoUrl}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                               placeholder="https://example.com/video.mp4"
+                               required>
+                    </div>
+
+                    <!-- Duration -->
+                    <div>
+                        <label for="durationSeconds" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            時長（秒）
+                        </label>
+                        <input type="number"
+                               id="durationSeconds"
+                               th:field="*{durationSeconds}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                               placeholder="例如：180"
+                               min="1">
+                    </div>
+
+                    <!-- Thumbnail URL -->
+                    <div>
+                        <label for="thumbnailUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            縮圖 URL
+                        </label>
+                        <input type="url"
+                               id="thumbnailUrl"
+                               th:field="*{thumbnailUrl}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                               placeholder="https://example.com/thumbnail.jpg">
+                    </div>
+                </div>
+
+                <!-- 關聯設定 (只有在新增時顯示) -->
+                <div th:if="${video == null}" class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">關聯設定</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Milestone -->
+                        <div>
+                            <label for="milestoneId" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                關聯里程碑
+                            </label>
+                            <select id="milestoneId"
+                                    name="milestoneId"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                                <option value="">請選擇里程碑</option>
+                                <option th:each="milestone : ${milestones}"
+                                        th:value="${milestone.id}"
+                                        th:text="${milestone.description?.getLangByLocaleName()}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- FlashCard -->
+                        <div>
+                            <label for="flashcardId" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                關聯 FlashCard
+                            </label>
+                            <select id="flashcardId"
+                                    name="flashcardId"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                                <option value="">請選擇 FlashCard</option>
+                                <option th:each="flashcard : ${flashcards}"
+                                        th:value="${flashcard.id}"
+                                        th:text="${flashcard.subject?.getLangByLocaleName()}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                        請選擇一個關聯對象（里程碑或 FlashCard）
+                    </p>
+                </div>
+
+                <!-- 多語言描述 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">描述（多語言）</h3>
+                    <div class="space-y-4">
+                        <!-- 繁體中文 -->
+                        <div>
+                            <label for="descriptionTw" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                繁體中文
+                            </label>
+                            <textarea id="descriptionTw"
+                                      th:field="*{descriptionTw}"
+                                      rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                      placeholder="輸入繁體中文描述..."></textarea>
+                        </div>
+
+                        <!-- 英文 -->
+                        <div>
+                            <label for="descriptionEn" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                English
+                            </label>
+                            <textarea id="descriptionEn"
+                                      th:field="*{descriptionEn}"
+                                      rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                      placeholder="Enter English description..."></textarea>
+                        </div>
+
+                        <!-- 簡體中文 -->
+                        <div>
+                            <label for="descriptionCn" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                简体中文
+                            </label>
+                            <textarea id="descriptionCn"
+                                      th:field="*{descriptionCn}"
+                                      rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                      placeholder="输入简体中文描述..."></textarea>
+                        </div>
+
+                        <!-- 日文 -->
+                        <div>
+                            <label for="descriptionJa" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                日本語
+                            </label>
+                            <textarea id="descriptionJa"
+                                      th:field="*{descriptionJa}"
+                                      rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                      placeholder="日本語の説明を入力してください..."></textarea>
+                        </div>
+
+                        <!-- 韓文 -->
+                        <div>
+                            <label for="descriptionKo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                한국어
+                            </label>
+                            <textarea id="descriptionKo"
+                                      th:field="*{descriptionKo}"
+                                      rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                      placeholder="한국어 설명을 입력하세요..."></textarea>
+                        </div>
+
+                        <!-- 越南文 -->
+                        <div>
+                            <label for="descriptionVi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Tiếng Việt
+                            </label>
+                            <textarea id="descriptionVi"
+                                      th:field="*{descriptionVi}"
+                                      rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                                      placeholder="Nhập mô tả tiếng Việt..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 提交按鈕 -->
+                <div class="flex justify-end space-x-3">
+                    <a th:href="@{/video}"
+                       class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
+                        取消
+                    </a>
+                    <button type="submit"
+                            class="px-4 py-2 bg-primary text-white rounded-md shadow-sm hover:bg-opacity-90 focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                        <span th:text="${video != null ? '更新' : '新增'}">提交</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript 用於關聯選擇的互斥邏輯 -->
+    <script th:if="${video == null}">
+        document.addEventListener('DOMContentLoaded', function() {
+            const milestoneSelect = document.getElementById('milestoneId');
+            const flashcardSelect = document.getElementById('flashcardId');
+
+            milestoneSelect.addEventListener('change', function() {
+                if (this.value) {
+                    flashcardSelect.value = '';
+                }
+            });
+
+            flashcardSelect.addEventListener('change', function() {
+                if (this.value) {
+                    milestoneSelect.value = '';
+                }
+            });
+        });
+    </script>
+</section>
+</body>
+</html>

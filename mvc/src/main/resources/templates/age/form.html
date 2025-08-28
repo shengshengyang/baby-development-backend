@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboardLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${age.id != null ? '編輯 Age' : '新增 Age'}">Age 表單</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="max-w-4xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6 text-primary" th:text="${age.id != null ? '編輯 Age' : '新增 Age'}"></h1>
+
+        <!-- 表單卡片 -->
+        <div class="card-bg p-6 rounded-lg shadow-md">
+            <form th:action="${age.id != null ? '/ages/edit/' + age.id : '/ages'}"
+                  method="post" th:object="${age}" class="space-y-6">
+
+                <!-- 月份 -->
+                <div>
+                    <label for="month" class="block text-sm font-medium label-text mb-2">
+                        月份 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number"
+                           class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                           id="month" th:field="*{month}"
+                           min="0" max="120" required
+                           placeholder="輸入月份 (0-120)">
+                    <p class="text-sm help-text mt-1">輸入年齡的月數，例如：6 表示 6 個月大</p>
+                </div>
+
+                <!-- 多語言顯示名稱 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold label-text">多語言顯示名稱</h3>
+
+                    <!-- 繁體中文 -->
+                    <div>
+                        <label for="displayNameTw" class="block text-sm font-medium label-text mb-2">
+                            繁體中文 <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                               id="displayNameTw" name="displayNameTw"
+                               th:value="${ageEntity != null ? ageEntity.displayName.tw : ''}"
+                               placeholder="例如：6個月"
+                               required>
+                    </div>
+
+                    <!-- 英文 -->
+                    <div>
+                        <label for="displayNameEn" class="block text-sm font-medium label-text mb-2">
+                            English <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                               id="displayNameEn" name="displayNameEn"
+                               th:value="${ageEntity != null ? ageEntity.displayName.en : ''}"
+                               placeholder="e.g., 6 Months"
+                               required>
+                    </div>
+
+                    <!-- 簡體中文 -->
+                    <div>
+                        <label for="displayNameCn" class="block text-sm font-medium label-text mb-2">
+                            简体中文
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                               id="displayNameCn" name="displayNameCn"
+                               th:value="${ageEntity != null ? ageEntity.displayName.cn : ''}"
+                               placeholder="例如：6个月">
+                    </div>
+
+                    <!-- 日文 -->
+                    <div>
+                        <label for="displayNameJa" class="block text-sm font-medium label-text mb-2">
+                            日本語
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                               id="displayNameJa" name="displayNameJa"
+                               th:value="${ageEntity != null ? ageEntity.displayName.ja : ''}"
+                               placeholder="例：6ヶ月">
+                    </div>
+
+                    <!-- 韓文 -->
+                    <div>
+                        <label for="displayNameKo" class="block text-sm font-medium label-text mb-2">
+                            한국어
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                               id="displayNameKo" name="displayNameKo"
+                               th:value="${ageEntity != null ? ageEntity.displayName.ko : ''}"
+                               placeholder="예: 6개월">
+                    </div>
+
+                    <!-- 越南文 -->
+                    <div>
+                        <label for="displayNameVi" class="block text-sm font-medium label-text mb-2">
+                            Tiếng Việt
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                               id="displayNameVi" name="displayNameVi"
+                               th:value="${ageEntity != null ? ageEntity.displayName.vi : ''}"
+                               placeholder="ví dụ: 6 tháng">
+                    </div>
+                </div>
+
+                <!-- 按鈕群組 -->
+                <div class="flex justify-between pt-6 border-t border-custom">
+                    <a href="/ages"
+                       class="px-6 py-2 border border-custom text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        取消
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition-colors">
+                        <span th:text="${age.id != null ? '更新' : '創建'}"></span> Age
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 提示卡片 -->
+        <div class="mt-6 info-bg p-4 rounded-lg border">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="info-text">
+                    <p class="font-medium mb-1">使用提示</p>
+                    <ul class="text-sm space-y-1 list-disc list-inside">
+                        <li>月份必須是唯一的，不能重複</li>
+                        <li>繁體中文和英文是必填項目</li>
+                        <li>其他語言為選填，系統會自動生成預設值</li>
+                        <li>月份範圍：0-120 個月（0-10 歲）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

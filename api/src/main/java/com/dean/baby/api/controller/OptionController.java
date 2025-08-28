@@ -1,7 +1,7 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.api.dto.StringOptionItem;
-import com.dean.baby.api.service.OptionService;
+import com.dean.baby.common.dto.common.StringOptionItem;
+import com.dean.baby.common.service.OptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
