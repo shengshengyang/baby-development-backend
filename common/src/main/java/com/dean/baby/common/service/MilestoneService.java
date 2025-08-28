@@ -49,6 +49,7 @@ public class MilestoneService extends BaseService {
         milestone.setCategory(category);
         milestone.setDescription(buildDescriptionObject(milestoneDTO));
         milestone.setVideoUrl(milestoneDTO.getVideoUrl());
+        milestone.setImageBase64(milestoneDTO.getImageBase64());
 
         Milestone saved = milestoneRepository.save(milestone);
         return MilestoneDTO.fromEntity(saved);
@@ -99,6 +100,7 @@ public class MilestoneService extends BaseService {
         milestone.setCategory(category);
         milestone.setDescription(updateDescriptionObject(milestone.getDescription(), milestoneDTO));
         milestone.setVideoUrl(milestoneDTO.getVideoUrl());
+        milestone.setImageBase64(milestoneDTO.getImageBase64());
 
         Milestone updated = milestoneRepository.save(milestone);
         return MilestoneDTO.fromEntity(updated);
@@ -171,6 +173,7 @@ public class MilestoneService extends BaseService {
                 .description(description != null ? description : "")
                 .category(CategoryDTO.fromEntity(milestone.getCategory()))
                 .videoUrl(milestone.getVideoUrl())
+                .imageBase64(milestone.getImageBase64())
                 .build();
     }
 

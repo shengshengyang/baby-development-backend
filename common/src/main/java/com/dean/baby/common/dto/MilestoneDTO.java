@@ -18,13 +18,16 @@ public class MilestoneDTO {
     private AgeDto age;
     private CategoryDTO category;
 
-    // 新增：多語描述（提供目前語系字串與完整物件）
+    // 新增：多語描述（���供目前語系字串與完整物件）
     private String description;
     @JsonIgnore
     private LangFieldObject descriptionObject;
 
     // 新增：影片連結
     private String videoUrl;
+
+    // 新增：base64 圖片
+    private String imageBase64;
 
     public static MilestoneDTO fromEntity(com.dean.baby.common.entity.Milestone milestone) {
         if (milestone == null) {
@@ -37,6 +40,7 @@ public class MilestoneDTO {
                 .description(milestone.getDescription() != null ? milestone.getDescription().getLangByLocaleName() : "")
                 .descriptionObject(milestone.getDescription())
                 .videoUrl(milestone.getVideoUrl())
+                .imageBase64(milestone.getImageBase64())
                 .build();
     }
 }

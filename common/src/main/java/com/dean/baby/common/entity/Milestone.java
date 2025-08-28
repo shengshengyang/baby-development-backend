@@ -37,6 +37,11 @@ public class Milestone {
     @Column(name = "video_url")
     private String videoUrl;
 
+    // 新增：base64 圖片儲存
+    @Lob
+    @Column(name = "image_base64", columnDefinition = "LONGTEXT")
+    private String imageBase64;
+
     // 為了向后兼容，添加便利方法
     public int getAgeInMonths() {
         return age != null ? age.getMonth() : 0;
