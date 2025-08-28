@@ -40,6 +40,45 @@ public class ProgressService extends BaseService {
     }
 
     /**
+     * 標記baby開始某個flashcard
+     */
+    public ProgressDto markFlashcardStarted(UUID babyId, UUID flashcardId, LocalDate dateStarted) {
+        Baby baby = babyRepository.findById(babyId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Baby not found"));
+
+        Flashcard flashcard = flashcardRepository.findById(flashcardId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Flashcard not found"));
+
+        // 檢查是否已存在記錄
+        Optional<Progress> existingProgress = progressRepository.findByBabyIdAndFlashcardIdAndProgressType(
+                babyId, flashcardId, ProgressType.FLASHCARD);
+
+        Progress progress;
+        if (existingProgress.isPresent()) {
+            // 更新現有記錄
+            progress = existingProgress.get();
+            if (progress.getProgressStatus() == ProgressStatus.NOT_STARTED) {
+                progress.setProgressStatus(ProgressStatus.IN_PROGRESS);
+                progress.setDateStarted(dateStarted);
+            }
+        } else {
+            // 創建新記錄
+            progress = Progress.builder()
+                    .baby(baby)
+                    .flashcard(flashcard)
+                    .milestone(flashcard.getMilestone())
+                    .progressType(ProgressType.FLASHCARD)
+                    .progressStatus(ProgressStatus.IN_PROGRESS)
+                    .achieved(false) // 保持向後兼容
+                    .dateStarted(dateStarted)
+                    .build();
+        }
+
+        progress = progressRepository.save(progress);
+        return ProgressDto.fromEntity(progress);
+    }
+
+    /**
      * 標記baby完成了某個flashcard
      */
     public ProgressDto markFlashcardCompleted(UUID babyId, UUID flashcardId, LocalDate dateAchieved) {
@@ -57,8 +96,13 @@ public class ProgressService extends BaseService {
         if (existingProgress.isPresent()) {
             // 更新現有記錄
             progress = existingProgress.get();
-            progress.setAchieved(true);
+            progress.setProgressStatus(ProgressStatus.COMPLETED);
+            progress.setAchieved(true); // 保持向後兼容
             progress.setDateAchieved(dateAchieved);
+            // 如果還沒有開始日期，設定開始日期為完成日期
+            if (progress.getDateStarted() == null) {
+                progress.setDateStarted(dateAchieved);
+            }
         } else {
             // 創建新記錄
             progress = Progress.builder()
@@ -66,7 +110,9 @@ public class ProgressService extends BaseService {
                     .flashcard(flashcard)
                     .milestone(flashcard.getMilestone())
                     .progressType(ProgressType.FLASHCARD)
-                    .achieved(true)
+                    .progressStatus(ProgressStatus.COMPLETED)
+                    .achieved(true) // 保持向後兼容
+                    .dateStarted(dateAchieved)
                     .dateAchieved(dateAchieved)
                     .build();
         }
@@ -76,6 +122,44 @@ public class ProgressService extends BaseService {
         // 檢查是否該milestone也該標記為完成
         checkAndMarkMilestoneCompleted(baby, flashcard.getMilestone());
 
+        return ProgressDto.fromEntity(progress);
+    }
+
+    /**
+     * 標記baby開始某個milestone
+     */
+    public ProgressDto markMilestoneStarted(UUID babyId, UUID milestoneId, LocalDate dateStarted) {
+        Baby baby = babyRepository.findById(babyId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Baby not found"));
+
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Milestone not found"));
+
+        // 檢查是否已存在記錄
+        Optional<Progress> existingProgress = progressRepository.findByBabyIdAndMilestoneIdAndProgressType(
+                babyId, milestoneId, ProgressType.MILESTONE);
+
+        Progress progress;
+        if (existingProgress.isPresent()) {
+            // 更新現有記錄
+            progress = existingProgress.get();
+            if (progress.getProgressStatus() == ProgressStatus.NOT_STARTED) {
+                progress.setProgressStatus(ProgressStatus.IN_PROGRESS);
+                progress.setDateStarted(dateStarted);
+            }
+        } else {
+            // 創建新記錄
+            progress = Progress.builder()
+                    .baby(baby)
+                    .milestone(milestone)
+                    .progressType(ProgressType.MILESTONE)
+                    .progressStatus(ProgressStatus.IN_PROGRESS)
+                    .achieved(false) // 保持向後兼容
+                    .dateStarted(dateStarted)
+                    .build();
+        }
+
+        progress = progressRepository.save(progress);
         return ProgressDto.fromEntity(progress);
     }
 
@@ -97,20 +181,66 @@ public class ProgressService extends BaseService {
         if (existingProgress.isPresent()) {
             // 更新現有記錄
             progress = existingProgress.get();
-            progress.setAchieved(true);
+            progress.setProgressStatus(ProgressStatus.COMPLETED);
+            progress.setAchieved(true); // 保持向後兼容
             progress.setDateAchieved(dateAchieved);
+            // 如果還沒有開始日期，設定開始日期為完成日期
+            if (progress.getDateStarted() == null) {
+                progress.setDateStarted(dateAchieved);
+            }
         } else {
             // 創建新記錄
             progress = Progress.builder()
                     .baby(baby)
                     .milestone(milestone)
                     .progressType(ProgressType.MILESTONE)
-                    .achieved(true)
+                    .progressStatus(ProgressStatus.COMPLETED)
+                    .achieved(true) // 保持向後兼容
+                    .dateStarted(dateAchieved)
                     .dateAchieved(dateAchieved)
                     .build();
         }
 
         return ProgressDto.fromEntity(progressRepository.save(progress));
+    }
+
+    /**
+     * 標記baby開始某個video
+     */
+    public ProgressDto markVideoStarted(UUID babyId, UUID videoId, LocalDate dateStarted) {
+        Baby baby = babyRepository.findById(babyId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Baby not found"));
+
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Video not found"));
+
+        // 檢查是否已存在記錄
+        Optional<Progress> existingProgress = progressRepository.findByBabyIdAndVideoIdAndProgressType(
+                babyId, videoId, ProgressType.VIDEO);
+
+        Progress progress;
+        if (existingProgress.isPresent()) {
+            // 更新現有記錄
+            progress = existingProgress.get();
+            if (progress.getProgressStatus() == ProgressStatus.NOT_STARTED) {
+                progress.setProgressStatus(ProgressStatus.IN_PROGRESS);
+                progress.setDateStarted(dateStarted);
+            }
+        } else {
+            // 創建新記錄
+            progress = Progress.builder()
+                    .baby(baby)
+                    .video(video)
+                    .milestone(video.getMilestone())
+                    .progressType(ProgressType.VIDEO)
+                    .progressStatus(ProgressStatus.IN_PROGRESS)
+                    .achieved(false) // 保持向後兼容
+                    .dateStarted(dateStarted)
+                    .build();
+        }
+
+        progress = progressRepository.save(progress);
+        return ProgressDto.fromEntity(progress);
     }
 
     /**
@@ -131,8 +261,13 @@ public class ProgressService extends BaseService {
         if (existingProgress.isPresent()) {
             // 更新現有記錄
             progress = existingProgress.get();
-            progress.setAchieved(true);
+            progress.setProgressStatus(ProgressStatus.COMPLETED);
+            progress.setAchieved(true); // 保持向後兼容
             progress.setDateAchieved(dateAchieved);
+            // 如果還沒有開始日期，設定開始日期為完成日期
+            if (progress.getDateStarted() == null) {
+                progress.setDateStarted(dateAchieved);
+            }
         } else {
             // 創建新記錄
             progress = Progress.builder()
@@ -140,7 +275,9 @@ public class ProgressService extends BaseService {
                     .video(video)
                     .milestone(video.getMilestone())
                     .progressType(ProgressType.VIDEO)
-                    .achieved(true)
+                    .progressStatus(ProgressStatus.COMPLETED)
+                    .achieved(true) // 保持向後兼容
+                    .dateStarted(dateAchieved)
                     .dateAchieved(dateAchieved)
                     .build();
         }
@@ -156,7 +293,7 @@ public class ProgressService extends BaseService {
     }
 
     /**
-     * 檢查並自動標記milestone完成（當所有相關flashcard和video都完成時）
+     * 檢查並自��標記milestone完成（當所有相關flashcard和video都完成時）
      */
     private void checkAndMarkMilestoneCompleted(Baby baby, Milestone milestone) {
         // 獲取該milestone下的所有flashcards
@@ -216,12 +353,50 @@ public class ProgressService extends BaseService {
     }
 
     /**
-     * 獲取baby完成的flashcards
+     * 根據進度狀態獲取baby的進度
+     */
+    @Transactional(readOnly = true)
+    public List<ProgressDto> getBabyProgressByStatus(UUID babyId, ProgressStatus status) {
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressStatus(babyId, status);
+        return ProgressDto.fromEntities(progresses);
+    }
+
+    /**
+     * 根據進度類型和狀態獲取baby的進度
+     */
+    @Transactional(readOnly = true)
+    public List<ProgressDto> getBabyProgressByTypeAndStatus(UUID babyId, ProgressType type, ProgressStatus status) {
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndProgressStatus(babyId, type, status);
+        return ProgressDto.fromEntities(progresses);
+    }
+
+    /**
+     * 獲取baby進行中的flashcards
+     */
+    @Transactional(readOnly = true)
+    public List<ProgressDto> getBabyInProgressFlashcards(UUID babyId) {
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndProgressStatus(
+                babyId, ProgressType.FLASHCARD, ProgressStatus.IN_PROGRESS);
+        return ProgressDto.fromEntities(progresses);
+    }
+
+    /**
+     * 獲取baby完��的flashcards
      */
     @Transactional(readOnly = true)
     public List<ProgressDto> getBabyCompletedFlashcards(UUID babyId) {
-        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndAchieved(
-                babyId, ProgressType.FLASHCARD, true);
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndProgressStatus(
+                babyId, ProgressType.FLASHCARD, ProgressStatus.COMPLETED);
+        return ProgressDto.fromEntities(progresses);
+    }
+
+    /**
+     * 獲取baby進行中的milestones
+     */
+    @Transactional(readOnly = true)
+    public List<ProgressDto> getBabyInProgressMilestones(UUID babyId) {
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndProgressStatus(
+                babyId, ProgressType.MILESTONE, ProgressStatus.IN_PROGRESS);
         return ProgressDto.fromEntities(progresses);
     }
 
@@ -230,8 +405,18 @@ public class ProgressService extends BaseService {
      */
     @Transactional(readOnly = true)
     public List<ProgressDto> getBabyCompletedMilestones(UUID babyId) {
-        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndAchieved(
-                babyId, ProgressType.MILESTONE, true);
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndProgressStatus(
+                babyId, ProgressType.MILESTONE, ProgressStatus.COMPLETED);
+        return ProgressDto.fromEntities(progresses);
+    }
+
+    /**
+     * 獲取baby進行中的videos
+     */
+    @Transactional(readOnly = true)
+    public List<ProgressDto> getBabyInProgressVideos(UUID babyId) {
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndProgressStatus(
+                babyId, ProgressType.VIDEO, ProgressStatus.IN_PROGRESS);
         return ProgressDto.fromEntities(progresses);
     }
 
@@ -240,19 +425,83 @@ public class ProgressService extends BaseService {
      */
     @Transactional(readOnly = true)
     public List<ProgressDto> getBabyCompletedVideos(UUID babyId) {
-        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndAchieved(
-                babyId, ProgressType.VIDEO, true);
+        List<Progress> progresses = progressRepository.findByBabyIdAndProgressTypeAndProgressStatus(
+                babyId, ProgressType.VIDEO, ProgressStatus.COMPLETED);
         return ProgressDto.fromEntities(progresses);
     }
 
     /**
-     * 取消flashcard完成狀態
+     * 重置進度狀態為未開始
+     */
+    public ProgressDto resetProgressToNotStarted(UUID babyId, UUID itemId, ProgressType type) {
+        Optional<Progress> progressOpt = findProgressByTypeAndItem(babyId, itemId, type);
+
+        if (progressOpt.isPresent()) {
+            Progress progress = progressOpt.get();
+            progress.setProgressStatus(ProgressStatus.NOT_STARTED);
+            progress.setAchieved(false);
+            progress.setDateStarted(null);
+            progress.setDateAchieved(null);
+
+            Progress savedProgress = progressRepository.save(progress);
+
+            // 如果是 flashcard 或 video 被重置，檢查是否需要取消 milestone 完成狀態
+            if (type == ProgressType.FLASHCARD) {
+                Flashcard flashcard = flashcardRepository.findById(itemId).orElse(null);
+                if (flashcard != null && flashcard.getMilestone() != null) {
+                    checkAndUnmarkMilestoneCompleted(babyRepository.findById(babyId).orElse(null), flashcard.getMilestone());
+                }
+            } else if (type == ProgressType.VIDEO) {
+                Video video = videoRepository.findById(itemId).orElse(null);
+                if (video != null && video.getMilestone() != null) {
+                    checkAndUnmarkMilestoneCompleted(babyRepository.findById(babyId).orElse(null), video.getMilestone());
+                }
+            }
+
+            return ProgressDto.fromEntity(savedProgress);
+        }
+
+        throw new ApiException(SysCode.DATA_NOT_FOUND, "Progress not found");
+    }
+
+    /**
+     * 更新進度狀態為進行中
+     */
+    public ProgressDto updateProgressToInProgress(UUID babyId, UUID itemId, ProgressType type, LocalDate dateStarted) {
+        Optional<Progress> progressOpt = findProgressByTypeAndItem(babyId, itemId, type);
+
+        if (progressOpt.isPresent()) {
+            Progress progress = progressOpt.get();
+            progress.setProgressStatus(ProgressStatus.IN_PROGRESS);
+            progress.setDateStarted(dateStarted);
+
+            return ProgressDto.fromEntity(progressRepository.save(progress));
+        }
+
+        throw new ApiException(SysCode.DATA_NOT_FOUND, "Progress not found");
+    }
+
+    /**
+     * 根據類型和項目ID查找進度記錄
+     */
+    private Optional<Progress> findProgressByTypeAndItem(UUID babyId, UUID itemId, ProgressType type) {
+        return switch (type) {
+            case FLASHCARD -> progressRepository.findByBabyIdAndFlashcardIdAndProgressType(babyId, itemId, type);
+            case MILESTONE -> progressRepository.findByBabyIdAndMilestoneIdAndProgressType(babyId, itemId, type);
+            case VIDEO -> progressRepository.findByBabyIdAndVideoIdAndProgressType(babyId, itemId, type);
+        };
+    }
+
+    /**
+     * 更新取消flashcard完成狀態的方法以支援新狀態系統
      */
     public void unmarkFlashcardCompleted(UUID babyId, UUID flashcardId) {
         Optional<Progress> progress = progressRepository.findByBabyIdAndFlashcardIdAndProgressType(
                 babyId, flashcardId, ProgressType.FLASHCARD);
 
         progress.ifPresent(p -> {
+            // 將狀態改為進行中而不是刪除記錄
+            p.setProgressStatus(ProgressStatus.IN_PROGRESS);
             p.setAchieved(false);
             p.setDateAchieved(null);
             progressRepository.save(p);
@@ -267,13 +516,15 @@ public class ProgressService extends BaseService {
     }
 
     /**
-     * 取消video完成狀態
+     * 更新取消video完成狀態的方法以支援新狀態系統
      */
     public void unmarkVideoCompleted(UUID babyId, UUID videoId) {
         Optional<Progress> progress = progressRepository.findByBabyIdAndVideoIdAndProgressType(
                 babyId, videoId, ProgressType.VIDEO);
 
         progress.ifPresent(p -> {
+            // 將狀態改為進行中而不是刪除記錄
+            p.setProgressStatus(ProgressStatus.IN_PROGRESS);
             p.setAchieved(false);
             p.setDateAchieved(null);
             progressRepository.save(p);
@@ -288,7 +539,22 @@ public class ProgressService extends BaseService {
     }
 
     /**
-     * 檢查並取消milestone完成狀態（當有flashcard或video被取消完成時）
+     * 更新取消milestone完成狀態的方法以支援新狀態系統
+     */
+    public void unmarkMilestoneCompleted(UUID babyId, UUID milestoneId) {
+        Optional<Progress> progress = progressRepository.findByBabyIdAndMilestoneIdAndProgressType(
+                babyId, milestoneId, ProgressType.MILESTONE);
+
+        progress.ifPresent(p -> {
+            p.setProgressStatus(ProgressStatus.IN_PROGRESS);
+            p.setAchieved(false);
+            p.setDateAchieved(null);
+            progressRepository.save(p);
+        });
+    }
+
+    /**
+     * 更新檢查並取消milestone完成狀態的方法
      */
     private void checkAndUnmarkMilestoneCompleted(Baby baby, Milestone milestone) {
         if (baby == null || milestone == null) return;
@@ -296,7 +562,8 @@ public class ProgressService extends BaseService {
         Optional<Progress> milestoneProgress = progressRepository.findByBabyIdAndMilestoneIdAndProgressType(
                 baby.getId(), milestone.getId(), ProgressType.MILESTONE);
 
-        if (milestoneProgress.isPresent() && milestoneProgress.get().isAchieved()) {
+        if (milestoneProgress.isPresent() && milestoneProgress.get().getProgressStatus() == ProgressStatus.COMPLETED) {
+            milestoneProgress.get().setProgressStatus(ProgressStatus.IN_PROGRESS);
             milestoneProgress.get().setAchieved(false);
             milestoneProgress.get().setDateAchieved(null);
             progressRepository.save(milestoneProgress.get());

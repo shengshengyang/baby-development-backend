@@ -50,6 +50,13 @@ public class Progress implements Serializable {
     @Column(name = "date_achieved")
     private LocalDate dateAchieved;
 
+    @Column(name = "progress_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProgressStatus progressStatus = ProgressStatus.NOT_STARTED;
+
+    @Column(name = "date_started")
+    private LocalDate dateStarted;
+
     @Column(name = "progress_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProgressType progressType;

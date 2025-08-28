@@ -1,6 +1,7 @@
 package com.dean.baby.common.repository;
 
 import com.dean.baby.common.entity.Progress;
+import com.dean.baby.common.entity.ProgressStatus;
 import com.dean.baby.common.entity.ProgressType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -44,4 +45,13 @@ public interface ProgressRepository extends JpaRepository<Progress, UUID> {
     Optional<Progress> findByBabyIdAndVideoIdAndProgressType(@Param("babyId") UUID babyId,
                                                             @Param("videoId") UUID videoId,
                                                             @Param("progressType") ProgressType progressType);
+
+    @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressStatus = :progressStatus")
+    List<Progress> findByBabyIdAndProgressStatus(@Param("babyId") UUID babyId,
+                                                @Param("progressStatus") ProgressStatus progressStatus);
+
+    @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressType = :progressType AND p.progressStatus = :progressStatus")
+    List<Progress> findByBabyIdAndProgressTypeAndProgressStatus(@Param("babyId") UUID babyId,
+                                                               @Param("progressType") ProgressType progressType,
+                                                               @Param("progressStatus") ProgressStatus progressStatus);
 }
