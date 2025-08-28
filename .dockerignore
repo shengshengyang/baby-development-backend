@@ -1,0 +1,26 @@
+# Maven/Gradle outputs
+**/target/
+# allow prebuilt jars for docker runtime-only images
+!api/target/*.jar
+!mvc/target/*.jar
+
+# IDE
+.idea/
+.project
+.classpath
+.settings/
+*.iml
+
+# VCS
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Logs
+*.log

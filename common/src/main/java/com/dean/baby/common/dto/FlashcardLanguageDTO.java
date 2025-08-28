@@ -13,11 +13,27 @@ import java.util.UUID;
 @Builder
 public class FlashcardLanguageDTO {
     private UUID id;
-    private UUID categoryId;                    // 分類
-    private UUID milestoneId;                   // 關聯的 月齡
-    private int ageInMonths;                    // 關聯的 Milestone 的月齡
+    private CategoryDTO category;               // 改為 CategoryDTO 對象
+    private MilestoneDTO milestone;             // 改為 MilestoneDTO 對象
     private String languageCode; // 語言代碼，例如 "en" 或 "zh"
-    private String frontText;   // 正面文字
-    private String backText;    // 背面文字
-    private String imageUrl;    // 圖片 URL
+    private String subject;    // 主題/正面文字（從 Flashcard.subject 依當前語系）
+    private String description;    // 描述文字（翻譯）
+    private String imageUrl;    // 圖片 URL（從 Flashcard）
+
+    public static FlashcardLanguageDTO fromEntityWithLanguage(com.dean.baby.common.entity.Flashcard flashcard,
+                                                             com.dean.baby.common.entity.FlashcardTranslation translation) {
+        if (flashcard == null) {
+            return null;
+        }
+        String subjectText = flashcard.getSubject() != null ? flashcard.getSubject().getLangByLocaleName() : null;
+        return FlashcardLanguageDTO.builder()
+                .id(flashcard.getId())
+                .category(CategoryDTO.fromEntity(flashcard.getCategory()))
+                .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
+                .languageCode(translation != null && translation.getLanguageCode() != null ? translation.getLanguageCode().getCode() : null)
+                .subject(subjectText)
+                .description(translation != null ? translation.getDescription() : null)
+                .imageUrl(flashcard.getImageUrl())
+                .build();
+    }
 }

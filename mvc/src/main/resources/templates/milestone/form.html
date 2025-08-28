@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboardLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${milestone.id != null ? '編輯 Milestone' : '新增 Milestone'}">Milestone 表單</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="max-w-4xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6 text-primary" th:text="${milestone.id != null ? '編輯 Milestone' : '新增 Milestone'}"></h1>
+
+        <!-- 表單卡片 -->
+        <div class="card-bg p-6 rounded-lg shadow-md">
+            <form th:action="${milestone.id != null ? '/milestones/edit/' + milestone.id : '/milestones'}"
+                  method="post" th:object="${milestone}" enctype="multipart/form-data" class="space-y-6">
+
+                <!-- 年齡選擇 -->
+                <div>
+                    <label for="age" class="block text-sm font-medium label-text mb-2">
+                        年齡 <span class="text-red-500">*</span>
+                    </label>
+                    <select class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary select-bg"
+                            id="age" th:field="*{age.id}" required>
+                        <option value="">請選擇年齡</option>
+                        <option th:each="age : ${ages}"
+                                th:value="${age.id}"
+                                th:text="${age.displayName != null ? age.displayName.getLangByLocaleName() : age.month + ' 個月'}"
+                                th:selected="${milestone.age != null and milestone.age.id == age.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- 類別選擇 -->
+                <div>
+                    <label for="category" class="block text-sm font-medium label-text mb-2">
+                        類別 <span class="text-red-500">*</span>
+                    </label>
+                    <select class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary select-bg"
+                            id="category" th:field="*{category.id}" required>
+                        <option value="">請選擇類別</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.name != null ? cat.name.getLangByLocaleName() : '無名稱'}"
+                                th:selected="${milestone.category != null and milestone.category.id == cat.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- 描述 -->
+                <div>
+                    <label for="description" class="block text-sm font-medium label-text mb-2">描述</label>
+                    <textarea class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary textarea-bg"
+                              id="description" rows="4" th:field="*{description}"
+                              placeholder="輸入里程碑描述..."></textarea>
+                    <p class="text-sm help-text mt-1">以您目前的語言輸入描述內容</p>
+                </div>
+
+                <!-- 影片連結 -->
+                <div>
+                    <label for="videoUrl" class="block text-sm font-medium label-text mb-2">影片連結</label>
+                    <input type="url"
+                           class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                           id="videoUrl" th:field="*{videoUrl}"
+                           placeholder="https://example.com/video">
+                    <p class="text-sm help-text mt-1">選填：輸入與此里程碑相關的影片網址</p>
+                </div>
+
+                <!-- 目前圖片顯示 -->
+                <div th:if="${milestone.imageBase64 != null}">
+                    <label class="block text-sm font-medium label-text mb-2">目前圖片</label>
+                    <div class="p-4 empty-state-bg rounded-lg">
+                        <img th:src="${milestone.imageBase64}"
+                             alt="目前里程碑圖片"
+                             class="max-w-xs max-h-48 rounded-lg shadow-md">
+                    </div>
+                </div>
+
+                <!-- 圖片上傳 -->
+                <div>
+                    <label for="imageFile" class="block text-sm font-medium label-text mb-2">上傳圖片</label>
+                    <input type="file"
+                           class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg"
+                           id="imageFile" name="imageFile"
+                           accept="image/*" onchange="previewImage(this)">
+                    <p class="text-sm help-text mt-1">
+                        選擇圖片檔案 (JPG, PNG, GIF)。圖片將以 base64 格式儲存。
+                        <span th:if="${milestone.imageBase64 != null}">留空則保持目前圖片。</span>
+                    </p>
+
+                    <!-- 圖片預覽 -->
+                    <div id="imagePreview" class="hidden mt-4 p-4 empty-state-bg rounded-lg">
+                        <p class="text-sm font-medium label-text mb-2">預覽：</p>
+                        <img id="previewImg" alt="圖片預覽" class="max-w-xs max-h-48 rounded-lg shadow-md">
+                    </div>
+                </div>
+
+                <!-- 按鈕群組 -->
+                <div class="flex justify-between pt-6 border-t border-custom">
+                    <a href="/milestones"
+                       class="px-6 py-2 border border-custom text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        取消
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition-colors">
+                        <span th:text="${milestone.id != null ? '更新' : '創建'}"></span> 里程碑
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.classList.add('hidden');
+            }
+        }
+    </script>
+</section>
+</body>
+</html>

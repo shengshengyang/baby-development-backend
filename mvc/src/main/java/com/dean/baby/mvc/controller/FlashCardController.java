@@ -1,17 +1,16 @@
 package com.dean.baby.mvc.controller;
 
-import com.dean.baby.common.entity.Category;
-import com.dean.baby.common.entity.Flashcard;
-import com.dean.baby.common.entity.FlashcardTranslation;
-import com.dean.baby.common.entity.Milestone;
-import com.dean.baby.common.repository.CategoryRepository;
-import com.dean.baby.common.repository.FlashcardRepository;
-import com.dean.baby.common.repository.MilestoneRepository;
+import com.dean.baby.common.entity.*;
+import com.dean.baby.common.repository.*;
+import com.dean.baby.common.dto.VideoDto;
+import com.dean.baby.common.dto.VideoFormDto;
+import com.dean.baby.common.service.VideoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,15 +18,19 @@ import java.util.UUID;
 @RequestMapping("/flashcard")
 public class FlashCardController {
 
-
     private final FlashcardRepository flashcardRepository;
     private final CategoryRepository categoryRepository;
     private final MilestoneRepository milestoneRepository;
+    private final VideoService videoService;
 
-    public FlashCardController(FlashcardRepository flashcardRepository, CategoryRepository categoryRepository, MilestoneRepository milestoneRepository) {
+    public FlashCardController(FlashcardRepository flashcardRepository,
+                              CategoryRepository categoryRepository,
+                              MilestoneRepository milestoneRepository,
+                              VideoService videoService) {
         this.flashcardRepository = flashcardRepository;
         this.categoryRepository = categoryRepository;
         this.milestoneRepository = milestoneRepository;
+        this.videoService = videoService;
     }
 
     @GetMapping
@@ -67,7 +70,7 @@ public class FlashCardController {
             flashcard.getTranslations().forEach(t -> t.setFlashcard(flashcard));
         }
         flashcardRepository.save(flashcard);
-        return "redirect:/flashcards";
+        return "redirect:/flashcard";
     }
 
     // 編輯頁面：顯示編輯 Flashcard 表單
@@ -80,7 +83,7 @@ public class FlashCardController {
             model.addAttribute("milestones", milestoneRepository.findAll());
             return "flashcard/form";
         }
-        return "redirect:/flashcards";
+        return "redirect:/flashcard";
     }
 
     // 處理更新 Flashcard
@@ -98,13 +101,102 @@ public class FlashCardController {
             flashcard.getTranslations().forEach(t -> t.setFlashcard(flashcard));
         }
         flashcardRepository.save(flashcard);
-        return "redirect:/flashcards";
+        return "redirect:/flashcard";
     }
 
     // 刪除 Flashcard
     @PostMapping("/delete/{id}")
     public String deleteFlashcard(@PathVariable("id") UUID id) {
         flashcardRepository.deleteById(id);
-        return "redirect:/flashcards";
+        return "redirect:/flashcard";
+    }
+
+    // ===== Video Management for FlashCard =====
+
+    /**
+     * 顯示FlashCard的Video列表
+     */
+    @GetMapping("/{flashcardId}/videos")
+    public String listFlashcardVideos(@PathVariable UUID flashcardId, Model model) {
+        Optional<Flashcard> flashcardOpt = flashcardRepository.findById(flashcardId);
+        if (flashcardOpt.isPresent()) {
+            List<VideoDto> videos = videoService.getVideosByFlashcard(flashcardId);
+            model.addAttribute("flashcard", flashcardOpt.get());
+            model.addAttribute("videos", videos);
+            return "flashcard/video-list";
+        }
+        return "redirect:/flashcard";
+    }
+
+    /**
+     * 顯示新增Video表單
+     */
+    @GetMapping("/{flashcardId}/videos/add")
+    public String addVideoForm(@PathVariable UUID flashcardId, Model model) {
+        Optional<Flashcard> flashcardOpt = flashcardRepository.findById(flashcardId);
+        if (flashcardOpt.isPresent()) {
+            model.addAttribute("flashcard", flashcardOpt.get());
+            model.addAttribute("videoForm", new VideoFormDto());
+            return "flashcard/video-form";
+        }
+        return "redirect:/flashcard";
+    }
+
+    /**
+     * 處理新增Video
+     */
+    @PostMapping("/{flashcardId}/videos/add")
+    public String addVideo(@PathVariable UUID flashcardId, @ModelAttribute VideoFormDto videoForm) {
+        try {
+            videoService.createVideoForFlashcardWithForm(flashcardId, videoForm);
+            return "redirect:/flashcard/" + flashcardId + "/videos";
+        } catch (Exception e) {
+            return "redirect:/flashcard/" + flashcardId + "/videos?error=true";
+        }
+    }
+
+    /**
+     * 顯示編輯Video表單
+     */
+    @GetMapping("/{flashcardId}/videos/edit/{videoId}")
+    public String editVideoForm(@PathVariable UUID flashcardId, @PathVariable UUID videoId, Model model) {
+        Optional<Flashcard> flashcardOpt = flashcardRepository.findById(flashcardId);
+
+        if (flashcardOpt.isPresent()) {
+            VideoFormDto videoForm = videoService.prepareVideoFormForEdit(videoId);
+            Optional<VideoDto> videoOpt = videoService.getVideoById(videoId);
+
+            model.addAttribute("flashcard", flashcardOpt.get());
+            model.addAttribute("video", videoOpt.orElse(null));
+            model.addAttribute("videoForm", videoForm);
+            return "flashcard/video-form";
+        }
+        return "redirect:/flashcard/" + flashcardId + "/videos";
+    }
+
+    /**
+     * 處理更新Video
+     */
+    @PostMapping("/{flashcardId}/videos/edit/{videoId}")
+    public String updateVideo(@PathVariable UUID flashcardId, @PathVariable UUID videoId, @ModelAttribute VideoFormDto videoForm) {
+        try {
+            videoService.updateVideoWithForm(videoId, videoForm);
+            return "redirect:/flashcard/" + flashcardId + "/videos";
+        } catch (Exception e) {
+            return "redirect:/flashcard/" + flashcardId + "/videos?error=true";
+        }
+    }
+
+    /**
+     * 刪除Video
+     */
+    @PostMapping("/{flashcardId}/videos/delete/{videoId}")
+    public String deleteVideo(@PathVariable UUID flashcardId, @PathVariable UUID videoId) {
+        try {
+            videoService.deleteVideo(videoId);
+            return "redirect:/flashcard/" + flashcardId + "/videos";
+        } catch (Exception e) {
+            return "redirect:/flashcard/" + flashcardId + "/videos?error=true";
+        }
     }
 }
