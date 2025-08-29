@@ -1,9 +1,12 @@
 package com.dean.baby.api.controller;
 
 import com.dean.baby.common.dto.ProgressDto;
+import com.dean.baby.common.dto.UpdateProgressStatusRequest;
+import com.dean.baby.common.entity.ProgressStatus;
+import com.dean.baby.common.entity.ProgressType;
 import com.dean.baby.common.service.ProgressService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,104 +26,38 @@ public class ProgressController {
     }
 
     /**
-     * 標記baby完成某個flashcard
+     * 統一的進度狀態更新 API
+     * 透過 RequestBody 傳入參數，所有邏輯都在 service 處理
      */
-    @PostMapping("/flashcard/complete")
-    public ResponseEntity<ProgressDto> markFlashcardCompleted(
-            @RequestParam UUID babyId,
-            @RequestParam UUID flashcardId,
-            @RequestParam(required = false) String dateAchieved) {
-
-        LocalDate date = dateAchieved != null ? LocalDate.parse(dateAchieved) : LocalDate.now();
-        ProgressDto progress = progressService.markFlashcardCompleted(babyId, flashcardId, date);
-        return new ResponseEntity<>(progress, HttpStatus.CREATED);
+    @PostMapping("/update-status")
+    public ResponseEntity<ProgressDto> updateProgressStatus(@Valid @RequestBody UpdateProgressStatusRequest request) {
+        ProgressDto progress = progressService.updateProgressStatus(request);
+        return ResponseEntity.ok(progress);
     }
 
     /**
-     * 標記baby達成某個milestone
+     * 更新已存在的進度記錄狀態
      */
-    @PostMapping("/milestone/complete")
-    public ResponseEntity<ProgressDto> markMilestoneCompleted(
-            @RequestParam UUID babyId,
-            @RequestParam UUID milestoneId,
-            @RequestParam(required = false) String dateAchieved) {
+    @PutMapping("/{progressId}/status")
+    public ResponseEntity<ProgressDto> updateExistingProgressStatus(
+            @PathVariable UUID progressId,
+            @RequestParam ProgressStatus status,
+            @RequestParam(required = false) String date) {
 
-        LocalDate date = dateAchieved != null ? LocalDate.parse(dateAchieved) : LocalDate.now();
-        ProgressDto progress = progressService.markMilestoneCompleted(babyId, milestoneId, date);
-        return new ResponseEntity<>(progress, HttpStatus.CREATED);
+        LocalDate actionDate = date != null ? LocalDate.parse(date) : LocalDate.now();
+        ProgressDto progress = progressService.updateProgressStatus(progressId, status, actionDate);
+        return ResponseEntity.ok(progress);
     }
 
     /**
-     * 取消flashcard完成狀態
-     */
-    @PostMapping("/flashcard/uncomplete")
-    public ResponseEntity<Void> unmarkFlashcardCompleted(
-            @RequestParam UUID babyId,
-            @RequestParam UUID flashcardId) {
-
-        progressService.unmarkFlashcardCompleted(babyId, flashcardId);
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * 標記baby完成某個video
-     */
-    @PostMapping("/video/complete")
-    public ResponseEntity<ProgressDto> markVideoCompleted(
-            @RequestParam UUID babyId,
-            @RequestParam UUID videoId,
-            @RequestParam(required = false) String dateAchieved) {
-
-        LocalDate date = dateAchieved != null ? LocalDate.parse(dateAchieved) : LocalDate.now();
-        ProgressDto progress = progressService.markVideoCompleted(babyId, videoId, date);
-        return new ResponseEntity<>(progress, HttpStatus.CREATED);
-    }
-
-    /**
-     * 取消video完成狀態
-     */
-    @PostMapping("/video/uncomplete")
-    public ResponseEntity<Void> unmarkVideoCompleted(
-            @RequestParam UUID babyId,
-            @RequestParam UUID videoId) {
-
-        progressService.unmarkVideoCompleted(babyId, videoId);
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * 獲取baby的所有進度
+     * 獲取baby的進度，支援多種篩選條件
      */
     @GetMapping("/baby/{babyId}")
-    public ResponseEntity<List<ProgressDto>> getBabyProgress(@PathVariable UUID babyId) {
-        List<ProgressDto> progresses = progressService.getBabyProgress(babyId);
-        return ResponseEntity.ok(progresses);
-    }
-
-    /**
-     * 獲取baby完成的flashcards
-     */
-    @GetMapping("/baby/{babyId}/flashcards/completed")
-    public ResponseEntity<List<ProgressDto>> getBabyCompletedFlashcards(@PathVariable UUID babyId) {
-        List<ProgressDto> progresses = progressService.getBabyCompletedFlashcards(babyId);
-        return ResponseEntity.ok(progresses);
-    }
-
-    /**
-     * 獲取baby達成的milestones
-     */
-    @GetMapping("/baby/{babyId}/milestones/completed")
-    public ResponseEntity<List<ProgressDto>> getBabyCompletedMilestones(@PathVariable UUID babyId) {
-        List<ProgressDto> progresses = progressService.getBabyCompletedMilestones(babyId);
-        return ResponseEntity.ok(progresses);
-    }
-
-    /**
-     * 獲取baby完成的videos
-     */
-    @GetMapping("/baby/{babyId}/videos/completed")
-    public ResponseEntity<List<ProgressDto>> getBabyCompletedVideos(@PathVariable UUID babyId) {
-        List<ProgressDto> progresses = progressService.getBabyCompletedVideos(babyId);
+    public ResponseEntity<List<ProgressDto>> getBabyProgress(
+            @PathVariable UUID babyId,
+            @RequestParam(required = false) ProgressStatus status,
+            @RequestParam(required = false) ProgressType type) {
+        List<ProgressDto> progresses = progressService.getBabyProgress(babyId, status, type);
         return ResponseEntity.ok(progresses);
     }
 

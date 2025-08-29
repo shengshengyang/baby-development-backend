@@ -50,6 +50,10 @@ public interface ProgressRepository extends JpaRepository<Progress, UUID> {
     List<Progress> findByBabyIdAndProgressStatus(@Param("babyId") UUID babyId,
                                                 @Param("progressStatus") ProgressStatus progressStatus);
 
+    @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressType = :progressType")
+    List<Progress> findByBabyIdAndProgressType(@Param("babyId") UUID babyId,
+                                              @Param("progressType") ProgressType progressType);
+
     @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressType = :progressType AND p.progressStatus = :progressStatus")
     List<Progress> findByBabyIdAndProgressTypeAndProgressStatus(@Param("babyId") UUID babyId,
                                                                @Param("progressType") ProgressType progressType,
