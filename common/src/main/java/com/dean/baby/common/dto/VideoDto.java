@@ -19,9 +19,9 @@ public class VideoDto {
     private String videoUrl;
     private Integer durationSeconds;
     private String thumbnailUrl;
-    private Milestone milestone;
-    private Article article;
-    private Flashcard flashcard;
+    private MilestoneDTO milestone;
+    private ArticalDto article;
+    private FlashcardDTO flashcard;
 
     public static List<VideoDto> fromEntities(List<Video> videos) {
         return videos.stream()
@@ -36,9 +36,9 @@ public class VideoDto {
                 .videoUrl(video.getVideoUrl())
                 .durationSeconds(video.getDurationSeconds())
                 .thumbnailUrl(video.getThumbnailUrl())
-                .milestone(video.getMilestone())
-                .article(video.getArticle())
-                .flashcard(video.getFlashcard())
+                .milestone(MilestoneDTO.fromEntity(video.getMilestone()))
+                .article(ArticalDto.fromEntity(video.getArticle()))
+                .flashcard(FlashcardDTO.fromEntity(video.getFlashcard()))
                 .build();
     }
 }

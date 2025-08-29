@@ -16,7 +16,6 @@ import java.util.UUID;
 public class CategoryDTO {
     private UUID id;
     private String name;
-    @JsonIgnore
     private LangFieldObject nameObject; // 完整的多語言物件
 
     /**

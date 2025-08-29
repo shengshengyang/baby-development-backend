@@ -23,4 +23,16 @@ public interface MilestoneRepository extends JpaRepository<Milestone, UUID> {
      */
     @Query("SELECT m FROM Milestone m WHERE m.age.month = :month")
     List<Milestone> findByAgeMonth(@Param("month") Integer month);
+
+    /**
+     * 根據分類 ID 查找里程碑
+     */
+    @Query("SELECT m FROM Milestone m WHERE m.category.id = :categoryId")
+    List<Milestone> findByCategoryId(@Param("categoryId") UUID categoryId);
+
+    /**
+     * 根據年齡 ID 和分類 ID 查找里程碑
+     */
+    @Query("SELECT m FROM Milestone m WHERE m.age.id = :ageId AND m.category.id = :categoryId")
+    List<Milestone> findByAgeIdAndCategoryId(@Param("ageId") UUID ageId, @Param("categoryId") UUID categoryId);
 }

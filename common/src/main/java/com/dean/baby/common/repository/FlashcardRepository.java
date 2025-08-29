@@ -19,4 +19,10 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, UUID> {
 
     @Query("SELECT f FROM Flashcard f WHERE f.milestone.age.id = :ageId")
     List<Flashcard> findByAgeId(@Param("ageId") UUID ageId);
+
+    @Query("SELECT f FROM Flashcard f WHERE f.category.id = :categoryId")
+    List<Flashcard> findByCategoryId(@Param("categoryId") UUID categoryId);
+
+    @Query("SELECT f FROM Flashcard f WHERE f.milestone.age.id = :ageId AND f.category.id = :categoryId")
+    List<Flashcard> findByAgeIdAndCategoryId(@Param("ageId") UUID ageId, @Param("categoryId") UUID categoryId);
 }

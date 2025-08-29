@@ -90,6 +90,33 @@ public class MilestoneService extends BaseService {
                 .toList();
     }
 
+    /**
+     * 根據條件查找里程碑，支援 ageId 和 categoryId 的組合查詢
+     * 如果兩個參數都為 null 則返回所有里程碑
+     */
+    public List<MilestoneDTO> getMilestonesByConditions(UUID ageId, UUID categoryId) {
+        Language currentLanguage = LanguageUtil.getLanguageFromLocale();
+        List<Milestone> milestones;
+
+        if (ageId != null && categoryId != null) {
+            // 兩個條件都有，查詢組合條件
+            milestones = milestoneRepository.findByAgeIdAndCategoryId(ageId, categoryId);
+        } else if (ageId != null) {
+            // 只有 ageId
+            milestones = milestoneRepository.findByAgeId(ageId);
+        } else if (categoryId != null) {
+            // 只有 categoryId
+            milestones = milestoneRepository.findByCategoryId(categoryId);
+        } else {
+            // 都沒有，返回所有
+            milestones = milestoneRepository.findAll();
+        }
+
+        return milestones.stream()
+                .map(milestone -> buildMilestoneDTOWithLanguage(milestone, currentLanguage))
+                .toList();
+    }
+
     @Transactional
     public MilestoneDTO updateMilestone(UUID id, MilestoneDTO milestoneDTO) {
         Milestone milestone = findMilestoneById(id);

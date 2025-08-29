@@ -208,4 +208,30 @@ public class FlashCardService extends BaseService {
                 .map(this::convertToDTO)
                 .toList();
     }
+
+    /**
+     * 根據條件查找 FlashCard，支援 ageId 和 categoryId 的組合查詢
+     * 如果兩個參數都為 null 則返回所有 FlashCard
+     */
+    public List<FlashcardDTO> getFlashcardsByConditions(UUID ageId, UUID categoryId) {
+        List<Flashcard> flashcards;
+
+        if (ageId != null && categoryId != null) {
+            // 兩個條件都有，查詢組合條件
+            flashcards = flashcardRepository.findByAgeIdAndCategoryId(ageId, categoryId);
+        } else if (ageId != null) {
+            // 只有 ageId
+            flashcards = flashcardRepository.findByAgeId(ageId);
+        } else if (categoryId != null) {
+            // 只有 categoryId
+            flashcards = flashcardRepository.findByCategoryId(categoryId);
+        } else {
+            // 都沒有，返回所有
+            flashcards = flashcardRepository.findAll();
+        }
+
+        return flashcards.stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
 }

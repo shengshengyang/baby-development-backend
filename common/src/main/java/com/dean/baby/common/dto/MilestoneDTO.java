@@ -20,7 +20,6 @@ public class MilestoneDTO {
 
     // 新增：多語描述（���供目前語系字串與完整物件）
     private String description;
-    @JsonIgnore
     private LangFieldObject descriptionObject;
 
     // 新增：影片連結
