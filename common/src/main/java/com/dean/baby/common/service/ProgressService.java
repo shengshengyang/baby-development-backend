@@ -71,14 +71,12 @@ public class ProgressService extends BaseService {
         switch (request.getStatus()) {
             case NOT_STARTED:
                 progress.setProgressStatus(ProgressStatus.NOT_STARTED);
-                progress.setAchieved(false);
                 progress.setDateStarted(null);
                 progress.setDateAchieved(null);
                 break;
 
             case IN_PROGRESS:
                 progress.setProgressStatus(ProgressStatus.IN_PROGRESS);
-                progress.setAchieved(false);
                 if (progress.getDateStarted() == null) {
                     progress.setDateStarted(actionDate);
                 }
@@ -87,7 +85,6 @@ public class ProgressService extends BaseService {
 
             case COMPLETED:
                 progress.setProgressStatus(ProgressStatus.COMPLETED);
-                progress.setAchieved(true);
                 progress.setDateAchieved(actionDate);
                 if (progress.getDateStarted() == null) {
                     progress.setDateStarted(actionDate);
@@ -124,19 +121,16 @@ public class ProgressService extends BaseService {
 
         switch (status) {
             case NOT_STARTED:
-                progress.setAchieved(false);
                 progress.setDateStarted(null);
                 progress.setDateAchieved(null);
                 break;
             case IN_PROGRESS:
-                progress.setAchieved(false);
                 if (progress.getDateStarted() == null) {
                     progress.setDateStarted(actionDate);
                 }
                 progress.setDateAchieved(null);
                 break;
             case COMPLETED:
-                progress.setAchieved(true);
                 progress.setDateAchieved(actionDate);
                 if (progress.getDateStarted() == null) {
                     progress.setDateStarted(actionDate);
@@ -215,8 +209,7 @@ public class ProgressService extends BaseService {
 
         Progress.ProgressBuilder builder = Progress.builder()
                 .baby(baby)
-                .progressStatus(ProgressStatus.NOT_STARTED)
-                .achieved(false);
+                .progressStatus(ProgressStatus.NOT_STARTED);
 
         if (flashcardId != null) {
             Flashcard flashcard = flashcardRepository.findById(flashcardId)

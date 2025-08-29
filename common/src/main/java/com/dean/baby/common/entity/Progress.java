@@ -44,9 +44,6 @@ public class Progress implements Serializable {
     @JoinColumn(name = "video_id")
     private Video video;
 
-    @Column(name = "achieved", nullable = false)
-    private boolean achieved;
-
     @Column(name = "date_achieved")
     private LocalDate dateAchieved;
 

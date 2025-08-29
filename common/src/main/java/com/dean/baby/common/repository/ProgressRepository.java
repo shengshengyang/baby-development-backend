@@ -28,34 +28,29 @@ public interface ProgressRepository extends JpaRepository<Progress, UUID> {
 
     @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.flashcard.id = :flashcardId AND p.progressType = :progressType")
     Optional<Progress> findByBabyIdAndFlashcardIdAndProgressType(@Param("babyId") UUID babyId,
-                                                                @Param("flashcardId") UUID flashcardId,
-                                                                @Param("progressType") ProgressType progressType);
+                                                                 @Param("flashcardId") UUID flashcardId,
+                                                                 @Param("progressType") ProgressType progressType);
 
     @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.milestone.id = :milestoneId AND p.progressType = :progressType")
     Optional<Progress> findByBabyIdAndMilestoneIdAndProgressType(@Param("babyId") UUID babyId,
-                                                                @Param("milestoneId") UUID milestoneId,
-                                                                @Param("progressType") ProgressType progressType);
-
-    @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressType = :progressType AND p.achieved = :achieved")
-    List<Progress> findByBabyIdAndProgressTypeAndAchieved(@Param("babyId") UUID babyId,
-                                                         @Param("progressType") ProgressType progressType,
-                                                         @Param("achieved") boolean achieved);
+                                                                 @Param("milestoneId") UUID milestoneId,
+                                                                 @Param("progressType") ProgressType progressType);
 
     @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.video.id = :videoId AND p.progressType = :progressType")
     Optional<Progress> findByBabyIdAndVideoIdAndProgressType(@Param("babyId") UUID babyId,
-                                                            @Param("videoId") UUID videoId,
-                                                            @Param("progressType") ProgressType progressType);
+                                                             @Param("videoId") UUID videoId,
+                                                             @Param("progressType") ProgressType progressType);
 
     @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressStatus = :progressStatus")
     List<Progress> findByBabyIdAndProgressStatus(@Param("babyId") UUID babyId,
-                                                @Param("progressStatus") ProgressStatus progressStatus);
+                                                 @Param("progressStatus") ProgressStatus progressStatus);
 
     @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressType = :progressType")
     List<Progress> findByBabyIdAndProgressType(@Param("babyId") UUID babyId,
-                                              @Param("progressType") ProgressType progressType);
+                                               @Param("progressType") ProgressType progressType);
 
     @Query("SELECT p FROM Progress p WHERE p.baby.id = :babyId AND p.progressType = :progressType AND p.progressStatus = :progressStatus")
     List<Progress> findByBabyIdAndProgressTypeAndProgressStatus(@Param("babyId") UUID babyId,
-                                                               @Param("progressType") ProgressType progressType,
-                                                               @Param("progressStatus") ProgressStatus progressStatus);
+                                                                @Param("progressType") ProgressType progressType,
+                                                                @Param("progressStatus") ProgressStatus progressStatus);
 }

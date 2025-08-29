@@ -18,7 +18,6 @@ public class ProgressDto {
     private ProgressType progressType;
     private ProgressStatus progressStatus;
     private UUID categoryId;
-    private boolean achieved;
     private String dateAchieved;
     private String dateStarted;
 
@@ -39,7 +38,6 @@ public class ProgressDto {
                 .progressType(progress.getProgressType())
                 .progressStatus(progress.getProgressStatus())
                 .categoryId(progress.getCategory() != null ? progress.getCategory().getId() : null)
-                .achieved(progress.isAchieved())
                 .dateAchieved(progress.getDateAchieved() != null ? progress.getDateAchieved().toString() : null)
                 .dateStarted(progress.getDateStarted() != null ? progress.getDateStarted().toString() : null)
                 .build();
