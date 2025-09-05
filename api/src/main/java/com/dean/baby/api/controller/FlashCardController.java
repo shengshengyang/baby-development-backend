@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/flashcard")
 public class FlashCardController {
 
     private final FlashCardService flashCardService;
@@ -21,33 +22,33 @@ public class FlashCardController {
     }
 
     // 創建 Flashcard
-    @PostMapping("/flash-card")
+    @PostMapping
     public ResponseEntity<FlashcardDTO> createFlashcard(@RequestBody FlashcardDTO flashcardDTO) {
         FlashcardDTO createdFlashcard = flashCardService.createFlashcard(flashcardDTO);
         return new ResponseEntity<>(createdFlashcard, HttpStatus.CREATED);
     }
 
-    @PostMapping("/flash-card/check-progress")
+    @PostMapping("check-progress")
     public ResponseEntity<BabyDto> checkProgress(@RequestBody CheckProgressRequestVo vo) {
         return ResponseEntity.ok(flashCardService.checkProgress(vo));
     }
 
     // 更新 Flashcard
-    @PutMapping("/flash-card/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<FlashcardDTO> updateFlashcard(@PathVariable UUID id, @RequestBody FlashcardDTO flashcardDTO) {
         FlashcardDTO updatedFlashcard = flashCardService.updateFlashcard(id, flashcardDTO);
         return ResponseEntity.ok(updatedFlashcard);
     }
 
     // 刪除 Flashcard
-    @DeleteMapping("/flash-card/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteFlashcard(@PathVariable UUID id) {
         flashCardService.deleteFlashcard(id);
         return ResponseEntity.noContent().build();
     }
 
     // 根據條件查找 FlashCard，支援 ageId 和 categoryId 的組合查詢，無條件時返回全部
-    @GetMapping("/flash-card")
+    @GetMapping
     public ResponseEntity<List<FlashcardDTO>> searchFlashcards(
             @RequestParam(required = false) UUID ageId,
             @RequestParam(required = false) UUID categoryId) {

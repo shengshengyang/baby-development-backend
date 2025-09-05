@@ -49,7 +49,7 @@ public class FlashCardService extends BaseService {
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
 
         // 查找 Category
-        UUID categoryId = dto.getCategory() != null ? dto.getCategory().getId() : null;
+        UUID categoryId = dto.getCategoryId();
         if (categoryId == null) {
             throw new RuntimeException("Category id is required");
         }
@@ -102,8 +102,8 @@ public class FlashCardService extends BaseService {
                 .orElseThrow(() -> new RuntimeException("Flashcard not found"));
 
         // 更新屬性：Category, Subject, ImageUrl, 以及 Milestone (若提供)
-        if (dto.getCategory() != null && dto.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(dto.getCategory().getId())
+        if (dto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             flashcard.setCategory(category);
         }
@@ -180,15 +180,9 @@ public class FlashCardService extends BaseService {
                 .map(FlashcardTranslationDTO::fromEntity)
                 .toList();
 
-        return FlashcardDTO.builder()
-                .id(flashcard.getId())
-                .category(CategoryDTO.fromEntity(flashcard.getCategory()))
-                .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
-                .ageInMonths(flashcard.getMilestone() != null ? flashcard.getMilestone().getAgeInMonths() : 0)
-                .subject(flashcard.getSubject())
-                .imageUrl(flashcard.getImageUrl())
-                .translations(translationDTOs)
-                .build();
+        FlashcardDTO dto = FlashcardDTO.fromEntity(flashcard);
+        dto.setTranslations(translationDTOs);
+        return dto;
     }
 
     private FlashcardLanguageDTO convertToLanguageDTO(Flashcard flashcard, Language lang) {

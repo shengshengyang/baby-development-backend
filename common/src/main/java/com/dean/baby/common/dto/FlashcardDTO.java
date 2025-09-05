@@ -15,10 +15,11 @@ import java.util.UUID;
 @Builder
 public class FlashcardDTO {
     private UUID id;
-    private CategoryDTO category;               // 改為 CategoryDTO 對象
-    private MilestoneDTO milestone;             // 改為 MilestoneDTO 對象
+    private UUID categoryId;               // 改為 CategoryDTO 對象
+    private MilestoneBaseDTO milestone;             // 改為 MilestoneDTO 對象
     private int ageInMonths;                    // 關聯的 Milestone 的月齡
     private LangFieldObject subject;            // 主題/正面文字 (原 frontText)
+    private String subjectString;                // 主題/正面文字 (從 LangFieldObject 取出目前語系字串)
     private String imageUrl;                    // 圖片URL (從 FlashcardTranslation 移過來)
     private List<FlashcardTranslationDTO> translations;
 
@@ -28,9 +29,10 @@ public class FlashcardDTO {
         }
         return FlashcardDTO.builder()
                 .id(flashcard.getId())
-                .category(CategoryDTO.fromEntity(flashcard.getCategory()))
-                .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
+                .categoryId(flashcard.getCategory().getId())
+                .milestone(MilestoneBaseDTO.fromEntity(flashcard.getMilestone()))
                 .ageInMonths(flashcard.getMilestone() != null ? flashcard.getMilestone().getAgeInMonths() : 0)
+                .subjectString(flashcard.getSubject() != null ? flashcard.getSubject().getLangByLocaleName() : "")
                 .subject(flashcard.getSubject())
                 .imageUrl(flashcard.getImageUrl())
                 .translations(flashcard.getTranslations() != null ?

@@ -2,6 +2,7 @@ package com.dean.baby.common.service;
 
 import com.dean.baby.common.dto.AgeDto;
 import com.dean.baby.common.dto.CategoryDTO;
+import com.dean.baby.common.dto.FlashcardSummaryDTO;
 import com.dean.baby.common.dto.MilestoneDTO;
 import com.dean.baby.common.entity.Age;
 import com.dean.baby.common.entity.Category;
@@ -201,6 +202,10 @@ public class MilestoneService extends BaseService {
                 .category(CategoryDTO.fromEntity(milestone.getCategory()))
                 .videoUrl(milestone.getVideoUrl())
                 .imageBase64(milestone.getImageBase64())
+                .flashcards(milestone.getFlashcards() != null ?
+                    milestone.getFlashcards().stream()
+                        .map(FlashcardSummaryDTO::fromEntity)
+                        .toList() : null)
                 .build();
     }
 
