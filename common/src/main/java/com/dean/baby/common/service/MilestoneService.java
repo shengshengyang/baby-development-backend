@@ -43,8 +43,7 @@ public class MilestoneService extends BaseService {
     @Transactional
     public MilestoneDTO createMilestone(MilestoneDTO milestoneDTO) {
         Category category = findCategoryById(milestoneDTO.getCategory().getId());
-        Age age = findOrCreateAge(milestoneDTO.getAge().getMonth());
-
+        Age age = findAgeById(milestoneDTO.getAge().getId());
         Milestone milestone = new Milestone();
         milestone.setAge(age);
         milestone.setCategory(category);
@@ -122,8 +121,7 @@ public class MilestoneService extends BaseService {
     public MilestoneDTO updateMilestone(UUID id, MilestoneDTO milestoneDTO) {
         Milestone milestone = findMilestoneById(id);
         Category category = findCategoryById(milestoneDTO.getCategory().getId());
-        Age age = findOrCreateAge(milestoneDTO.getAge().getMonth());
-
+        Age age = findAgeById(milestoneDTO.getAge().getId());
         milestone.setAge(age);
         milestone.setCategory(category);
         milestone.setDescription(updateDescriptionObject(milestone.getDescription(), milestoneDTO));
@@ -152,9 +150,9 @@ public class MilestoneService extends BaseService {
                 .orElseThrow(() -> new ApiException(SysCode.MILESTONE_NOT_FOUND));
     }
 
-    private Age findOrCreateAge(int month) {
-        return ageRepository.findByMonth(month)
-                .orElseGet(() -> createAgeIfNotExists(month));
+    private Age findAgeById(UUID ageId) {
+        return ageRepository.findById(ageId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND));
     }
 
     /**

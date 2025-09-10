@@ -32,4 +32,16 @@ public enum Language {
     public static Language fromCode(String code) {
         return CODE_MAP.get(code);
     }
+
+    // 提供模板使用的顯示名稱
+    public String getDisplayName() {
+        return switch (this) {
+            case TRADITIONAL_CHINESE -> "繁體中文";
+            case SIMPLIFIED_CHINESE -> "簡體中文";
+            case ENGLISH -> "英文";
+            case JAPANESE -> "日文";
+            case KOREAN -> "韓文";
+            case VIETNAMESE -> "越南文";
+        };
+    }
 }
