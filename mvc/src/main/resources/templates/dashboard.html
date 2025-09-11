@@ -36,37 +36,55 @@
         const milestoneCount = [[${milestoneCount}]];
         const flashcardCount = [[${flashcardCount}]];
         const articleCount = [[${articleCount}]];
+
+        // 根據主題取得顏色
+        function getChartColors() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                background: isDark
+                    ? ['rgba(255, 206, 86, 0.4)', 'rgba(54, 162, 235, 0.4)', 'rgba(255, 99, 132, 0.4)']
+                    : ['rgba(255, 206, 86, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 99, 132, 0.7)'],
+                border: isDark
+                    ? ['rgba(255, 206, 86, 0.8)', 'rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)']
+                    : ['rgba(255, 206, 86, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)']
+            };
+        }
+
         // 初始化 Chart.js
-        const ctx = document.getElementById('dashboardChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Milestone', 'Flashcard', 'Article'],
-                datasets: [{
-                    label: '數量',
-                    data: [milestoneCount, flashcardCount, articleCount],
-                    backgroundColor: [
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 99, 132, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 99, 132, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        precision: 0
+        let chartInstance;
+        function renderChart() {
+            const ctx = document.getElementById('dashboardChart').getContext('2d');
+            const colors = getChartColors();
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Milestone', 'Flashcard', 'Article'],
+                    datasets: [{
+                        label: '數量',
+                        data: [milestoneCount, flashcardCount, articleCount],
+                        backgroundColor: colors.background,
+                        borderColor: colors.border,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            precision: 0
+                        }
                     }
                 }
-            }
+            });
+        }
+        // 首次渲染
+        renderChart();
+        // 監聽主題切換（假設主題切換時會加/移除 'dark' class）
+        const observer = new MutationObserver(() => {
+            renderChart();
         });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     </script>
 </main>
 </body>

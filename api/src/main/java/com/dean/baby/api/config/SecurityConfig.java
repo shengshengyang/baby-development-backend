@@ -63,8 +63,10 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        // Nginx 已處理 CORS，Spring Security 不需額外設定
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(Constants.FRONT_HOST));
+        // 不設置 allowedOrigins 等，直接允許所有
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type","accept-language"));
         configuration.setAllowCredentials(true);
