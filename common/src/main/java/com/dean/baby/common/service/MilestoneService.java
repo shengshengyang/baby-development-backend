@@ -161,28 +161,41 @@ public class MilestoneService extends BaseService {
     private LangFieldObject buildDescriptionObject(MilestoneDTO milestoneDTO) {
         LangFieldObject desc = milestoneDTO.getDescriptionObject();
         if (desc == null) {
+            // 建立空的語言物件，不自動將單一語系內容複製到所有語系
             desc = new LangFieldObject();
-            if (milestoneDTO.getDescription() != null) {
+            if (milestoneDTO.getDescription() != null && !milestoneDTO.getDescription().isBlank()) {
+                // 只設定目前 locale 對應語言，其餘保持空白
                 desc.setLangByLocaleName(milestoneDTO.getDescription());
             }
-            desc.setDefaultBeforeInsert("");
         }
         return desc;
     }
 
     /**
-     * 更新里程碑描述對象
+     * 更新里程碑描述對象：僅覆寫有提供值的語言，其他語言保留原值
      */
     private LangFieldObject updateDescriptionObject(LangFieldObject existingDesc, MilestoneDTO milestoneDTO) {
-        LangFieldObject desc = milestoneDTO.getDescriptionObject();
-        if (desc == null) {
-            desc = existingDesc != null ? existingDesc : new LangFieldObject();
-            if (milestoneDTO.getDescription() != null) {
-                desc.setLangByLocaleName(milestoneDTO.getDescription());
-            }
-            desc.setDefaultBeforeInsert("");
+        LangFieldObject incoming = milestoneDTO.getDescriptionObject();
+        if (existingDesc == null) {
+            // 沒有既存資料，直接建立（沿用 create 邏輯）
+            return buildDescriptionObject(milestoneDTO);
         }
-        return desc;
+        if (incoming == null) {
+            // 沒有新資料，保留原本
+            return existingDesc;
+        }
+        // 合併：僅當新值 != null 且非空字串時覆寫
+        for (Language lang : Language.values()) {
+            String code = lang.getCode();
+            String newVal = incoming.getLang(code);
+            if (newVal != null) { // 允許清空：若需要保留舊值則再判斷 isBlank
+                if (!newVal.isBlank()) {
+                    existingDesc.setLang(code, newVal);
+                }
+                // 若想支援清空語言，可以在此處加上 else 將其設為空字串
+            }
+        }
+        return existingDesc;
     }
 
     /**

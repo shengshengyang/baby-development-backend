@@ -157,43 +157,37 @@
                             <div id="viewMilestoneDescContainer" class="space-y-4">
                                 <div class="vm-desc-item" data-lang="TRADITIONAL_CHINESE" style="display:block;">
                                     <label class="block text-xs text-gray-600 mb-1">繁體中文描述 (主語言)</label>
-                                    <textarea name="description.tw" rows="4" required
-                                              th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.tw : ''}"
+                                    <textarea th:field="*{descriptionObject.tw}" rows="4" required
                                               placeholder="請輸入繁體中文描述"
                                               class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
                                 </div>
                                 <div class="vm-desc-item" data-lang="SIMPLIFIED_CHINESE" style="display:none;">
                                     <label class="block text-xs text-gray-600 mb-1">簡體中文描述</label>
-                                    <textarea name="description.cn" rows="4"
-                                              th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.cn : ''}"
+                                    <textarea th:field="*{descriptionObject.cn}" rows="4"
                                               placeholder="请输入简体中文描述"
                                               class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
                                 </div>
                                 <div class="vm-desc-item" data-lang="ENGLISH" style="display:none;">
                                     <label class="block text-xs text-gray-600 mb-1">英文描述</label>
-                                    <textarea name="description.en" rows="4"
-                                              th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.en : ''}"
+                                    <textarea th:field="*{descriptionObject.en}" rows="4"
                                               placeholder="Enter English description"
                                               class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
                                 </div>
                                 <div class="vm-desc-item" data-lang="JAPANESE" style="display:none;">
                                     <label class="block text-xs text-gray-600 mb-1">日文描述</label>
-                                    <textarea name="description.ja" rows="4"
-                                              th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.ja : ''}"
+                                    <textarea th:field="*{descriptionObject.ja}" rows="4"
                                               placeholder="日本語の説明を入力してください"
                                               class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
                                 </div>
                                 <div class="vm-desc-item" data-lang="KOREAN" style="display:none;">
                                     <label class="block text-xs text-gray-600 mb-1">韓文描述</label>
-                                    <textarea name="description.ko" rows="4"
-                                              th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.ko : ''}"
+                                    <textarea th:field="*{descriptionObject.ko}" rows="4"
                                               placeholder="한국어 설명을 입력하세요"
                                               class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
                                 </div>
                                 <div class="vm-desc-item" data-lang="VIETNAMESE" style="display:none;">
                                     <label class="block text-xs text-gray-600 mb-1">越南文描述</label>
-                                    <textarea name="description.vi" rows="4"
-                                              th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.vi : ''}"
+                                    <textarea th:field="*{descriptionObject.vi}" rows="4"
                                               placeholder="Nhập mô tả tiếng Việt"
                                               class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
                                 </div>
@@ -360,12 +354,13 @@
         const copyBtn = document.getElementById('copyMainDescBtn');
         if(copyBtn){
             copyBtn.addEventListener('click', function(){
-                const base = document.querySelector('textarea[name="description.tw"]').value.trim();
+                const baseEl = document.querySelector('[name="descriptionObject.tw"]');
+                const base = baseEl ? baseEl.value.trim() : '';
                 if(!base){ alert('繁體中文描述為空，無法複製'); return; }
                 const targets = ['cn','en','ja','ko','vi'];
                 let filled = 0;
                 targets.forEach(code => {
-                    const ta = document.querySelector(`textarea[name="description.${code}"]`);
+                    const ta = document.querySelector(`[name="descriptionObject.${code}"]`);
                     if(ta && !ta.value.trim()){ ta.value = base; filled++; }
                 });
                 alert(filled > 0 ? `已填入 ${filled} 個語言空白欄位` : '其他語言皆已有內容，未變更');
