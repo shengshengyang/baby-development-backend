@@ -1,9 +1,6 @@
 package com.dean.baby.common.dto;
 
 import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.entity.Article;
-import com.dean.baby.common.entity.Flashcard;
-import com.dean.baby.common.entity.Milestone;
 import com.dean.baby.common.entity.Video;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +17,7 @@ public class VideoDto {
     private Integer durationSeconds;
     private String thumbnailUrl;
     private MilestoneDTO milestone;
-    private ArticalDto article;
+    private ArticleDto article;
     private FlashcardDTO flashcard;
 
     public static List<VideoDto> fromEntities(List<Video> videos) {
@@ -37,7 +34,7 @@ public class VideoDto {
                 .durationSeconds(video.getDurationSeconds())
                 .thumbnailUrl(video.getThumbnailUrl())
                 .milestone(MilestoneDTO.fromEntity(video.getMilestone()))
-                .article(ArticalDto.fromEntity(video.getArticle()))
+                .article(ArticleDto.fromEntity(video.getArticle()))
                 .flashcard(FlashcardDTO.fromEntity(video.getFlashcard()))
                 .build();
     }

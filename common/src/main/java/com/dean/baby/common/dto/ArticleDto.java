@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class ArticalDto {
+public class ArticleDto {
 
     private UUID id;
 
@@ -15,17 +15,17 @@ public class ArticalDto {
 
     private List<ArticleTranslationDto> translations;
 
-    public static ArticalDto fromEntity(Article article) {
+    public static ArticleDto fromEntity(Article article) {
         if (article == null) {
             return null;
         }
-        ArticalDto articalDto = new ArticalDto();
-        articalDto.setId(article.getId());
-        articalDto.setCategory(CategoryDTO.fromEntity(article.getCategory()));
+        ArticleDto articleDto = new ArticleDto();
+        articleDto.setId(article.getId());
+        articleDto.setCategory(CategoryDTO.fromEntity(article.getCategory()));
         if (article.getTranslations() != null) {
             List<ArticleTranslationDto> translationDtos = article.getTranslations().stream().map(ArticleTranslationDto::fromEntity).toList();
-            articalDto.setTranslations(translationDtos);
+            articleDto.setTranslations(translationDtos);
         }
-        return articalDto;
+        return articleDto;
     }
 }

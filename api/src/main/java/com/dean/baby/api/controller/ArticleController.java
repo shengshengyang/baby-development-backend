@@ -1,6 +1,6 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.ArticalDto;
+import com.dean.baby.common.dto.ArticleResponseDto;
 import com.dean.baby.common.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,23 +22,25 @@ public class ArticleController {
     }
 
     /**
-     * Get article by ID
+     * Get article by ID with localized content based on Accept-Language header
+     * Default language: Traditional Chinese (tw)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ArticalDto> getArticleById(@PathVariable UUID id) {
-        Optional<ArticalDto> article = articleService.getArticleById(id);
+    public ResponseEntity<ArticleResponseDto> getArticleById(@PathVariable UUID id) {
+        Optional<ArticleResponseDto> article = articleService.getArticleById(id);
         return article.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Get all articles or search by category
+     * Get all articles or search by category with localized content
+     * Language is determined by Accept-Language header, defaults to Traditional Chinese (tw)
      * @param categoryId optional category ID to filter by
      */
     @GetMapping
-    public ResponseEntity<List<ArticalDto>> getArticles(
+    public ResponseEntity<List<ArticleResponseDto>> getArticles(
             @RequestParam(required = false) UUID categoryId) {
-        List<ArticalDto> articles = articleService.getArticles(categoryId);
+        List<ArticleResponseDto> articles = articleService.getArticles(categoryId);
         return ResponseEntity.ok(articles);
     }
 
