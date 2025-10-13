@@ -28,4 +28,31 @@ public class ArticleDto {
         }
         return articleDto;
     }
+
+    public static ArticleDto fromEntity(Article article, String languageCode) {
+        if (article == null) {
+            return null;
+        }
+        ArticleDto articleDto = new ArticleDto();
+        articleDto.setId(article.getId());
+        articleDto.setCategory(CategoryDTO.fromEntity(article.getCategory()));
+
+        if (article.getTranslations() != null) {
+            List<ArticleTranslationDto> translationDtos;
+            if (languageCode != null && !languageCode.isEmpty()) {
+                // Filter by language code
+                translationDtos = article.getTranslations().stream()
+                    .filter(t -> t.getLanguageCode().getCode().equalsIgnoreCase(languageCode))
+                    .map(ArticleTranslationDto::fromEntity)
+                    .toList();
+            } else {
+                // Return all translations
+                translationDtos = article.getTranslations().stream()
+                    .map(ArticleTranslationDto::fromEntity)
+                    .toList();
+            }
+            articleDto.setTranslations(translationDtos);
+        }
+        return articleDto;
+    }
 }

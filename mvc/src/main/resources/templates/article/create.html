@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboardLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>新增 Article</title>
+    <!-- CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+    <style>
+        .ck-editor__editable {
+            min-height: 300px;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="max-w-5xl mx-auto py-8">
+        <div class="flex items-center mb-6">
+            <a th:href="@{/articles}" class="text-primary hover:text-primary/80 mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </a>
+            <h1 class="text-3xl font-bold text-primary">新增 Article</h1>
+        </div>
+
+        <div class="card-bg p-8 rounded-lg shadow-md">
+            <form id="articleForm">
+                <!-- 分類選擇 -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        分類 <span class="text-red-500">*</span>
+                    </label>
+                    <select id="categoryId" required
+                            class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary">
+                        <option value="">請選擇分類</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.value}"
+                                th:text="${category.label}">
+                        </option>
+                    </select>
+                </div>
+
+                <hr class="my-6 border-gray-300 dark:border-gray-600">
+
+                <!-- 多語言翻譯區 -->
+                <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">多語言內容</h2>
+
+                <div id="translationsContainer" class="space-y-6">
+                    <!-- 英文 -->
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                        <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100 flex items-center">
+                            <span class="mr-2">🇬🇧</span> 英文 (English)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">標題</label>
+                                <input type="text" data-lang="ENGLISH" data-field="title"
+                                       class="translation-input w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                       placeholder="Enter title in English">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">內容</label>
+                                <div id="editor-ENGLISH" data-lang="ENGLISH" data-field="content"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 繁體中文 -->
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                        <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100 flex items-center">
+                            <span class="mr-2">🇹🇼</span> 繁體中文 (Traditional Chinese)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">標題</label>
+                                <input type="text" data-lang="TRADITIONAL_CHINESE" data-field="title"
+                                       class="translation-input w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                       placeholder="輸入繁體中文標題">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">內容</label>
+                                <div id="editor-TRADITIONAL_CHINESE" data-lang="TRADITIONAL_CHINESE" data-field="content"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 簡體中文 -->
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                        <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100 flex items-center">
+                            <span class="mr-2">🇨🇳</span> 简体中文 (Simplified Chinese)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">标题</label>
+                                <input type="text" data-lang="SIMPLIFIED_CHINESE" data-field="title"
+                                       class="translation-input w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                       placeholder="输入简体中文标题">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">内容</label>
+                                <div id="editor-SIMPLIFIED_CHINESE" data-lang="SIMPLIFIED_CHINESE" data-field="content"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 日文 -->
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                        <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100 flex items-center">
+                            <span class="mr-2">🇯🇵</span> 日本語 (Japanese)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">タイトル</label>
+                                <input type="text" data-lang="JAPANESE" data-field="title"
+                                       class="translation-input w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                       placeholder="日本語のタイトルを入力">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">内容</label>
+                                <div id="editor-JAPANESE" data-lang="JAPANESE" data-field="content"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 韓文 -->
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                        <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100 flex items-center">
+                            <span class="mr-2">🇰🇷</span> 한국어 (Korean)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">제목</label>
+                                <input type="text" data-lang="KOREAN" data-field="title"
+                                       class="translation-input w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                       placeholder="한국어 제목 입력">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">내용</label>
+                                <div id="editor-KOREAN" data-lang="KOREAN" data-field="content"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 越南文 -->
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                        <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100 flex items-center">
+                            <span class="mr-2">🇻🇳</span> Tiếng Việt (Vietnamese)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Tiêu đề</label>
+                                <input type="text" data-lang="VIETNAMESE" data-field="title"
+                                       class="translation-input w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                       placeholder="Nhập tiêu đề tiếng Việt">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Nội dung</label>
+                                <div id="editor-VIETNAMESE" data-lang="VIETNAMESE" data-field="content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex gap-4">
+                    <button type="submit"
+                            class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90 transition-colors">
+                        儲存
+                    </button>
+                    <a th:href="@{/articles}"
+                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition-colors inline-block">
+                        取消
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Loading 覆蓋層 -->
+        <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl">
+                <div class="flex items-center space-x-3">
+                    <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-lg text-gray-900 dark:text-gray-100">儲存中...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const form = document.getElementById('articleForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // 儲存所有 CKEditor 實例
+        const editors = {};
+        const languages = ['ENGLISH', 'TRADITIONAL_CHINESE', 'SIMPLIFIED_CHINESE', 'JAPANESE', 'KOREAN', 'VIETNAMESE'];
+
+        // 初始化所有 CKEditor
+        window.addEventListener('DOMContentLoaded', async () => {
+            for (const lang of languages) {
+                try {
+                    const editor = await ClassicEditor.create(document.querySelector(`#editor-${lang}`), {
+                        toolbar: {
+                            items: [
+                                'heading', '|',
+                                'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                                'blockQuote', 'insertTable', '|',
+                                'undo', 'redo'
+                            ]
+                        },
+                        language: 'zh',
+                        table: {
+                            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                        }
+                    });
+                    editors[lang] = editor;
+                } catch (error) {
+                    console.error(`Error initializing CKEditor for ${lang}:`, error);
+                }
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const categoryId = document.getElementById('categoryId').value;
+            if (!categoryId) {
+                alert('請選擇分類');
+                return;
+            }
+
+            // 收集所有翻譯資料
+            const translations = [];
+            const translationMap = {};
+
+            // 收集標題
+            const titleInputs = document.querySelectorAll('input[data-field="title"]');
+            titleInputs.forEach(input => {
+                const lang = input.getAttribute('data-lang');
+                const value = input.value.trim();
+
+                if (value) {
+                    if (!translationMap[lang]) {
+                        translationMap[lang] = { languageCode: lang };
+                    }
+                    translationMap[lang].title = value;
+                }
+            });
+
+            // 收集內容 (從 CKEditor)
+            languages.forEach(lang => {
+                const editor = editors[lang];
+                if (editor) {
+                    const content = editor.getData().trim();
+                    if (content) {
+                        if (!translationMap[lang]) {
+                            translationMap[lang] = { languageCode: lang };
+                        }
+                        translationMap[lang].content = content;
+                    }
+                }
+            });
+
+            // 只加入有內容的翻譯
+            Object.values(translationMap).forEach(translation => {
+                if (translation.title || translation.content) {
+                    translations.push(translation);
+                }
+            });
+
+            if (translations.length === 0) {
+                alert('請至少填寫一種語言的內容');
+                return;
+            }
+
+            const requestData = {
+                categoryId: categoryId,
+                translations: translations
+            };
+
+            try {
+                loadingOverlay.classList.remove('hidden');
+
+                const csrfToken = /*[[${_csrf.token}]]*/ '';
+                const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+
+                const response = await fetch('/articles', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    window.location.href = '/articles?success=Article 新增成功';
+                } else {
+                    const error = await response.text();
+                    alert('儲存失敗: ' + error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('發生錯誤: ' + error.message);
+            } finally {
+                loadingOverlay.classList.add('hidden');
+            }
+        });
+    </script>
+</section>
+</body>
+</html>

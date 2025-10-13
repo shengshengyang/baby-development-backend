@@ -19,6 +19,6 @@ public class Article {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleTranslation> translations;
 }

@@ -32,6 +32,7 @@ public enum SysCode implements ErrorCode{
     BAD_CREDENTIALS(10024, "Bad credentials"),
     FLASHCARD_NOT_FOUND(10025, "Flashcard not found"),
     DATA_NOT_FOUND(10026, "Data not found"),
+    ARTICLE_NOT_FOUND(10027, "Article not found"),
     SYSTEM_ERROR(9999, "system error" );
 
     private final Integer code;
