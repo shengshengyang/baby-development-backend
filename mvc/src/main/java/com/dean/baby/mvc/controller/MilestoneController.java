@@ -5,6 +5,7 @@ import com.dean.baby.common.dto.common.LangFieldObject;
 import com.dean.baby.common.repository.CategoryRepository;
 import com.dean.baby.common.repository.AgeRepository;
 import com.dean.baby.common.service.MilestoneService;
+import com.dean.baby.common.service.OptionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,13 +24,16 @@ public class MilestoneController {
     private final MilestoneService milestoneService;
     private final CategoryRepository categoryRepository;
     private final AgeRepository ageRepository;
+    private final OptionService optionService;
 
     public MilestoneController(MilestoneService milestoneService,
                               CategoryRepository categoryRepository,
-                              AgeRepository ageRepository) {
+                              AgeRepository ageRepository,
+                              OptionService optionService) {
         this.milestoneService = milestoneService;
         this.categoryRepository = categoryRepository;
         this.ageRepository = ageRepository;
+        this.optionService = optionService;
     }
 
     // 顯示所有 Milestones 列表
@@ -44,9 +47,12 @@ public class MilestoneController {
     // 顯示新增 Milestone 表單
     @GetMapping("/new")
     public String newMilestone(Model model) {
-        model.addAttribute("milestone", new MilestoneDTO());
-        model.addAttribute("categories", categoryRepository.findAll());
-        model.addAttribute("ages", ageRepository.findAll());
+        MilestoneDTO milestone = new MilestoneDTO();
+        // 初始化多語描述物件，讓 Spring DataBinder 可以綁定 nested 欄位
+        milestone.setDescriptionObject(new LangFieldObject());
+        model.addAttribute("milestone", milestone);
+        model.addAttribute("categoryOptions", optionService.getCategoryOptions());
+        model.addAttribute("ageOptions", optionService.getAgeOptions());
         return "milestone/form";
     }
 
@@ -56,12 +62,21 @@ public class MilestoneController {
                                  @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                  RedirectAttributes redirectAttributes) {
         try {
+            if (milestoneDTO.getAge() == null || milestoneDTO.getAge().getId() == null) {
+                throw new IllegalArgumentException("Age id is required");
+            }
+            if (milestoneDTO.getCategory() == null || milestoneDTO.getCategory().getId() == null) {
+                throw new IllegalArgumentException("Category id is required");
+            }
             // 處理圖片上傳
             if (imageFile != null && !imageFile.isEmpty()) {
                 String base64Image = convertToBase64(imageFile);
                 milestoneDTO.setImageBase64(base64Image);
             }
-
+            // 若未綁定（理論上不會），避免 NPE
+            if (milestoneDTO.getDescriptionObject() == null) {
+                milestoneDTO.setDescriptionObject(new LangFieldObject());
+            }
             milestoneService.createMilestone(milestoneDTO);
             redirectAttributes.addFlashAttribute("success", "Milestone created successfully!");
             return "redirect:/milestones";
@@ -73,15 +88,20 @@ public class MilestoneController {
 
     // 顯示編輯 Milestone 表單
     @GetMapping("/edit/{id}")
-    public String editMilestone(@PathVariable UUID id, Model model, RedirectAttributes redirectAttributes) {
+    public String editMilestone(@PathVariable UUID id, Model model) {
         Optional<MilestoneDTO> milestoneOpt = milestoneService.getMilestoneById(id);
         if (milestoneOpt.isPresent()) {
-            model.addAttribute("milestone", milestoneOpt.get());
-            model.addAttribute("categories", categoryRepository.findAll());
-            model.addAttribute("ages", ageRepository.findAll());
+            MilestoneDTO milestone = milestoneOpt.get();
+            // 確保 descriptionObject 不為 null
+            if (milestone.getDescriptionObject() == null) {
+                milestone.setDescriptionObject(new LangFieldObject());
+            }
+            model.addAttribute("milestone", milestone);
+            model.addAttribute("categoryOptions", optionService.getCategoryOptions());
+            model.addAttribute("ageOptions", optionService.getAgeOptions());
             return "milestone/form";
         } else {
-            redirectAttributes.addFlashAttribute("error", "Milestone not found!");
+            model.addAttribute("error", "Milestone not found!");
             return "redirect:/milestones";
         }
     }
@@ -93,12 +113,19 @@ public class MilestoneController {
                                  @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                  RedirectAttributes redirectAttributes) {
         try {
-            // 處理圖片上傳
+            if (milestoneDTO.getAge() == null || milestoneDTO.getAge().getId() == null) {
+                throw new IllegalArgumentException("Age id is required");
+            }
+            if (milestoneDTO.getCategory() == null || milestoneDTO.getCategory().getId() == null) {
+                throw new IllegalArgumentException("Category id is required");
+            }
             if (imageFile != null && !imageFile.isEmpty()) {
                 String base64Image = convertToBase64(imageFile);
                 milestoneDTO.setImageBase64(base64Image);
             }
-
+            if (milestoneDTO.getDescriptionObject() == null) {
+                milestoneDTO.setDescriptionObject(new LangFieldObject());
+            }
             milestoneService.updateMilestone(id, milestoneDTO);
             redirectAttributes.addFlashAttribute("success", "Milestone updated successfully!");
             return "redirect:/milestones";
@@ -130,12 +157,15 @@ public class MilestoneController {
         Optional<MilestoneDTO> milestoneOpt = milestoneService.getMilestoneById(id);
         if (milestoneOpt.isPresent()) {
             MilestoneDTO milestone = milestoneOpt.get();
+            if (milestone.getDescriptionObject() == null) {
+                milestone.setDescriptionObject(new LangFieldObject());
+            }
             model.addAttribute("milestone", milestone);
 
             if (editMode) {
-                // 編輯模式 - 載入表單需要的數據
-                model.addAttribute("categories", categoryRepository.findAll());
-                model.addAttribute("ages", ageRepository.findAll());
+                // 改用精簡選項
+                model.addAttribute("ageOptions", optionService.getAgeOptions());
+                model.addAttribute("categoryOptions", optionService.getCategoryOptions());
             }
 
             model.addAttribute("editMode", editMode);
@@ -153,26 +183,21 @@ public class MilestoneController {
     public String updateMilestoneFromView(@PathVariable UUID id,
                                          @ModelAttribute MilestoneDTO milestoneDTO,
                                          @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                                         @RequestParam Map<String, String> allParams,
                                          RedirectAttributes redirectAttributes) {
         try {
-            // 處理圖片上傳
+            if (milestoneDTO.getAge() == null || milestoneDTO.getAge().getId() == null) {
+                throw new IllegalArgumentException("Age id is required");
+            }
+            if (milestoneDTO.getCategory() == null || milestoneDTO.getCategory().getId() == null) {
+                throw new IllegalArgumentException("Category id is required");
+            }
             if (imageFile != null && !imageFile.isEmpty()) {
                 String base64Image = convertToBase64(imageFile);
                 milestoneDTO.setImageBase64(base64Image);
             }
-
-            // 處理多語言描述
-            LangFieldObject description = new LangFieldObject();
-            description.setTw(allParams.get("description.tw"));
-            description.setEn(allParams.get("description.en"));
-            description.setCn(allParams.get("description.cn"));
-            description.setJa(allParams.get("description.ja"));
-            description.setKo(allParams.get("description.ko"));
-            description.setVi(allParams.get("description.vi"));
-
-            milestoneDTO.setDescriptionObject(description);
-
+            if (milestoneDTO.getDescriptionObject() == null) {
+                milestoneDTO.setDescriptionObject(new LangFieldObject());
+            }
             milestoneService.updateMilestone(id, milestoneDTO);
             redirectAttributes.addFlashAttribute("success", "Milestone updated successfully!");
             return "redirect:/milestones/view/" + id;

@@ -2,6 +2,7 @@ package com.dean.baby.common.service;
 
 import com.dean.baby.common.dto.AgeDto;
 import com.dean.baby.common.dto.CategoryDTO;
+import com.dean.baby.common.dto.FlashcardSummaryDTO;
 import com.dean.baby.common.dto.MilestoneDTO;
 import com.dean.baby.common.entity.Age;
 import com.dean.baby.common.entity.Category;
@@ -42,8 +43,7 @@ public class MilestoneService extends BaseService {
     @Transactional
     public MilestoneDTO createMilestone(MilestoneDTO milestoneDTO) {
         Category category = findCategoryById(milestoneDTO.getCategory().getId());
-        Age age = findOrCreateAge(milestoneDTO.getAge().getMonth());
-
+        Age age = findAgeById(milestoneDTO.getAge().getId());
         Milestone milestone = new Milestone();
         milestone.setAge(age);
         milestone.setCategory(category);
@@ -90,12 +90,38 @@ public class MilestoneService extends BaseService {
                 .toList();
     }
 
+    /**
+     * 根據條件查找里程碑，支援 ageId 和 categoryId 的組合查詢
+     * 如果兩個參數都為 null 則返回所有里程碑
+     */
+    public List<MilestoneDTO> getMilestonesByConditions(UUID ageId, UUID categoryId) {
+        Language currentLanguage = LanguageUtil.getLanguageFromLocale();
+        List<Milestone> milestones;
+
+        if (ageId != null && categoryId != null) {
+            // 兩個條件都有，查詢組合條件
+            milestones = milestoneRepository.findByAgeIdAndCategoryId(ageId, categoryId);
+        } else if (ageId != null) {
+            // 只有 ageId
+            milestones = milestoneRepository.findByAgeId(ageId);
+        } else if (categoryId != null) {
+            // 只有 categoryId
+            milestones = milestoneRepository.findByCategoryId(categoryId);
+        } else {
+            // 都沒有，返回所有
+            milestones = milestoneRepository.findAll();
+        }
+
+        return milestones.stream()
+                .map(milestone -> buildMilestoneDTOWithLanguage(milestone, currentLanguage))
+                .toList();
+    }
+
     @Transactional
     public MilestoneDTO updateMilestone(UUID id, MilestoneDTO milestoneDTO) {
         Milestone milestone = findMilestoneById(id);
         Category category = findCategoryById(milestoneDTO.getCategory().getId());
-        Age age = findOrCreateAge(milestoneDTO.getAge().getMonth());
-
+        Age age = findAgeById(milestoneDTO.getAge().getId());
         milestone.setAge(age);
         milestone.setCategory(category);
         milestone.setDescription(updateDescriptionObject(milestone.getDescription(), milestoneDTO));
@@ -124,9 +150,9 @@ public class MilestoneService extends BaseService {
                 .orElseThrow(() -> new ApiException(SysCode.MILESTONE_NOT_FOUND));
     }
 
-    private Age findOrCreateAge(int month) {
-        return ageRepository.findByMonth(month)
-                .orElseGet(() -> createAgeIfNotExists(month));
+    private Age findAgeById(UUID ageId) {
+        return ageRepository.findById(ageId)
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND));
     }
 
     /**
@@ -135,28 +161,41 @@ public class MilestoneService extends BaseService {
     private LangFieldObject buildDescriptionObject(MilestoneDTO milestoneDTO) {
         LangFieldObject desc = milestoneDTO.getDescriptionObject();
         if (desc == null) {
+            // 建立空的語言物件，不自動將單一語系內容複製到所有語系
             desc = new LangFieldObject();
-            if (milestoneDTO.getDescription() != null) {
+            if (milestoneDTO.getDescription() != null && !milestoneDTO.getDescription().isBlank()) {
+                // 只設定目前 locale 對應語言，其餘保持空白
                 desc.setLangByLocaleName(milestoneDTO.getDescription());
             }
-            desc.setDefaultBeforeInsert("");
         }
         return desc;
     }
 
     /**
-     * 更新里程碑描述對象
+     * 更新里程碑描述對象：僅覆寫有提供值的語言，其他語言保留原值
      */
     private LangFieldObject updateDescriptionObject(LangFieldObject existingDesc, MilestoneDTO milestoneDTO) {
-        LangFieldObject desc = milestoneDTO.getDescriptionObject();
-        if (desc == null) {
-            desc = existingDesc != null ? existingDesc : new LangFieldObject();
-            if (milestoneDTO.getDescription() != null) {
-                desc.setLangByLocaleName(milestoneDTO.getDescription());
-            }
-            desc.setDefaultBeforeInsert("");
+        LangFieldObject incoming = milestoneDTO.getDescriptionObject();
+        if (existingDesc == null) {
+            // 沒有既存資料，直接建立（沿用 create 邏輯）
+            return buildDescriptionObject(milestoneDTO);
         }
-        return desc;
+        if (incoming == null) {
+            // 沒有新資料，保留原本
+            return existingDesc;
+        }
+        // 合併：僅當新值 != null 且非空字串時覆寫
+        for (Language lang : Language.values()) {
+            String code = lang.getCode();
+            String newVal = incoming.getLang(code);
+            if (newVal != null) { // 允許清空：若需要保留舊值則再判斷 isBlank
+                if (!newVal.isBlank()) {
+                    existingDesc.setLang(code, newVal);
+                }
+                // 若想支援清空語言，可以在此處加上 else 將其設為空字串
+            }
+        }
+        return existingDesc;
     }
 
     /**
@@ -174,6 +213,10 @@ public class MilestoneService extends BaseService {
                 .category(CategoryDTO.fromEntity(milestone.getCategory()))
                 .videoUrl(milestone.getVideoUrl())
                 .imageBase64(milestone.getImageBase64())
+                .flashcards(milestone.getFlashcards() != null ?
+                    milestone.getFlashcards().stream()
+                        .map(FlashcardSummaryDTO::fromEntity)
+                        .toList() : null)
                 .build();
     }
 

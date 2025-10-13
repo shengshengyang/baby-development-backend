@@ -37,17 +37,12 @@ public class MilestoneController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // 讀取所有 Milestones
+    // 根據條件查找 Milestone，支援 ageId 和 categoryId 的組合查詢，無條件時返回全部
     @GetMapping("/milestone")
-    public ResponseEntity<List<MilestoneDTO>> getAllMilestones() {
-        List<MilestoneDTO> milestones = milestoneService.getAllMilestones();
-        return ResponseEntity.ok(milestones);
-    }
-
-    // 根據年齡 UUID 查詢 Milestones（使用當前語言環境）
-    @GetMapping("/milestone/by-age/{ageId}")
-    public ResponseEntity<List<MilestoneDTO>> getMilestonesByAgeId(@PathVariable UUID ageId) {
-        List<MilestoneDTO> milestones = milestoneService.getMilestonesByAgeId(ageId);
+    public ResponseEntity<List<MilestoneDTO>> searchMilestones(
+            @RequestParam(required = false) UUID ageId,
+            @RequestParam(required = false) UUID categoryId) {
+        List<MilestoneDTO> milestones = milestoneService.getMilestonesByConditions(ageId, categoryId);
         return ResponseEntity.ok(milestones);
     }
 

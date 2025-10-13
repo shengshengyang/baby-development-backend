@@ -11,45 +11,35 @@ import java.util.UUID;
 @Builder
 public class ProgressDto {
     private UUID id;
-    private Baby baby;
-    private Flashcard flashcard;
-    private Milestone milestone;
-    private Video video;
+    private UUID babyId;
+    private UUID flashcardId;
+    private UUID milestoneId;
+    private UUID videoId;
     private ProgressType progressType;
-    private int ageInMonths;
-    private Category category;
-    private boolean achieved;
+    private ProgressStatus progressStatus;
+    private UUID categoryId;
     private String dateAchieved;
+    private String dateStarted;
 
     public static List<ProgressDto> fromEntities(List<Progress> progresses) {
         return progresses.stream()
-                .map(progress -> ProgressDto.builder()
-                        .id(progress.getId())
-                        .baby(progress.getBaby())
-                        .flashcard(progress.getFlashcard())
-                        .milestone(progress.getMilestone())
-                        .video(progress.getVideo())
-                        .progressType(progress.getProgressType())
-                        .ageInMonths(progress.getAgeInMonths())
-                        .category(progress.getCategory())
-                        .achieved(progress.isAchieved())
-                        .dateAchieved(progress.getDateAchieved() != null ? progress.getDateAchieved().toString() : null)
-                        .build())
+                .map(ProgressDto::fromEntity)
                 .toList();
     }
 
+    // 單筆的fromEntity方法
     public static ProgressDto fromEntity(Progress progress) {
         return ProgressDto.builder()
                 .id(progress.getId())
-                .baby(progress.getBaby())
-                .flashcard(progress.getFlashcard())
-                .milestone(progress.getMilestone())
-                .video(progress.getVideo())
+                .babyId(progress.getBaby() != null ? progress.getBaby().getId() : null)
+                .flashcardId(progress.getFlashcard() != null ? progress.getFlashcard().getId() : null)
+                .milestoneId(progress.getMilestone() != null ? progress.getMilestone().getId() : null)
+                .videoId(progress.getVideo() != null ? progress.getVideo().getId() : null)
                 .progressType(progress.getProgressType())
-                .ageInMonths(progress.getAgeInMonths())
-                .category(progress.getCategory())
-                .achieved(progress.isAchieved())
+                .progressStatus(progress.getProgressStatus())
+                .categoryId(progress.getCategory() != null ? progress.getCategory().getId() : null)
                 .dateAchieved(progress.getDateAchieved() != null ? progress.getDateAchieved().toString() : null)
+                .dateStarted(progress.getDateStarted() != null ? progress.getDateStarted().toString() : null)
                 .build();
     }
 }

@@ -49,7 +49,7 @@ public class FlashCardService extends BaseService {
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
 
         // 查找 Category
-        UUID categoryId = dto.getCategory() != null ? dto.getCategory().getId() : null;
+        UUID categoryId = dto.getCategoryId();
         if (categoryId == null) {
             throw new RuntimeException("Category id is required");
         }
@@ -102,8 +102,8 @@ public class FlashCardService extends BaseService {
                 .orElseThrow(() -> new RuntimeException("Flashcard not found"));
 
         // 更新屬性：Category, Subject, ImageUrl, 以及 Milestone (若提供)
-        if (dto.getCategory() != null && dto.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(dto.getCategory().getId())
+        if (dto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             flashcard.setCategory(category);
         }
@@ -180,15 +180,9 @@ public class FlashCardService extends BaseService {
                 .map(FlashcardTranslationDTO::fromEntity)
                 .toList();
 
-        return FlashcardDTO.builder()
-                .id(flashcard.getId())
-                .category(CategoryDTO.fromEntity(flashcard.getCategory()))
-                .milestone(MilestoneDTO.fromEntity(flashcard.getMilestone()))
-                .ageInMonths(flashcard.getMilestone() != null ? flashcard.getMilestone().getAgeInMonths() : 0)
-                .subject(flashcard.getSubject())
-                .imageUrl(flashcard.getImageUrl())
-                .translations(translationDTOs)
-                .build();
+        FlashcardDTO dto = FlashcardDTO.fromEntity(flashcard);
+        dto.setTranslations(translationDTOs);
+        return dto;
     }
 
     private FlashcardLanguageDTO convertToLanguageDTO(Flashcard flashcard, Language lang) {
@@ -205,6 +199,32 @@ public class FlashCardService extends BaseService {
      */
     public List<FlashcardDTO> getFlashcardsByAgeId(UUID ageId) {
         return flashcardRepository.findByAgeId(ageId).stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    /**
+     * 根據條件查找 FlashCard，支援 ageId 和 categoryId 的組合查詢
+     * 如果兩個參數都為 null 則返回所有 FlashCard
+     */
+    public List<FlashcardDTO> getFlashcardsByConditions(UUID ageId, UUID categoryId) {
+        List<Flashcard> flashcards;
+
+        if (ageId != null && categoryId != null) {
+            // 兩個條件都有，查詢組合條件
+            flashcards = flashcardRepository.findByAgeIdAndCategoryId(ageId, categoryId);
+        } else if (ageId != null) {
+            // 只有 ageId
+            flashcards = flashcardRepository.findByAgeId(ageId);
+        } else if (categoryId != null) {
+            // 只有 categoryId
+            flashcards = flashcardRepository.findByCategoryId(categoryId);
+        } else {
+            // 都沒有，返回所有
+            flashcards = flashcardRepository.findAll();
+        }
+
+        return flashcards.stream()
                 .map(this::convertToDTO)
                 .toList();
     }

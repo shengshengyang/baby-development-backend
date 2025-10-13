@@ -1,12 +1,12 @@
 package com.dean.baby.common.dto;
 
 import com.dean.baby.common.dto.common.LangFieldObject;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,9 +18,8 @@ public class MilestoneDTO {
     private AgeDto age;
     private CategoryDTO category;
 
-    // 新增：多語描述（���供目前語系字串與完整物件）
+    // 新增：多語描述（提供目前語系字串與完整物件）
     private String description;
-    @JsonIgnore
     private LangFieldObject descriptionObject;
 
     // 新增：影片連結
@@ -28,6 +27,9 @@ public class MilestoneDTO {
 
     // 新增：base64 圖片
     private String imageBase64;
+
+    // 新增：對應的 FlashCard 列表
+    private List<FlashcardSummaryDTO> flashcards;
 
     public static MilestoneDTO fromEntity(com.dean.baby.common.entity.Milestone milestone) {
         if (milestone == null) {
@@ -41,6 +43,10 @@ public class MilestoneDTO {
                 .descriptionObject(milestone.getDescription())
                 .videoUrl(milestone.getVideoUrl())
                 .imageBase64(milestone.getImageBase64())
+                .flashcards(milestone.getFlashcards() != null ?
+                    milestone.getFlashcards().stream()
+                        .map(FlashcardSummaryDTO::fromEntity)
+                        .toList() : null)
                 .build();
     }
 }

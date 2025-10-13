@@ -1,7 +1,6 @@
 package com.dean.baby.common.util;
 
 import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.dto.common.LangFieldObject;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -18,16 +17,13 @@ public class LanguageUtil {
      * @return 對應的Language枚舉
      */
     public static Language getLanguageFromLocale() {
-        // 創建一個臨時的 LangFieldObject 來使用其語言映射邏輯
-        LangFieldObject tempLangObject = new LangFieldObject();
         String currentLocale = LocaleContextHolder.getLocale().toLanguageTag().toLowerCase();
 
         // 使用 LangFieldObject 中的 mapLocaleToLanguageCode 邏輯
         String languageCode = mapLocaleToLanguageCode(currentLocale);
 
         // 通過語言代碼獲取 Language 枚舉
-        Language language = Language.fromCode(languageCode);
-        return language != null ? language : Language.TRADITIONAL_CHINESE;
+        return getLanguageFromCode(languageCode);
     }
 
     /**
