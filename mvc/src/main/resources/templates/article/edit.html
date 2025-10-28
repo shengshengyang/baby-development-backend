@@ -195,7 +195,6 @@
     </div>
 
     <script th:inline="javascript">
-        const article = /*[[${article}]]*/ {};
         const form = document.getElementById('articleForm');
         const loadingOverlay = document.getElementById('loadingOverlay');
 
@@ -205,6 +204,10 @@
 
         // 初始化所有 CKEditor 並載入現有資料
         window.addEventListener('DOMContentLoaded', async () => {
+            // 獲取 articleId
+            const articleId = document.getElementById('articleId').value;
+            console.log('Loading article with ID:', articleId);
+
             // 初始化 CKEditor
             for (const lang of languages) {
                 try {
@@ -228,23 +231,51 @@
                 }
             }
 
-            // 載入現有資料
-            if (article && article.translations) {
-                article.translations.forEach(translation => {
-                    const langCode = translation.languageCode.name || translation.languageCode;
+            // 通過 API 載入文章資料（獲取所有語系）
+            try {
+                const apiUrl = `/articles/${articleId}`;
+                console.log('Fetching article from:', apiUrl);
 
-                    // 填入標題
-                    const titleInput = document.querySelector(`input[data-lang="${langCode}"][data-field="title"]`);
-                    if (titleInput && translation.title) {
-                        titleInput.value = translation.title;
-                    }
+                const response = await fetch(apiUrl);
+                console.log('Response status:', response.status);
 
-                    // 填入內容到 CKEditor
-                    const editor = editors[langCode];
-                    if (editor && translation.content) {
-                        editor.setData(translation.content);
-                    }
-                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API error response:', errorText);
+                    throw new Error(`Failed to load article data: ${response.status} ${errorText}`);
+                }
+
+                const article = await response.json();
+                console.log('Loaded article:', article);
+
+                // 載入現有資料
+                if (article && article.translations) {
+                    console.log('Translations found:', article.translations.length);
+                    article.translations.forEach(translation => {
+                        // Language enum 會被序列化為字符串，例如 "ENGLISH", "TRADITIONAL_CHINESE"
+                        const langCode = translation.languageCode;
+                        console.log(`Loading translation for ${langCode}:`, translation);
+
+                        // 填入標題
+                        const titleInput = document.querySelector(`input[data-lang="${langCode}"][data-field="title"]`);
+                        if (titleInput && translation.title) {
+                            titleInput.value = translation.title;
+                            console.log(`Set title for ${langCode}`);
+                        }
+
+                        // 填入內容到 CKEditor
+                        const editor = editors[langCode];
+                        if (editor && translation.content) {
+                            editor.setData(translation.content);
+                            console.log(`Set content for ${langCode}`);
+                        }
+                    });
+                } else {
+                    console.warn('No translations found in article data');
+                }
+            } catch (error) {
+                console.error('Error loading article:', error);
+                alert('載入文章資料失敗: ' + error.message + '\n請檢查瀏覽器 Console 查看詳細錯誤');
             }
         });
 
