@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Milestone 詳細資訊</title>
+    <title th:text="${editMode ? '編輯 Milestone' : 'Milestone 詳細資訊'}">Milestone 詳細資訊</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -45,29 +46,32 @@
 
     <!-- 返回按鈕和操作按鈕 -->
     <div class="mb-6 flex space-x-3">
-        <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+        <a th:href="@{/milestones}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             返回列表
-        </button>
-        <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+        </a>
+        <a th:href="@{/milestones/view/{id}(id=${milestone.id})}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
             </svg>
             取消編輯
-        </button>
+        </a>
     </div>
 
     <!-- 編輯表單 -->
-    <form method="post" enctype="multipart/form-data">
+    <form th:action="@{/milestones/view/{id}(id=${milestone.id})}" method="post" enctype="multipart/form-data">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- 圖片編輯區域 -->
             <div class="lg:col-span-1">
                 <div class="card-bg rounded-lg shadow-md overflow-hidden">
                     <div class="aspect-square bg-gray-50 flex items-center justify-center">
-                        <div class="text-center text-gray-400">
+                        <div th:if="${milestone.imageBase64 != null}" class="w-full h-full">
+                            <img th:src="${milestone.imageBase64}" alt="Milestone 圖片" class="w-full h-full object-cover" />
+                        </div>
+                        <div th:unless="${milestone.imageBase64 != null}" class="text-center text-gray-400">
                             <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -100,9 +104,10 @@
                             <select id="age" name="age.id" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
                                 <option value="">請選擇年齡</option>
-                                <option value="1">0-6個月</option>
-                                <option value="2">6-12個月</option>
-                                <option value="3">1-2歲</option>
+                                <option th:each="ageOpt : ${ageOptions}"
+                                        th:value="${ageOpt.value}"
+                                        th:text="${ageOpt.label}"
+                                        th:selected="${milestone.age != null and milestone.age.id.toString() == ageOpt.value}"></option>
                             </select>
                         </div>
 
@@ -114,9 +119,10 @@
                             <select id="category" name="category.id" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
                                 <option value="">請選擇類別</option>
-                                <option value="1">認知發展</option>
-                                <option value="2">語言發展</option>
-                                <option value="3">動作發展</option>
+                                <option th:each="catOpt : ${categoryOptions}"
+                                        th:value="${catOpt.value}"
+                                        th:text="${catOpt.label}"
+                                        th:selected="${milestone.category != null and milestone.category.id.toString() == catOpt.value}"></option>
                             </select>
                         </div>
                     </div>
@@ -148,12 +154,12 @@
                                   placeholder="請輸入繁體中文描述"
                                   class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
                         <!-- 隱藏欄位綁定後端物件 -->
-                        <input type="hidden" name="descriptionObject.tw" />
-                        <input type="hidden" name="descriptionObject.cn" />
-                        <input type="hidden" name="descriptionObject.en" />
-                        <input type="hidden" name="descriptionObject.ja" />
-                        <input type="hidden" name="descriptionObject.ko" />
-                        <input type="hidden" name="descriptionObject.vi" />
+                        <input type="hidden" name="descriptionObject.tw" th:value="${milestone.descriptionObject != null ? milestone.descriptionObject.tw : ''}" />
+                        <input type="hidden" name="descriptionObject.cn" th:value="${milestone.descriptionObject != null ? milestone.descriptionObject.cn : ''}" />
+                        <input type="hidden" name="descriptionObject.en" th:value="${milestone.descriptionObject != null ? milestone.descriptionObject.en : ''}" />
+                        <input type="hidden" name="descriptionObject.ja" th:value="${milestone.descriptionObject != null ? milestone.descriptionObject.ja : ''}" />
+                        <input type="hidden" name="descriptionObject.ko" th:value="${milestone.descriptionObject != null ? milestone.descriptionObject.ko : ''}" />
+                        <input type="hidden" name="descriptionObject.vi" th:value="${milestone.descriptionObject != null ? milestone.descriptionObject.vi : ''}" />
                         <p class="text-[11px] text-gray-400">切換語言按鈕會儲存目前內容並載入所選語言描述。</p>
                     </div>
                 </div>
@@ -162,13 +168,14 @@
                 <div class="card-bg rounded-lg shadow-md p-6">
                     <h2 class="text-xl font-semibold mb-4 text-gray-900">相關影片</h2>
                     <input type="url" id="videoUrl" name="videoUrl"
+                           th:value="${milestone.videoUrl}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
                            placeholder="https://example.com/video.mp4">
                 </div>
 
                 <!-- 提交按鈕 -->
                 <div class="flex justify-end space-x-3">
-                    <button type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">取消</button>
+                    <a th:href="@{/milestones/view/{id}(id=${milestone.id})}" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">取消</a>
                     <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md shadow-sm hover:bg-opacity-90 focus:ring-2 focus:ring-primary focus:ring-opacity-50">
                         更新
                     </button>
@@ -181,7 +188,7 @@
 <script>
     (function(){
         // 啟用詳細除錯資訊
-        const DEBUG_LANG = true;
+        const DEBUG_LANG = false;
         const log = (...args) => {
             if(DEBUG_LANG) {
                 console.log('[LangSwitch]', new Date().toLocaleTimeString(), ...args);

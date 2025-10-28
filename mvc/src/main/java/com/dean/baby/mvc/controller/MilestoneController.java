@@ -8,6 +8,7 @@ import com.dean.baby.common.service.MilestoneService;
 import com.dean.baby.common.service.OptionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -34,6 +35,15 @@ public class MilestoneController {
         this.categoryRepository = categoryRepository;
         this.ageRepository = ageRepository;
         this.optionService = optionService;
+    }
+
+    /**
+     * 初始化資料綁定器，啟用自動增長 nested paths
+     * 這樣 Spring 可以自動創建 nested objects
+     */
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAutoGrowNestedPaths(true);
     }
 
     // 顯示所有 Milestones 列表
