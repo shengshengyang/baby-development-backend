@@ -126,7 +126,11 @@ public class MilestoneService extends BaseService {
         milestone.setCategory(category);
         milestone.setDescription(updateDescriptionObject(milestone.getDescription(), milestoneDTO));
         milestone.setVideoUrl(milestoneDTO.getVideoUrl());
-        milestone.setImageBase64(milestoneDTO.getImageBase64());
+
+        // 只有在有新圖片時才更新圖片，避免覆蓋掉原有圖片
+        if (milestoneDTO.getImageBase64() != null && !milestoneDTO.getImageBase64().isEmpty()) {
+            milestone.setImageBase64(milestoneDTO.getImageBase64());
+        }
 
         Milestone updated = milestoneRepository.save(milestone);
         return MilestoneDTO.fromEntity(updated);
