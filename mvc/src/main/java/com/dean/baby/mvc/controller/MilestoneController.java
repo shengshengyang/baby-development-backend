@@ -96,54 +96,6 @@ public class MilestoneController {
         }
     }
 
-    // 顯示編輯 Milestone 表單
-    @GetMapping("/edit/{id}")
-    public String editMilestone(@PathVariable UUID id, Model model) {
-        Optional<MilestoneDTO> milestoneOpt = milestoneService.getMilestoneById(id);
-        if (milestoneOpt.isPresent()) {
-            MilestoneDTO milestone = milestoneOpt.get();
-            // 確保 descriptionObject 不為 null
-            if (milestone.getDescriptionObject() == null) {
-                milestone.setDescriptionObject(new LangFieldObject());
-            }
-            model.addAttribute("milestone", milestone);
-            model.addAttribute("categoryOptions", optionService.getCategoryOptions());
-            model.addAttribute("ageOptions", optionService.getAgeOptions());
-            return "milestone/form";
-        } else {
-            model.addAttribute("error", "Milestone not found!");
-            return "redirect:/milestones";
-        }
-    }
-
-    // 處理更新 Milestone
-    @PostMapping("/edit/{id}")
-    public String updateMilestone(@PathVariable UUID id,
-                                 @ModelAttribute MilestoneDTO milestoneDTO,
-                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                                 RedirectAttributes redirectAttributes) {
-        try {
-            if (milestoneDTO.getAge() == null || milestoneDTO.getAge().getId() == null) {
-                throw new IllegalArgumentException("Age id is required");
-            }
-            if (milestoneDTO.getCategory() == null || milestoneDTO.getCategory().getId() == null) {
-                throw new IllegalArgumentException("Category id is required");
-            }
-            if (imageFile != null && !imageFile.isEmpty()) {
-                String base64Image = convertToBase64(imageFile);
-                milestoneDTO.setImageBase64(base64Image);
-            }
-            if (milestoneDTO.getDescriptionObject() == null) {
-                milestoneDTO.setDescriptionObject(new LangFieldObject());
-            }
-            milestoneService.updateMilestone(id, milestoneDTO);
-            redirectAttributes.addFlashAttribute("success", "Milestone updated successfully!");
-            return "redirect:/milestones";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update milestone: " + e.getMessage());
-            return "redirect:/milestones/edit/" + id;
-        }
-    }
 
     // 處理刪除 Milestone
     @PostMapping("/delete/{id}")

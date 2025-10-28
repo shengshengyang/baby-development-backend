@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboardLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${editMode ? '編輯分類' : '分類詳細資訊'}">分類詳細資訊</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="max-w-4xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6 text-primary" th:text="${editMode ? '編輯分類' : '分類詳細資訊'}"></h1>
+
+        <!-- 返回按鈕和操作按鈕 -->
+        <div class="mb-6 flex space-x-3">
+            <a th:href="@{/categories}" class="inline-flex items-center px-4 py-2 border border-custom rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 card-bg hover:bg-gray-50 dark:hover:bg-gray-600">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                返回列表
+            </a>
+            <a th:if="${!editMode}" th:href="@{/categories/view/{id}(id=${category.id}, edit=true)}"
+               class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md shadow-sm hover:bg-opacity-90">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                編輯
+            </a>
+            <a th:if="${editMode}" th:href="@{/categories/view/{id}(id=${category.id})}"
+               class="inline-flex items-center px-4 py-2 border border-custom rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 card-bg hover:bg-gray-50 dark:hover:bg-gray-600">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                取消編輯
+            </a>
+        </div>
+
+        <!-- 成功/錯誤訊息 -->
+        <div th:if="${success}" class="mb-6 p-4 rounded-lg success-bg border">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="success-text" th:text="${success}"></span>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="mb-6 p-4 rounded-lg error-bg border">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-red-600 dark:text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="error-text" th:text="${error}"></span>
+            </div>
+        </div>
+
+        <!-- 檢視模式 -->
+        <div th:if="${!editMode}" class="card-bg rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center justify-between">
+                <span>分類名稱（多語言）</span>
+                <!-- 語言按鈕群組 -->
+                <div id="viewLangButtonGroup" class="flex flex-wrap gap-1">
+                    <button type="button" class="view-lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="TRADITIONAL_CHINESE" data-field="tw">繁體</button>
+                    <button type="button" class="view-lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="SIMPLIFIED_CHINESE" data-field="cn">简体</button>
+                    <button type="button" class="view-lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="ENGLISH" data-field="en">EN</button>
+                    <button type="button" class="view-lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="JAPANESE" data-field="ja">日</button>
+                    <button type="button" class="view-lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="KOREAN" data-field="ko">韓</button>
+                    <button type="button" class="view-lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="VIETNAMESE" data-field="vi">越</button>
+                </div>
+            </h2>
+            <div class="space-y-2">
+                <label id="viewCurrentLangLabel" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">繁體中文</label>
+                <div class="px-3 py-2 border rounded-md input-bg border-custom min-h-[60px] flex items-center">
+                    <p id="viewNameText" class="text-gray-900 dark:text-gray-100"
+                       th:text="${category.name != null ? category.name.tw : ''}"></p>
+                </div>
+                <!-- 隱藏的資料屬性用於存儲所有語言的名稱 -->
+                <div id="viewNameData" style="display:none;"
+                     th:attr="data-tw=${category.name != null ? category.name.tw : ''},
+                             data-cn=${category.name != null ? category.name.cn : ''},
+                             data-en=${category.name != null ? category.name.en : ''},
+                             data-ja=${category.name != null ? category.name.ja : ''},
+                             data-ko=${category.name != null ? category.name.ko : ''},
+                             data-vi=${category.name != null ? category.name.vi : ''}">
+                </div>
+            </div>
+        </div>
+
+        <!-- 編輯模式 -->
+        <form th:if="${editMode}" th:action="@{/categories/view/{id}(id=${category.id})}" method="post">
+            <div class="card-bg rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center justify-between">
+                    <span>分類名稱（多語言）</span>
+                    <div class="flex items-center space-x-2">
+                        <!-- 語言按鈕群組 -->
+                        <div id="langButtonGroup" class="flex flex-wrap gap-1">
+                            <button type="button" class="lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="TRADITIONAL_CHINESE" data-field="tw">繁體</button>
+                            <button type="button" class="lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="SIMPLIFIED_CHINESE" data-field="cn">简体</button>
+                            <button type="button" class="lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="ENGLISH" data-field="en">EN</button>
+                            <button type="button" class="lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="JAPANESE" data-field="ja">日</button>
+                            <button type="button" class="lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="KOREAN" data-field="ko">韓</button>
+                            <button type="button" class="lang-btn px-2 py-1 text-xs rounded border border-custom" data-lang="VIETNAMESE" data-field="vi">越</button>
+                        </div>
+                        <button type="button" id="copyMainNameBtn"
+                                class="px-3 py-1 bg-blue-100 text-blue-800 rounded text-xs hover:bg-blue-200 transition-colors">
+                            複製繁體到其他語言
+                        </button>
+                    </div>
+                </h2>
+                <div class="space-y-2">
+                    <label id="currentLangLabel" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">繁體中文名稱 (主語言)</label>
+                    <input type="text" id="categoryNameInput" required
+                           placeholder="請輸入繁體中文名稱"
+                           class="w-full px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary input-bg">
+                    <!-- 隱藏欄位綁定後端物件 -->
+                    <input type="hidden" name="nameObject.tw" th:value="${category.name != null ? category.name.tw : ''}" />
+                    <input type="hidden" name="nameObject.cn" th:value="${category.name != null ? category.name.cn : ''}" />
+                    <input type="hidden" name="nameObject.en" th:value="${category.name != null ? category.name.en : ''}" />
+                    <input type="hidden" name="nameObject.ja" th:value="${category.name != null ? category.name.ja : ''}" />
+                    <input type="hidden" name="nameObject.ko" th:value="${category.name != null ? category.name.ko : ''}" />
+                    <input type="hidden" name="nameObject.vi" th:value="${category.name != null ? category.name.vi : ''}" />
+                    <p class="text-[11px] help-text">切換語言按鈕會儲存目前內容並載入所選語言名稱。</p>
+                </div>
+
+                <!-- 提交按鈕 -->
+                <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-custom">
+                    <a th:href="@{/categories/view/{id}(id=${category.id})}" class="px-4 py-2 border border-custom rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 card-bg hover:bg-gray-50 dark:hover:bg-gray-600">取消</a>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md shadow-sm hover:bg-opacity-90 focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                        更新
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 檢視模式的語言切換功能 -->
+    <script th:if="${!editMode}">
+        (function(){
+            // 語言配置
+            const langConfig = [
+                {key:'TRADITIONAL_CHINESE', field:'tw', label:'繁體中文'},
+                {key:'SIMPLIFIED_CHINESE', field:'cn', label:'簡體中文'},
+                {key:'ENGLISH', field:'en', label:'英文'},
+                {key:'JAPANESE', field:'ja', label:'日文'},
+                {key:'KOREAN', field:'ko', label:'韓文'},
+                {key:'VIETNAMESE', field:'vi', label:'越南文'}
+            ];
+
+            // DOM 元素
+            const nameText = document.getElementById('viewNameText');
+            const label = document.getElementById('viewCurrentLangLabel');
+            const dataContainer = document.getElementById('viewNameData');
+            const group = document.getElementById('viewLangButtonGroup');
+
+            if(!nameText || !group || !dataContainer) {
+                return;
+            }
+
+            let activeKey = 'TRADITIONAL_CHINESE';
+
+            // CSS 類別定義
+            const inactiveClasses = ['bg-white','dark:bg-gray-700','text-gray-700','dark:text-gray-300','hover:bg-gray-100','dark:hover:bg-gray-600'];
+            const activeClasses = ['bg-primary','text-white'];
+
+            // 輔助函數
+            function cfg(key) {
+                return langConfig.find(c => c.key === key);
+            }
+
+            // 載入當前語言內容
+            function loadActive(){
+                const c = cfg(activeKey);
+                if(!c) return;
+
+                // 從 data 屬性讀取內容
+                const value = dataContainer.getAttribute('data-' + c.field) || '';
+
+                // 更新顯示內容
+                nameText.textContent = value || '無內容';
+
+                // 更新標籤
+                label.textContent = c.label;
+            }
+
+            // 更新按鈕外觀
+            function refreshButtons(){
+                group.querySelectorAll('.view-lang-btn').forEach(btn => {
+                    const btnLang = btn.getAttribute('data-lang');
+                    const isActive = btnLang === activeKey;
+
+                    // 移除所有狀態類別
+                    [...activeClasses, ...inactiveClasses].forEach(cls => {
+                        btn.classList.remove(cls);
+                    });
+
+                    // 添加對應狀態類別
+                    if(isActive) {
+                        activeClasses.forEach(cls => btn.classList.add(cls));
+                        btn.setAttribute('aria-selected', 'true');
+                    } else {
+                        inactiveClasses.forEach(cls => btn.classList.add(cls));
+                        btn.setAttribute('aria-selected', 'false');
+                    }
+                });
+            }
+
+            // 切換語言
+            function switchLang(nextKey) {
+                if(nextKey === activeKey) return;
+
+                // 切換到新語言
+                activeKey = nextKey;
+
+                // 載入新語言內容
+                loadActive();
+
+                // 更新按鈕狀態
+                refreshButtons();
+            }
+
+            // 初始化
+            loadActive();
+            refreshButtons();
+
+            // 綁定按鈕點擊事件
+            group.querySelectorAll('.view-lang-btn').forEach((btn) => {
+                const btnLang = btn.getAttribute('data-lang');
+
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    switchLang(btnLang);
+                });
+            });
+        })();
+    </script>
+
+    <!-- 編輯模式的功能 -->
+    <script th:if="${editMode}">
+        // 語言切換功能
+        (function(){
+            // 語言配置
+            const langConfig = [
+                {key:'TRADITIONAL_CHINESE', field:'tw', label:'繁體中文名稱', placeholder:'請輸入繁體中文名稱', main:true},
+                {key:'SIMPLIFIED_CHINESE', field:'cn', label:'簡體中文名稱', placeholder:'请输入简体中文名称'},
+                {key:'ENGLISH', field:'en', label:'英文名稱', placeholder:'Enter English name'},
+                {key:'JAPANESE', field:'ja', label:'日文名稱', placeholder:'日本語名を入力してください'},
+                {key:'KOREAN', field:'ko', label:'韓文名稱', placeholder:'한국어 이름을 입력하세요'},
+                {key:'VIETNAMESE', field:'vi', label:'越南文名稱', placeholder:'Nhập tên tiếng Việt'}
+            ];
+
+            // DOM 元素
+            const form = document.querySelector('form[method="post"]');
+            const inputField = document.getElementById('categoryNameInput');
+            const label = document.getElementById('currentLangLabel');
+            const copyBtn = document.getElementById('copyMainNameBtn');
+            const group = document.getElementById('langButtonGroup');
+
+            if(!inputField || !group) {
+                return;
+            }
+
+            let activeKey = 'TRADITIONAL_CHINESE';
+
+            // CSS 類別定義
+            const inactiveClasses = ['bg-white','dark:bg-gray-700','text-gray-700','dark:text-gray-300','hover:bg-gray-100','dark:hover:bg-gray-600'];
+            const activeClasses = ['bg-primary','text-white'];
+
+            // 輔助函數
+            function cfg(key) {
+                return langConfig.find(c => c.key === key);
+            }
+
+            function hidden(field) {
+                return document.querySelector(`[name="nameObject.${field}"]`);
+            }
+
+            // 保存當前語言內容
+            function saveActive(){
+                const c = cfg(activeKey);
+                if(!c) return;
+
+                const h = hidden(c.field);
+                if(!h) return;
+
+                h.value = inputField.value;
+            }
+
+            // 載入當前語言內容
+            function loadActive(){
+                const c = cfg(activeKey);
+                if(!c) return;
+
+                const h = hidden(c.field);
+                const value = h ? h.value : '';
+
+                // 更新 input
+                inputField.value = value;
+                inputField.placeholder = c.placeholder || '';
+
+                // 更新標籤
+                label.textContent = c.label + (c.main ? ' (主語言)' : '');
+
+                // 更新必填屬性
+                if(c.main) {
+                    inputField.setAttribute('required','required');
+                } else {
+                    inputField.removeAttribute('required');
+                }
+            }
+
+            // 更新按鈕外觀
+            function refreshButtons(){
+                group.querySelectorAll('.lang-btn').forEach(btn => {
+                    const btnLang = btn.getAttribute('data-lang');
+                    const isActive = btnLang === activeKey;
+
+                    // 移除所有狀態類別
+                    [...activeClasses, ...inactiveClasses].forEach(cls => {
+                        btn.classList.remove(cls);
+                    });
+
+                    // 添加對應狀態類別
+                    if(isActive) {
+                        activeClasses.forEach(cls => btn.classList.add(cls));
+                        btn.setAttribute('aria-selected', 'true');
+                    } else {
+                        inactiveClasses.forEach(cls => btn.classList.add(cls));
+                        btn.setAttribute('aria-selected', 'false');
+                    }
+                });
+            }
+
+            // 切換語言
+            function switchLang(nextKey) {
+                if(nextKey === activeKey) return;
+
+                // 保存當前語言內容
+                saveActive();
+
+                // 切換到新語言
+                activeKey = nextKey;
+
+                // 載入新語言內容
+                loadActive();
+
+                // 更新按鈕狀態
+                refreshButtons();
+            }
+
+            // 初始化
+            const twHidden = hidden('tw');
+            if(twHidden && inputField.value) {
+                twHidden.value = inputField.value;
+            }
+
+            // 載入初始語言
+            loadActive();
+            refreshButtons();
+
+            // 綁定按鈕點擊事件
+            group.querySelectorAll('.lang-btn').forEach((btn) => {
+                const btnLang = btn.getAttribute('data-lang');
+
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    switchLang(btnLang);
+                });
+            });
+
+            // 綁定 input 輸入事件
+            inputField.addEventListener('input', function() {
+                saveActive();
+            });
+
+            // 綁定表單提交事件
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    saveActive();
+
+                    const base = hidden('tw');
+                    if(!base || !base.value.trim()) {
+                        alert('請填寫繁體中文名稱');
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+
+            // 綁定複製按鈕事件
+            if(copyBtn) {
+                copyBtn.addEventListener('click', function() {
+                    saveActive();
+
+                    const base = hidden('tw');
+                    const val = base ? base.value.trim() : '';
+
+                    if(!val) {
+                        alert('繁體中文名稱為空，無法複製');
+                        return;
+                    }
+
+                    let filled = 0;
+                    langConfig.filter(c => !c.main).forEach(c => {
+                        const h = hidden(c.field);
+                        if(h && !h.value.trim()) {
+                            h.value = val;
+                            filled++;
+                        }
+                    });
+
+                    loadActive();
+
+                    const message = filled > 0 ? `已填入 ${filled} 個語言空白欄位` : '其他語言皆已有內容，未變更';
+                    alert(message);
+                });
+            }
+        })();
+    </script>
+</section>
+</body>
+</html>
