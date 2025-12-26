@@ -66,6 +66,43 @@ docker run --rm \
 - **Elasticsearch**: http://localhost:9200
 - **Logstash 監控**: http://localhost:9600
 
+## Kibana 8.x 設定步驟（Data Views）
+
+首次使用 Kibana 需要建立 Data View：
+
+1. **打開 Kibana**
+   - 訪問：http://localhost:5601
+
+2. **建立 Data View**
+   - 方式一：前往「Stack Management」>「Data Views」>「Create data view」
+   - 方式二：直接點擊左側選單「Kibana」>「Data Views」>「Create data view」
+
+3. **設定 Data View**
+   - **Name**: `baby-development-backend-*`
+   - **Index pattern**: `baby-development-backend-*`
+   - **Time field**: 選擇 `@timestamp`
+   - 點擊「Save data view」
+
+4. **查看日誌**
+   - 前往「Discover」頁面
+   - 選擇剛建立的 `baby-development-backend-*` Data View
+   - 即可開始查詢和分析日誌
+
+**常見查詢範例**：
+```
+# 查看 API 請求
+message: "API_REQUEST*"
+
+# 查看錯誤日誌
+level: "ERROR"
+
+# 查看特定實體變更
+action: "CREATE" AND entity: "Baby"
+
+# 追蹤請求 ID
+requestId: "550e8400-e29b-41d4-a716-446655440000"
+```
+
 ## 故障排除
 
 ```bash

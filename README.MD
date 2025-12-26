@@ -117,10 +117,13 @@ docker-compose -f docker-compose-with-elk.yml up --build
 
 **Kibana 初始設定**：
 1. 打開 http://localhost:5601
-2. 前往「Stack Management」>「Index Patterns」
-3. 建立索引模式：`baby-development-backend-*`
-4. 選擇時間欄位：`@timestamp`
-5. 前往「Discover」頁面開始查詢日誌
+2. 前往「Stack Management」>「Data Views」（或「Kibana」>「Data Views」）
+3. 點擊「Create data view」建立資料視圖
+4. 設定名稱：`baby-development-backend-*`
+5. 選擇索引模式：`baby-development-backend-*`
+6. 選擇時間欄位：`@timestamp`
+7. 點擊「Save data view」儲存
+8. 前往「Discover」頁面開始查詢日誌
 
 **停止與清理**：
 ```bash
@@ -393,10 +396,13 @@ This configuration starts:
 
 **Kibana Initial Setup**:
 1. Open http://localhost:5601
-2. Go to "Stack Management" > "Index Patterns"
-3. Create index pattern: `baby-development-backend-*`
-4. Select time field: `@timestamp`
-5. Go to "Discover" page to query logs
+2. Go to "Stack Management" > "Data Views" (or "Kibana" > "Data Views")
+3. Click "Create data view"
+4. Set name: `baby-development-backend-*`
+5. Set index pattern: `baby-development-backend-*`
+6. Select time field: `@timestamp`
+7. Click "Save data view"
+8. Go to "Discover" page to query logs
 
 **Stop and Cleanup**:
 ```bash
