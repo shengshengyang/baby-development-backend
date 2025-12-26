@@ -1,0 +1,131 @@
+version: "3.9"
+
+services:
+  # Elasticsearch - 儲存和索引日誌
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: baby-dev-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=baby-dev-cluster
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - baby-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # Logstash - 日誌處理和轉發
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: baby-dev-logstash
+    volumes:
+      - ./logstash-docker.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - logstash_data:/usr/share/logstash/data
+    ports:
+      - "5000:5000"
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+      - xpack.monitoring.enabled=false
+    networks:
+      - baby-dev-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Kibana - 日誌視覺化介面
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: baby-dev-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=baby-dev-kibana
+      - SERVER_HOST=0.0.0.0
+    ports:
+      - "5601:5601"
+    networks:
+      - baby-dev-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # API 模組 - 啟用 Logstash 日誌
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: baby-dev-api
+    ports:
+      - "8085:8085"
+    command: ["--server.port=8085"]
+    environment:
+      # Redis 配置
+      - SPRING_DATA_REDIS_HOST=host.docker.internal
+      - SPRING_DATA_REDIS_PORT=6379
+      # 啟用 Logstash 日誌傳送
+      - LOGSTASH_ENABLED=true
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - baby-dev-network
+    depends_on:
+      logstash:
+        condition: service_started
+    restart: unless-stopped
+
+  # MVC 模組 - 啟用 Logstash 日誌
+  mvc:
+    build:
+      context: .
+      dockerfile: mvc/Dockerfile
+    container_name: baby-dev-mvc
+    ports:
+      - "8084:8084"
+    command: ["--server.port=8084"]
+    environment:
+      # 啟用 Logstash 日誌傳送
+      - LOGSTASH_ENABLED=true
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - baby-dev-network
+    depends_on:
+      - api
+      - logstash
+    restart: unless-stopped
+
+networks:
+  baby-dev-network:
+    name: baby-dev-network
+    driver: bridge
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  logstash_data:
+    driver: local
