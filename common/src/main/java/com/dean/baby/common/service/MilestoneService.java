@@ -13,7 +13,9 @@ import com.dean.baby.common.repository.AgeRepository;
 import com.dean.baby.common.repository.CategoryRepository;
 import com.dean.baby.common.repository.MilestoneRepository;
 import com.dean.baby.common.repository.UserRepository;
+import com.dean.baby.common.util.ChangeLogUtil;
 import com.dean.baby.common.util.LanguageUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.dto.common.LangFieldObject;
 
 @Service
+@Slf4j
 public class MilestoneService extends BaseService {
 
     private final MilestoneRepository milestoneRepository;
@@ -52,7 +55,14 @@ public class MilestoneService extends BaseService {
         milestone.setImageBase64(milestoneDTO.getImageBase64());
 
         Milestone saved = milestoneRepository.save(milestone);
-        return MilestoneDTO.fromEntity(saved);
+        MilestoneDTO result = MilestoneDTO.fromEntity(saved);
+
+        // 記錄異動日誌
+        ChangeLogUtil.logCreate("Milestone", saved.getId(), result);
+        log.info("Milestone created: id={}, category={}, ageMonths={}",
+                saved.getId(), category.getId(), age.getMonth());
+
+        return result;
     }
 
     public Optional<MilestoneDTO> getMilestoneById(UUID id) {
@@ -120,22 +130,46 @@ public class MilestoneService extends BaseService {
     @Transactional
     public MilestoneDTO updateMilestone(UUID id, MilestoneDTO milestoneDTO) {
         Milestone milestone = findMilestoneById(id);
+
+        // 記錄更新前的資料
+        MilestoneDTO oldData = MilestoneDTO.fromEntity(milestone);
+
         Category category = findCategoryById(milestoneDTO.getCategory().getId());
         Age age = findAgeById(milestoneDTO.getAge().getId());
         milestone.setAge(age);
         milestone.setCategory(category);
         milestone.setDescription(updateDescriptionObject(milestone.getDescription(), milestoneDTO));
         milestone.setVideoUrl(milestoneDTO.getVideoUrl());
-        milestone.setImageBase64(milestoneDTO.getImageBase64());
+
+        // 只有在有新圖片時才更新圖片，避免覆蓋掉原有圖片
+        if (milestoneDTO.getImageBase64() != null && !milestoneDTO.getImageBase64().isEmpty()) {
+            milestone.setImageBase64(milestoneDTO.getImageBase64());
+        }
 
         Milestone updated = milestoneRepository.save(milestone);
-        return MilestoneDTO.fromEntity(updated);
+        MilestoneDTO newData = MilestoneDTO.fromEntity(updated);
+
+        // 記錄異動日誌
+        ChangeLogUtil.logUpdate("Milestone", id, oldData, newData);
+        log.info("Milestone updated: id={}, category={}, ageMonths={}",
+                id, category.getId(), age.getMonth());
+
+        return newData;
     }
 
     @Transactional
     public void deleteMilestone(UUID id) {
         Milestone milestone = findMilestoneById(id);
+
+        // 記錄被刪除的資料
+        MilestoneDTO deletedData = MilestoneDTO.fromEntity(milestone);
+
         milestoneRepository.delete(milestone);
+
+        // 記錄異動日誌
+        ChangeLogUtil.logDelete("Milestone", id, deletedData);
+        log.warn("Milestone deleted: id={}, category={}, ageMonths={}",
+                id, milestone.getCategory().getId(), milestone.getAge().getMonth());
     }
 
     // === 私有輔��方法 ===

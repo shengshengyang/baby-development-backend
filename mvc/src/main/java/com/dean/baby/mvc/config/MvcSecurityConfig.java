@@ -20,7 +20,7 @@ public class MvcSecurityConfig {
                 // 設定哪些路徑可以不驗證，哪些需要驗證
                 .authorizeHttpRequests(authorize -> authorize
                         // 放行登入頁面、靜態資源等
-                        .requestMatchers("/login","/register" ,"/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login","/register" ,"/css/**", "/js/**", "/images/**", "/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -1,6 +1,7 @@
 package com.dean.baby.mvc.controller;
 
 import com.dean.baby.common.dto.ArticleCreateRequestVo;
+import com.dean.baby.common.dto.ArticleDto;
 import com.dean.baby.common.dto.ArticleResponseDto;
 import com.dean.baby.common.service.ArticleService;
 import com.dean.baby.common.service.OptionService;
@@ -39,6 +40,12 @@ public class ArticleController {
     @ResponseBody
     public ArticleResponseDto createArticle(@RequestBody ArticleCreateRequestVo vo) {
         return articleService.createOrUpdateArticle(vo);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public ArticleDto getArticle(@PathVariable UUID id) {
+        return articleService.getArticle(id, null);
     }
 
     @GetMapping("/edit/{id}")

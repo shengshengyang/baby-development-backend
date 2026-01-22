@@ -44,7 +44,6 @@ public class ArticleService extends BaseService {
      */
     public List<ArticleDto> listArticles(UUID categoryId, String languageCode) {
         if (categoryId != null) {
-            Category category = findCategoryById(categoryId);
             return articleRepository.findAll().stream()
                     .filter(article -> article.getCategory().getId().equals(categoryId))
                     .map(article -> ArticleDto.fromEntity(article, languageCode))
@@ -65,31 +64,6 @@ public class ArticleService extends BaseService {
         return articleRepository.findById(id)
                 .map(article -> ArticleDto.fromEntity(article, languageCode))
                 .orElseThrow(() -> new ApiException(SysCode.ARTICLE_NOT_FOUND));
-    }
-
-    /**
-     * Get article by ID with localized content
-     * @param id article ID
-     * @return ArticleResponseDto with translation for current locale
-     */
-    public Optional<ArticleResponseDto> getArticleById(UUID id) {
-        Language language = LanguageUtil.getLanguageFromLocale();
-        return articleRepository.findById(id)
-                .map(article -> ArticleResponseDto.fromEntity(article, language));
-    }
-
-    /**
-     * Get articles with optional category filter and localized content
-     * @param categoryId optional category ID to filter by
-     * @return list of articles with translations for current locale
-     */
-    public List<ArticleResponseDto> getArticles(UUID categoryId) {
-        Language language = LanguageUtil.getLanguageFromLocale();
-
-        if (categoryId != null) {
-            return getArticlesByCategory(categoryId, language);
-        }
-        return getAllArticles(language);
     }
 
     /**

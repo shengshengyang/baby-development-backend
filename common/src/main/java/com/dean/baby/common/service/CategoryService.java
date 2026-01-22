@@ -27,29 +27,27 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category create(String tw, String en) {
+    public Category create(LangFieldObject nameObject) {
         Category category = new Category();
-        LangFieldObject name = new LangFieldObject();
-        if (tw != null) name.setTw(tw);
-        if (en != null) name.setEn(en);
+        if (nameObject == null) {
+            nameObject = new LangFieldObject();
+        }
         // 以目前語系的值填滿其餘為空的欄位，避免空字串
-        name.setDefaultBeforeInsert();
-        category.setName(name);
+        nameObject.setDefaultBeforeInsert();
+        category.setName(nameObject);
         return categoryRepository.save(category);
     }
 
     @Transactional
-    public Optional<Category> update(UUID id, String tw, String en) {
-        return categoryRepository.findById(id).map(existing -> {
-            LangFieldObject name = existing.getName();
-            if (name == null) {
-                name = new LangFieldObject();
-            }
-            if (tw != null) name.setTw(tw);
-            if (en != null) name.setEn(en);
-            existing.setName(name);
-            return categoryRepository.save(existing);
-        });
+    public Category update(UUID id, LangFieldObject nameObject) {
+        Category existing = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+
+        if (nameObject == null) {
+            nameObject = new LangFieldObject();
+        }
+        existing.setName(nameObject);
+        return categoryRepository.save(existing);
     }
 
     @Transactional

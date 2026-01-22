@@ -64,40 +64,46 @@
                     <div id="milestoneDescriptionContainer" class="space-y-4">
                         <div class="milestone-desc-item" data-lang="TRADITIONAL_CHINESE" style="display:block;">
                             <label class="block text-xs text-gray-600 mb-1">繁體中文描述</label>
-                            <!-- 使用 th:field 綁定 nested property，確保預設值正確帶入 -->
+                            <!-- 使用 th:field 綁定 nested property，th:text 設置初始值 -->
                             <textarea th:field="*{descriptionObject.tw}" rows="4" required
                                       placeholder="請輸入繁體中文描述"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
+                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.tw : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="SIMPLIFIED_CHINESE" style="display:none;">
                             <label class="block text-xs text-gray-600 mb-1">簡體中文描述</label>
                             <textarea th:field="*{descriptionObject.cn}" rows="4"
                                       placeholder="请输入简体中文描述"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
+                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.cn : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="ENGLISH" style="display:none;">
                             <label class="block text-xs text-gray-600 mb-1">英文描述</label>
                             <textarea th:field="*{descriptionObject.en}" rows="4"
                                       placeholder="Enter English description"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
+                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.en : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="JAPANESE" style="display:none;">
                             <label class="block text-xs text-gray-600 mb-1">日文描述</label>
                             <textarea th:field="*{descriptionObject.ja}" rows="4"
                                       placeholder="日本語の説明を入力してください"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
+                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.ja : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="KOREAN" style="display:none;">
                             <label class="block text-xs text-gray-600 mb-1">韓文描述</label>
                             <textarea th:field="*{descriptionObject.ko}" rows="4"
                                       placeholder="한국어 설명을 입력하세요"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
+                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.ko : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="VIETNAMESE" style="display:none;">
                             <label class="block text-xs text-gray-600 mb-1">越南文描述</label>
                             <textarea th:field="*{descriptionObject.vi}" rows="4"
                                       placeholder="Nhập mô tả tiếng Việt"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"></textarea>
+                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.vi : ''}"></textarea>
                         </div>
                     </div>
                 </div>

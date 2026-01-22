@@ -8,63 +8,158 @@
     <title>分類管理</title>
 </head>
 <body>
-<!-- 將原有內容放入 dashboardLayout 的 content 區域 -->
 <section layout:fragment="content">
-    <div class="max-w-4xl mx-auto py-8">
+    <div class="max-w-6xl mx-auto py-8">
         <h1 class="text-3xl font-bold mb-6 text-primary">分類管理</h1>
 
-        <!-- 新增分類表單 -->
+        <!-- 新增分類連結 -->
         <div class="mb-6">
-            <h2 class="text-2xl font-bold mb-4">新增分類</h2>
-            <form th:action="@{/categories}" method="post" class="bg-white p-6 rounded-lg shadow-md space-y-4">
-                <div>
-                    <label class="block mb-1 font-medium">中文分類名稱</label>
-                    <input type="text" name="tw" placeholder="例如：語言" required
-                           class="w-full border rounded px-3 py-2"/>
-                </div>
-                <div>
-                    <label class="block mb-1 font-medium">英文分類名稱</label>
-                    <input type="text" name="en" placeholder="例如：Language" required
-                           class="w-full border rounded px-3 py-2"/>
-                </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
-                    新增分類
-                </button>
-            </form>
+            <a th:href="@{/categories/new}"
+               class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 inline-flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                新增分類
+            </a>
         </div>
 
-        <!-- 分類清單 -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold mb-4 dark:text-gray-100">分類列表</h2>
-            <table class="w-full table-auto dark:bg-gray-800 dark:text-gray-100">
-                <thead>
-                <tr class="text-left border-b dark:border-gray-700">
-                    <th class="py-2">ID</th>
-                    <th class="py-2">中文</th>
-                    <th class="py-2">English</th>
-                    <th class="py-2">操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="category : ${categories}" class="border-b dark:border-gray-700">
-                    <td th:text="${category.id}" class="py-2"></td>
-                    <!-- LangFieldObject 直接使用屬性存取對應語言值 -->
-                    <td th:text="${category.name.tw}"></td>
-                    <td th:text="${category.name.en}"></td>
-                    <td class="py-2">
-                        <div class="flex space-x-2">
-                            <!-- 修改按鈕：導向修改頁面 -->
-                            <a th:href="@{'/categories/edit/' + ${category.id}}" class="text-blue-600 dark:text-blue-400 hover:underline">修改</a>
-                            <!-- 刪除表單：提交後刪除分類 -->
-                            <form th:action="@{'/categories/delete/' + ${category.id}}" method="post"
-                                  onsubmit="return confirm('確定要刪除嗎？');">
-                                <button type="submit" class="text-red-600 dark:text-red-400 hover:underline">刪除</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <!-- 成功/錯誤訊息 -->
+        <div th:if="${success}" class="mb-6 p-4 rounded-lg success-bg border">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="success-text" th:text="${success}"></span>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="mb-6 p-4 rounded-lg error-bg border">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-red-600 dark:text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="error-text" th:text="${error}"></span>
+            </div>
+        </div>
+
+        <!-- 分類列表 -->
+        <div class="card-bg p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">分類列表</h2>
+
+            <!-- 如果沒有資料 -->
+            <div th:if="${#lists.isEmpty(categories)}" class="text-center py-8">
+                <div class="text-gray-500 dark:text-gray-400 mb-4">
+                    <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                </div>
+                <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">目前沒有任何分類</p>
+                <a th:href="@{/categories/new}" class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90">
+                    建立第一個分類
+                </a>
+            </div>
+
+            <!-- 資料表格 -->
+            <div th:if="${!#lists.isEmpty(categories)}" class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead>
+                    <tr class="text-left border-b table-header-bg border-custom">
+                        <th class="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">繁體中文</th>
+                        <th class="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">簡體中文</th>
+                        <th class="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">English</th>
+                        <th class="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">日本語</th>
+                        <th class="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">한국어</th>
+                        <th class="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Tiếng Việt</th>
+                        <th class="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="category : ${categories}" class="border-b table-row-hover border-custom">
+                        <!-- 繁體中文 -->
+                        <td class="py-3 px-4">
+                            <span th:if="${category.name != null and category.name.tw != null and !category.name.tw.isEmpty()}"
+                                  th:text="${category.name.tw}"
+                                  class="text-gray-900 dark:text-gray-100"></span>
+                            <span th:if="${category.name == null or category.name.tw == null or category.name.tw.isEmpty()}"
+                                  class="text-gray-500 dark:text-gray-400">—</span>
+                        </td>
+
+                        <!-- 簡體中文 -->
+                        <td class="py-3 px-4">
+                            <span th:if="${category.name != null and category.name.cn != null and !category.name.cn.isEmpty()}"
+                                  th:text="${category.name.cn}"
+                                  class="text-gray-900 dark:text-gray-100"></span>
+                            <span th:if="${category.name == null or category.name.cn == null or category.name.cn.isEmpty()}"
+                                  class="text-gray-500 dark:text-gray-400">—</span>
+                        </td>
+
+                        <!-- English -->
+                        <td class="py-3 px-4">
+                            <span th:if="${category.name != null and category.name.en != null and !category.name.en.isEmpty()}"
+                                  th:text="${category.name.en}"
+                                  class="text-gray-900 dark:text-gray-100"></span>
+                            <span th:if="${category.name == null or category.name.en == null or category.name.en.isEmpty()}"
+                                  class="text-gray-500 dark:text-gray-400">—</span>
+                        </td>
+
+                        <!-- 日本語 -->
+                        <td class="py-3 px-4">
+                            <span th:if="${category.name != null and category.name.ja != null and !category.name.ja.isEmpty()}"
+                                  th:text="${category.name.ja}"
+                                  class="text-gray-900 dark:text-gray-100"></span>
+                            <span th:if="${category.name == null or category.name.ja == null or category.name.ja.isEmpty()}"
+                                  class="text-gray-500 dark:text-gray-400">—</span>
+                        </td>
+
+                        <!-- 한국어 -->
+                        <td class="py-3 px-4">
+                            <span th:if="${category.name != null and category.name.ko != null and !category.name.ko.isEmpty()}"
+                                  th:text="${category.name.ko}"
+                                  class="text-gray-900 dark:text-gray-100"></span>
+                            <span th:if="${category.name == null or category.name.ko == null or category.name.ko.isEmpty()}"
+                                  class="text-gray-500 dark:text-gray-400">—</span>
+                        </td>
+
+                        <!-- Tiếng Việt -->
+                        <td class="py-3 px-4">
+                            <span th:if="${category.name != null and category.name.vi != null and !category.name.vi.isEmpty()}"
+                                  th:text="${category.name.vi}"
+                                  class="text-gray-900 dark:text-gray-100"></span>
+                            <span th:if="${category.name == null or category.name.vi == null or category.name.vi.isEmpty()}"
+                                  class="text-gray-500 dark:text-gray-400">—</span>
+                        </td>
+
+                        <!-- 操作 -->
+                        <td class="py-3 px-4">
+                            <div class="flex space-x-2">
+                                <!-- View/Edit Button -->
+                                <a th:href="@{'/categories/view/' + ${category.id}}"
+                                   class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors text-sm">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    查看
+                                </a>
+
+                                <!-- Delete Button -->
+                                <form th:action="@{'/categories/delete/' + ${category.id}}" method="post" class="inline">
+                                    <button type="submit"
+                                            class="inline-flex items-center px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm"
+                                            onclick="return confirm('確定要刪除此分類嗎？此操作無法復原。')">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        刪除
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>

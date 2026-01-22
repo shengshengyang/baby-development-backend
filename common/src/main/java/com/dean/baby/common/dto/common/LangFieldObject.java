@@ -49,6 +49,9 @@ public class LangFieldObject implements Serializable {
      */
     @JsonIgnore
     public String getLang(String languageCode) {
+        if (languageMap == null) {
+            languageMap = new HashMap<>();
+        }
         Language language = Language.fromCode(languageCode);
         if (language != null) {
             return languageMap.get(language.getCode());
@@ -63,6 +66,9 @@ public class LangFieldObject implements Serializable {
      */
     @JsonIgnore
     public void setLang(String languageCode, String value) {
+        if (languageMap == null) {
+            languageMap = new HashMap<>();
+        }
         Language language = Language.fromCode(languageCode);
         if (language != null) {
             languageMap.put(language.getCode(), value);
@@ -77,6 +83,9 @@ public class LangFieldObject implements Serializable {
      */
     @JsonIgnore
     public String getLangByLocaleName() {
+        if (languageMap == null) {
+            languageMap = new HashMap<>();
+        }
         String currentLocale = LocaleContextHolder.getLocale().toLanguageTag().toLowerCase();
 
         // 將實際的locale映射到我們的語言代碼
@@ -97,6 +106,9 @@ public class LangFieldObject implements Serializable {
      */
     @JsonIgnore
     public void setLangByLocaleName(String value) {
+        if (languageMap == null) {
+            languageMap = new HashMap<>();
+        }
         String currentLocale = LocaleContextHolder.getLocale().toLanguageTag().toLowerCase();
         String languageCode = mapLocaleToLanguageCode(currentLocale);
         languageMap.put(languageCode, value);
@@ -141,6 +153,9 @@ public class LangFieldObject implements Serializable {
      */
     @JsonIgnore
     public void setDefaultBeforeInsert(String defaultValue) {
+        if (languageMap == null) {
+            languageMap = new HashMap<>();
+        }
         for (Language lang : Language.values()) {
             if (languageMap.get(lang.getCode()) == null || languageMap.get(lang.getCode()).isEmpty()) {
                 languageMap.put(lang.getCode(), defaultValue);
@@ -162,6 +177,9 @@ public class LangFieldObject implements Serializable {
      */
     @JsonAnyGetter
     public Map<String, String> getLanguageMap() {
+        if (languageMap == null) {
+            languageMap = new HashMap<>();
+        }
         return languageMap;
     }
 
@@ -172,6 +190,9 @@ public class LangFieldObject implements Serializable {
      */
     @JsonAnySetter
     public void setLanguageProperty(String key, String value) {
+        if (languageMap == null) {
+            languageMap = new HashMap<>();
+        }
         Language language = Language.fromCode(key);
         if (language != null) {
             languageMap.put(key, value);
@@ -180,32 +201,50 @@ public class LangFieldObject implements Serializable {
 
     // 便利方法 - 基於枚舉的getter/setter
     /** 取得英文值 */
-    public String getEn() { return getLang(Language.ENGLISH.getCode()); }
+    public String getEn() {
+        String value = getLang(Language.ENGLISH.getCode());
+        return value != null ? value : "";
+    }
     /** 設定英文值 */
     public void setEn(String value) { setLang(Language.ENGLISH.getCode(), value); }
 
     /** 取得日文值 */
-    public String getJa() { return getLang(Language.JAPANESE.getCode()); }
+    public String getJa() {
+        String value = getLang(Language.JAPANESE.getCode());
+        return value != null ? value : "";
+    }
     /** 設定日文值 */
     public void setJa(String value) { setLang(Language.JAPANESE.getCode(), value); }
 
     /** 取得簡體中文值 */
-    public String getCn() { return getLang(Language.SIMPLIFIED_CHINESE.getCode()); }
+    public String getCn() {
+        String value = getLang(Language.SIMPLIFIED_CHINESE.getCode());
+        return value != null ? value : "";
+    }
     /** 設定簡體中文值 */
     public void setCn(String value) { setLang(Language.SIMPLIFIED_CHINESE.getCode(), value); }
 
     /** 取得繁體中文值 */
-    public String getTw() { return getLang(Language.TRADITIONAL_CHINESE.getCode()); }
+    public String getTw() {
+        String value = getLang(Language.TRADITIONAL_CHINESE.getCode());
+        return value != null ? value : "";
+    }
     /** 設定繁體中文值 */
     public void setTw(String value) { setLang(Language.TRADITIONAL_CHINESE.getCode(), value); }
 
     /** 取得韓文值 */
-    public String getKo() { return getLang(Language.KOREAN.getCode()); }
+    public String getKo() {
+        String value = getLang(Language.KOREAN.getCode());
+        return value != null ? value : "";
+    }
     /** 設定韓文值 */
     public void setKo(String value) { setLang(Language.KOREAN.getCode(), value); }
 
     /** 取得越南文值 */
-    public String getVi() { return getLang(Language.VIETNAMESE.getCode()); }
+    public String getVi() {
+        String value = getLang(Language.VIETNAMESE.getCode());
+        return value != null ? value : "";
+    }
     /** 設定越南文值 */
     public void setVi(String value) { setLang(Language.VIETNAMESE.getCode(), value); }
 }
