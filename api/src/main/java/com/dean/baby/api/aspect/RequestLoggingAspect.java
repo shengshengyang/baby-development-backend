@@ -1,5 +1,6 @@
 package com.dean.baby.api.aspect;
 
+import com.dean.baby.common.exception.ApiException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -63,8 +64,8 @@ public class RequestLoggingAspect {
                     StructuredArguments.keyValue("method", methodName),
                     StructuredArguments.keyValue("controller", className),
                     StructuredArguments.keyValue("clientIp", clientIp),
-                    StructuredArguments.keyValue("userAgent", request != null ? request.getHeader("User-Agent") : "unknown")
-            );
+                    StructuredArguments.keyValue("userAgent",
+                            request != null ? request.getHeader("User-Agent") : "unknown"));
 
             // 記錄請求參數
             if (joinPoint.getArgs() != null && joinPoint.getArgs().length > 0) {
@@ -83,8 +84,7 @@ public class RequestLoggingAspect {
 
                 log.debug("REQUEST_PARAMS - [{}]",
                         params,
-                        StructuredArguments.keyValue("requestId", requestId)
-                );
+                        StructuredArguments.keyValue("requestId", requestId));
             }
 
             // 執行方法
@@ -94,14 +94,39 @@ public class RequestLoggingAspect {
             long executionTime = System.currentTimeMillis() - startTime;
 
             // 記錄回應
-            log.info("API_RESPONSE - {} {} completed in {}ms",
-                    method,
-                    uri,
-                    executionTime,
-                    StructuredArguments.keyValue("requestId", requestId),
-                    StructuredArguments.keyValue("executionTime", executionTime),
-                    StructuredArguments.keyValue("status", "SUCCESS")
-            );
+            // 判斷是否為資料異動請求 (POST, PUT, DELETE, PATCH)
+            boolean isDataChange = isDataChangeMethod(method);
+            String responseBody = null;
+
+            if (isDataChange) {
+                try {
+                    // 序列化回傳結果作為 response body
+                    responseBody = objectMapper.writeValueAsString(result);
+                } catch (Exception e) {
+                    responseBody = "Failed to serialize response: " + e.getMessage();
+                }
+            }
+
+            // 記錄回應
+            if (isDataChange) {
+                log.info("API_DATA_CHANGE - {} {} completed in {}ms",
+                        method,
+                        uri,
+                        executionTime,
+                        StructuredArguments.keyValue("requestId", requestId),
+                        StructuredArguments.keyValue("executionTime", executionTime),
+                        StructuredArguments.keyValue("status", "SUCCESS"),
+                        StructuredArguments.keyValue("event_type", "DATA_CHANGE"),
+                        StructuredArguments.keyValue("response_body", responseBody));
+            } else {
+                log.info("API_RESPONSE - {} {} completed in {}ms",
+                        method,
+                        uri,
+                        executionTime,
+                        StructuredArguments.keyValue("requestId", requestId),
+                        StructuredArguments.keyValue("executionTime", executionTime),
+                        StructuredArguments.keyValue("status", "SUCCESS"));
+            }
 
             return result;
 
@@ -109,17 +134,30 @@ public class RequestLoggingAspect {
             // 計算執行時間
             long executionTime = System.currentTimeMillis() - startTime;
 
-            // 記錄錯誤
-            log.error("API_ERROR - {} {} failed after {}ms: {}",
-                    method,
-                    uri,
-                    executionTime,
-                    e.getMessage(),
-                    StructuredArguments.keyValue("requestId", requestId),
-                    StructuredArguments.keyValue("executionTime", executionTime),
-                    StructuredArguments.keyValue("status", "ERROR"),
-                    StructuredArguments.keyValue("errorType", e.getClass().getSimpleName())
-            );
+            if (e instanceof ApiException) {
+                ApiException apiEx = (ApiException) e;
+                log.warn("API_WARN - {} {} failed with code {} after {}ms: {}",
+                        method,
+                        uri,
+                        apiEx.getErrorCode().getCode(),
+                        executionTime,
+                        e.getMessage(),
+                        StructuredArguments.keyValue("requestId", requestId),
+                        StructuredArguments.keyValue("executionTime", executionTime),
+                        StructuredArguments.keyValue("status", "WARN"),
+                        StructuredArguments.keyValue("errorCode", apiEx.getErrorCode().getCode()));
+            } else {
+                // 記錄錯誤
+                log.error("API_ERROR - {} {} failed after {}ms: {}",
+                        method,
+                        uri,
+                        executionTime,
+                        e.getMessage(),
+                        StructuredArguments.keyValue("requestId", requestId),
+                        StructuredArguments.keyValue("executionTime", executionTime),
+                        StructuredArguments.keyValue("status", "ERROR"),
+                        StructuredArguments.keyValue("errorType", e.getClass().getSimpleName()));
+            }
 
             throw e;
         } finally {
@@ -166,5 +204,18 @@ public class RequestLoggingAspect {
         }
 
         return ip;
+    }
+
+    /**
+     * 判斷是否為資料異動方法
+     */
+    private boolean isDataChangeMethod(String method) {
+        if (method == null)
+            return false;
+        String upperMethod = method.toUpperCase();
+        return "POST".equals(upperMethod) ||
+                "PUT".equals(upperMethod) ||
+                "DELETE".equals(upperMethod) ||
+                "PATCH".equals(upperMethod);
     }
 }

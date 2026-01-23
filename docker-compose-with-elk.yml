@@ -23,7 +23,8 @@ services:
     networks:
       - baby-dev-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -71,6 +72,19 @@ services:
       timeout: 10s
       retries: 5
     restart: unless-stopped
+
+  # Kibana Setup - 自動設定 Data View
+  kibana-setup:
+    image: curlimages/curl
+    container_name: baby-dev-kibana-setup
+    volumes:
+      - ./kibana-setup.sh:/kibana-setup.sh
+    command: ["/bin/sh", "/kibana-setup.sh"]
+    networks:
+      - baby-dev-network
+    depends_on:
+      kibana:
+        condition: service_healthy
 
   # API 模組 - 啟用 Logstash 日誌
   api:

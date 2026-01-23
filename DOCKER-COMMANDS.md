@@ -16,6 +16,9 @@ docker-compose -f docker-compose-with-elk.yml restart
 docker-compose -f docker-compose-with-elk.yml restart api
 docker-compose -f docker-compose-with-elk.yml restart elasticsearch
 
+# 單獨重新 build 並重啟 api (使用 Maven Wrapper)
+mvnw clean install -pl api -am && docker-compose -f docker-compose-with-elk.yml up -d --build --no-deps api
+
 # 查看服務狀態
 docker-compose -f docker-compose-with-elk.yml ps
 
@@ -89,6 +92,7 @@ docker run --rm \
    - 即可開始查詢和分析日誌
 
 **常見查詢範例**：
+
 ```
 # 查看 API 請求
 message: "API_REQUEST*"

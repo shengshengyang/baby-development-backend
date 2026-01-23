@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python generate_milestone_sql.py:*)",
+      "Bash(mvn clean compile:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -9,7 +9,6 @@ import com.dean.baby.common.util.LanguageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,17 +23,18 @@ public class FlashCardService extends BaseService {
     private final MilestoneRepository milestoneRepository;
     private final ProgressRepository progressRepository;
     private final BabyService babyService;
-    private final AgeRepository ageRepository;
     private final CategoryRepository categoryRepository;
 
-    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository, FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository, ProgressRepository progressRepository, BabyService babyService, AgeRepository ageRepository, CategoryRepository categoryRepository) {
+    protected FlashCardService(UserRepository userRepository, FlashcardRepository flashcardRepository,
+            FlashcardTranslationRepository translationRepository, MilestoneRepository milestoneRepository,
+            ProgressRepository progressRepository, BabyService babyService, AgeRepository ageRepository,
+            CategoryRepository categoryRepository) {
         super(userRepository);
         this.flashcardRepository = flashcardRepository;
         this.translationRepository = translationRepository;
         this.milestoneRepository = milestoneRepository;
         this.progressRepository = progressRepository;
         this.babyService = babyService;
-        this.ageRepository = ageRepository;
         this.categoryRepository = categoryRepository;
     }
 
@@ -43,18 +43,18 @@ public class FlashCardService extends BaseService {
         // 查找 Milestone
         UUID milestoneId = dto.getMilestone() != null ? dto.getMilestone().getId() : null;
         if (milestoneId == null) {
-            throw new RuntimeException("Milestone id is required");
+            throw new ApiException(SysCode.MISSING_PARAMETER, "Milestone id is required");
         }
         Milestone milestone = milestoneRepository.findById(milestoneId)
-                .orElseThrow(() -> new RuntimeException("Milestone not found"));
+                .orElseThrow(() -> new ApiException(SysCode.MILESTONE_NOT_FOUND));
 
         // 查找 Category
         UUID categoryId = dto.getCategoryId();
         if (categoryId == null) {
-            throw new RuntimeException("Category id is required");
+            throw new ApiException(SysCode.MISSING_PARAMETER, "Category id is required");
         }
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ApiException(SysCode.CATEGORY_NOT_FOUND));
 
         // 創建 Flashcard Entity
         Flashcard flashcard = new Flashcard();
@@ -99,17 +99,17 @@ public class FlashCardService extends BaseService {
     public FlashcardDTO updateFlashcard(UUID id, FlashcardDTO dto) {
         // 查找 Flashcard
         Flashcard flashcard = flashcardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flashcard not found"));
+                .orElseThrow(() -> new ApiException(SysCode.FLASHCARD_NOT_FOUND));
 
         // 更新屬性：Category, Subject, ImageUrl, 以及 Milestone (若提供)
         if (dto.getCategoryId() != null) {
             Category category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+                    .orElseThrow(() -> new ApiException(SysCode.CATEGORY_NOT_FOUND));
             flashcard.setCategory(category);
         }
         if (dto.getMilestone() != null && dto.getMilestone().getId() != null) {
             Milestone milestone = milestoneRepository.findById(dto.getMilestone().getId())
-                    .orElseThrow(() -> new RuntimeException("Milestone not found"));
+                    .orElseThrow(() -> new ApiException(SysCode.MILESTONE_NOT_FOUND));
             flashcard.setMilestone(milestone);
         }
         flashcard.setSubject(dto.getSubject());
@@ -143,7 +143,7 @@ public class FlashCardService extends BaseService {
     public void deleteFlashcard(UUID id) {
         // 查找 Flashcard
         Flashcard flashcard = flashcardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flashcard not found"));
+                .orElseThrow(() -> new ApiException(SysCode.FLASHCARD_NOT_FOUND));
 
         // 刪除相關翻譯
         if (flashcard.getTranslations() != null && !flashcard.getTranslations().isEmpty()) {
@@ -168,17 +168,16 @@ public class FlashCardService extends BaseService {
                     return newProgress;
                 });
 
-
         progressRepository.save(progress);
 
         return babyService.getBaby(vo.babyId());
     }
 
     private FlashcardDTO convertToDTO(Flashcard flashcard) {
-        List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations() == null ? List.of() :
-                flashcard.getTranslations().stream()
-                .map(FlashcardTranslationDTO::fromEntity)
-                .toList();
+        List<FlashcardTranslationDTO> translationDTOs = flashcard.getTranslations() == null ? List.of()
+                : flashcard.getTranslations().stream()
+                        .map(FlashcardTranslationDTO::fromEntity)
+                        .toList();
 
         FlashcardDTO dto = FlashcardDTO.fromEntity(flashcard);
         dto.setTranslations(translationDTOs);

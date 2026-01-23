@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,8 +28,8 @@ public class ArticleService extends BaseService {
     private final CategoryRepository categoryRepository;
 
     public ArticleService(UserRepository userRepository,
-                         ArticleRepository articleRepository,
-                         CategoryRepository categoryRepository) {
+            ArticleRepository articleRepository,
+            CategoryRepository categoryRepository) {
         super(userRepository);
         this.articleRepository = articleRepository;
         this.categoryRepository = categoryRepository;
@@ -38,7 +37,8 @@ public class ArticleService extends BaseService {
 
     /**
      * List articles with optional category filter and language filter
-     * @param categoryId optional category ID to filter by
+     * 
+     * @param categoryId   optional category ID to filter by
      * @param languageCode optional language code to filter translations
      * @return list of articles with translations
      */
@@ -56,7 +56,8 @@ public class ArticleService extends BaseService {
 
     /**
      * Get article by ID with optional language filter
-     * @param id article ID
+     * 
+     * @param id           article ID
      * @param languageCode optional language code to filter translations
      * @return ArticleDto with translations
      */
@@ -68,6 +69,7 @@ public class ArticleService extends BaseService {
 
     /**
      * Create or update an article with translations
+     * 
      * @param vo ArticleCreateRequestVo containing article data
      * @return ArticleResponseDto with the created/updated article
      */
@@ -105,6 +107,7 @@ public class ArticleService extends BaseService {
 
     /**
      * Delete an article by ID
+     * 
      * @param id article ID to delete
      */
     @Transactional

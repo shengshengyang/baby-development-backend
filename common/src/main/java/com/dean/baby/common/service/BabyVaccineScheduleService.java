@@ -4,6 +4,8 @@ import com.dean.baby.common.dto.enums.VaccineStatus;
 import com.dean.baby.common.entity.Baby;
 import com.dean.baby.common.entity.BabyVaccineSchedule;
 import com.dean.baby.common.entity.Vaccine;
+import com.dean.baby.common.exception.ApiException;
+import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.BabyRepository;
 import com.dean.baby.common.repository.BabyVaccineScheduleRepository;
 import com.dean.baby.common.repository.UserRepository;
@@ -17,23 +19,23 @@ import java.util.stream.Collectors;
 
 /**
  * 服務：負責管理排程紀錄(BabyVaccineSchedule)的各種邏輯：
- *   - 產生預排接種計劃
- *   - 查詢寶寶的排程
- *   - 更新實際施打/延期
- *   - ...
+ * - 產生預排接種計劃
+ * - 查詢寶寶的排程
+ * - 更新實際施打/延期
+ * - ...
  */
 @Service
 @Transactional
-public class BabyVaccineScheduleService extends BaseService{
+public class BabyVaccineScheduleService extends BaseService {
 
     private final BabyVaccineScheduleRepository scheduleRepository;
     private final BabyRepository babyRepository;
     private final VaccineRepository vaccineRepository;
 
     public BabyVaccineScheduleService(BabyVaccineScheduleRepository scheduleRepository,
-                                      BabyRepository babyRepository,
-                                      VaccineRepository vaccineRepository,
-                                      UserRepository userRepository) {
+            BabyRepository babyRepository,
+            VaccineRepository vaccineRepository,
+            UserRepository userRepository) {
         super(userRepository);
         this.scheduleRepository = scheduleRepository;
         this.babyRepository = babyRepository;
@@ -68,14 +70,14 @@ public class BabyVaccineScheduleService extends BaseService{
      * 產生預排接種計畫
      * （示範：對所有 Vaccine 或特定 Vaccine 自動生成）
      *
-     * @param babyId 指定寶寶 ID
+     * @param babyId      指定寶寶 ID
      * @param allVaccines 是否對所有疫苗產生 (true: 對 vaccine 全部生成)
      */
     public List<BabyVaccineSchedule> generateDefaultScheduleForBaby(UUID babyId, boolean allVaccines) {
         isCurrentUserBabyOwner(babyId);
         // 1) 找到寶寶資料
         Baby baby = babyRepository.findById(babyId)
-                .orElseThrow(() -> new RuntimeException("Baby not found"));
+                .orElseThrow(() -> new ApiException(SysCode.BABY_NOT_FOUND));
 
         // 2) 如果 allVaccines=true, 則把全部 Vaccine 撈出來；否則可依需求篩選
         List<Vaccine> vaccines = vaccineRepository.findAll();
@@ -93,7 +95,7 @@ public class BabyVaccineScheduleService extends BaseService{
             // 例如 [2,4,6] => 第1劑(2個月), 第2劑(4個月), 第3劑(6個月)
             for (int i = 0; i < intervals.size(); i++) {
                 Integer monthOffset = intervals.get(i);
-                int doseNumber = i + 1;  // 第幾劑
+                int doseNumber = i + 1; // 第幾劑
 
                 LocalDate scheduledDate = baby.getBirthDate().plusMonths(monthOffset);
                 LocalDate reminderDate = scheduledDate.minusDays(14); // 範例：提前 14 天提醒
@@ -118,7 +120,7 @@ public class BabyVaccineScheduleService extends BaseService{
      */
     public BabyVaccineSchedule completeSchedule(UUID scheduleId, LocalDate actualDate) {
         BabyVaccineSchedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Schedule not found"));
         schedule.setActualDate(actualDate);
         schedule.setStatus(VaccineStatus.COMPLETED);
         return scheduleRepository.save(schedule);
@@ -129,7 +131,7 @@ public class BabyVaccineScheduleService extends BaseService{
      */
     public BabyVaccineSchedule delayAndReschedule(UUID scheduleId, LocalDate newDate) {
         BabyVaccineSchedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new ApiException(SysCode.DATA_NOT_FOUND, "Schedule not found"));
         schedule.setStatus(VaccineStatus.DELAYED);
         schedule.setRescheduledDate(newDate);
         // 如果你也想同步更新 scheduledDate，就加上:

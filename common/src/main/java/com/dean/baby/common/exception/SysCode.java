@@ -1,7 +1,6 @@
 package com.dean.baby.common.exception;
 
-
-public enum SysCode implements ErrorCode{
+public enum SysCode implements ErrorCode {
 
     OK(200, "Success"),
     USER_NOT_FOUND(1001, "User not found"),
@@ -33,7 +32,7 @@ public enum SysCode implements ErrorCode{
     FLASHCARD_NOT_FOUND(10025, "Flashcard not found"),
     DATA_NOT_FOUND(10026, "Data not found"),
     ARTICLE_NOT_FOUND(10027, "Article not found"),
-    SYSTEM_ERROR(9999, "system error" );
+    SYSTEM_ERROR(9999, "system error");
 
     private final Integer code;
     private final String message;
