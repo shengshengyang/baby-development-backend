@@ -44,11 +44,11 @@ public enum SysCode implements ErrorCode {
 
     @Override
     public String getMessage() {
-        return "";
+        return message;
     }
 
     @Override
     public Integer getCode() {
-        return 0;
+        return code;
     }
 }
