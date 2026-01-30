@@ -6,85 +6,236 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
-    <!-- 引入 Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <main layout:fragment="content">
-    <h1 class="text-3xl font-bold mb-6 text-primary">Dashboard</h1>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-pastel-yellow p-5 rounded-xl shadow-lg dark:bg-gray-800">
-            <h5 class="text-xl font-semibold mb-2 dark:text-gray-100">Milestone 數量</h5>
-            <p class="dark:text-gray-300">Value: <span th:text="${milestoneCount}">0</span></p>
-        </div>
-        <div class="bg-pastel-blue p-5 rounded-xl shadow-lg dark:bg-gray-800">
-            <h5 class="text-xl font-semibold mb-2 dark:text-gray-100">Flashcard 數量</h5>
-            <p class="dark:text-gray-300">Value: <span th:text="${flashcardCount}">0</span></p>
-        </div>
-        <div class="bg-pastel-pink p-5 rounded-xl shadow-lg dark:bg-gray-800">
-            <h5 class="text-xl font-semibold mb-2 dark:text-gray-100">Article 數量</h5>
-            <p class="dark:text-gray-300">Value: <span th:text="${articleCount}">0</span></p>
-        </div>
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-heading font-bold text-gray-800 dark:text-white mb-2">Dashboard</h1>
+        <p class="text-gray-500 dark:text-gray-400">Overview of your content and statistics</p>
     </div>
-    <!-- 圖表區塊 -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-        <h2 class="text-2xl font-bold mb-4 dark:text-gray-100">數量圖表</h2>
-        <canvas id="dashboardChart" width="400" height="180"></canvas>
-    </div>
-    <script>
-        // 從 Thymeleaf 取得後端數據
-        const milestoneCount = [[${milestoneCount}]];
-        const flashcardCount = [[${flashcardCount}]];
-        const articleCount = [[${articleCount}]];
 
-        // 根據主題取得顏色
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Milestone Card -->
+        <div class="relative overflow-hidden rounded-2xl shadow-xl card-hoverable">
+            <div class="absolute inset-0 bg-gradient-to-br from-pastel-yellow to-yellow-100 opacity-90"></div>
+            <div class="relative p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h5 class="text-lg font-heading font-semibold text-gray-700">Milestones</h5>
+                        <p class="text-xs text-gray-600 mt-1">Developmental milestones</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                        <i class="fas fa-trophy text-2xl text-yellow-600"></i>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold text-gray-800 mb-2" th:text="${milestoneCount} ?: '0'">0</p>
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="px-2 py-1 bg-green-500/20 text-green-700 rounded-lg font-medium">
+                        <i class="fas fa-arrow-up mr-1"></i>Active
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard Card -->
+        <div class="relative overflow-hidden rounded-2xl shadow-xl card-hoverable">
+            <div class="absolute inset-0 bg-gradient-to-br from-pastel-blue to-blue-100 opacity-90"></div>
+            <div class="relative p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h5 class="text-lg font-heading font-semibold text-gray-700">Flashcards</h5>
+                        <p class="text-xs text-gray-600 mt-1">Learning cards</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                        <i class="fas fa-id-card text-2xl text-blue-600"></i>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold text-gray-800 mb-2" th:text="${flashcardCount} ?: '0'">0</p>
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="px-2 py-1 bg-blue-500/20 text-blue-700 rounded-lg font-medium">
+                        <i class="fas fa-layer-group mr-1"></i>Total
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article Card -->
+        <div class="relative overflow-hidden rounded-2xl shadow-xl card-hoverable">
+            <div class="absolute inset-0 bg-gradient-to-br from-pastel-pink to-pink-100 opacity-90"></div>
+            <div class="relative p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h5 class="text-lg font-heading font-semibold text-gray-700">Articles</h5>
+                        <p class="text-xs text-gray-600 mt-1">Published articles</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                        <i class="fas fa-newspaper text-2xl text-pink-600"></i>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold text-gray-800 mb-2" th:text="${articleCount} ?: '0'">0</p>
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="px-2 py-1 bg-pink-500/20 text-pink-700 rounded-lg font-medium">
+                        <i class="fas fa-pencil-alt mr-1"></i>Published
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="glass-panel rounded-2xl shadow-xl p-6">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-heading font-bold text-gray-800 dark:text-white">Content Statistics</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Overview of all content types</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="changeChartType('bar')" class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium">
+                    <i class="fas fa-chart-bar mr-1"></i>Bar
+                </button>
+                <button onclick="changeChartType('line')" class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+                    <i class="fas fa-chart-line mr-1"></i>Line
+                </button>
+                <button onclick="changeChartType('doughnut')" class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+                    <i class="fas fa-chart-pie mr-1"></i>Pie
+                </button>
+            </div>
+        </div>
+        <div class="relative" style="height: 350px;">
+            <canvas id="dashboardChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Data from Thymeleaf
+        const milestoneCount = [[${milestoneCount}]] || 0;
+        const flashcardCount = [[${flashcardCount}]] || 0;
+        const articleCount = [[${articleCount}]] || 0;
+
+        let chartInstance;
+        let currentChartType = 'bar';
+
         function getChartColors() {
             const isDark = document.documentElement.classList.contains('dark');
             return {
-                background: isDark
-                    ? ['rgba(255, 206, 86, 0.4)', 'rgba(54, 162, 235, 0.4)', 'rgba(255, 99, 132, 0.4)']
-                    : ['rgba(255, 206, 86, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 99, 132, 0.7)'],
-                border: isDark
-                    ? ['rgba(255, 206, 86, 0.8)', 'rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)']
-                    : ['rgba(255, 206, 86, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)']
+                background: [
+                    'rgba(255, 206, 81, 0.8)',
+                    'rgba(74, 187, 185, 0.8)',
+                    'rgba(255, 143, 119, 0.8)'
+                ],
+                border: [
+                    'rgba(255, 206, 81, 1)',
+                    'rgba(74, 187, 185, 1)',
+                    'rgba(255, 143, 119, 1)'
+                ],
+                text: isDark ? '#f3f4f6' : '#1f2937',
+                grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
             };
         }
 
-        // 初始化 Chart.js
-        let chartInstance;
         function renderChart() {
             const ctx = document.getElementById('dashboardChart').getContext('2d');
             const colors = getChartColors();
-            if (chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const chartConfig = {
+                type: currentChartType,
                 data: {
-                    labels: ['Milestone', 'Flashcard', 'Article'],
+                    labels: ['Milestones', 'Flashcards', 'Articles'],
                     datasets: [{
-                        label: '數量',
+                        label: 'Content Count',
                         data: [milestoneCount, flashcardCount, articleCount],
                         backgroundColor: colors.background,
                         borderColor: colors.border,
-                        borderWidth: 1
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        tension: 0.4
                     }]
                 },
                 options: {
-                    scales: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: currentChartType === 'doughnut',
+                            position: 'bottom',
+                            labels: {
+                                color: colors.text,
+                                font: {
+                                    family: "'Plus Jakarta Sans', sans-serif",
+                                    size: 12
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                family: "'Outfit', sans-serif",
+                                size: 14
+                            },
+                            bodyFont: {
+                                family: "'Plus Jakarta Sans', sans-serif",
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: currentChartType !== 'doughnut' ? {
                         y: {
                             beginAtZero: true,
-                            precision: 0
+                            ticks: {
+                                color: colors.text,
+                                font: {
+                                    family: "'Plus Jakarta Sans', sans-serif"
+                                },
+                                precision: 0
+                            },
+                            grid: {
+                                color: colors.grid
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: colors.text,
+                                font: {
+                                    family: "'Plus Jakarta Sans', sans-serif"
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
                         }
-                    }
+                    } : {}
                 }
-            });
+            };
+
+            chartInstance = new Chart(ctx, chartConfig);
         }
-        // 首次渲染
+
+        function changeChartType(type) {
+            currentChartType = type;
+            renderChart();
+        }
+
+        // Initial render
         renderChart();
-        // 監聽主題切換（假設主題切換時會加/移除 'dark' class）
+
+        // Watch for theme changes
         const observer = new MutationObserver(() => {
             renderChart();
         });
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
     </script>
 </main>
 </body>

@@ -9,73 +9,181 @@
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="max-w-4xl mx-auto py-8">
-        <h1 class="text-3xl font-bold mb-6 text-primary">新增分類</h1>
+    <div class="max-w-4xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <a th:href="@{/categories}" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <h1 class="text-3xl font-heading font-bold text-gray-800 dark:text-white">新增分類</h1>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400">Create a new content category with multilingual support</p>
+        </div>
 
-        <div class="card-bg p-6 rounded-lg shadow-md">
-            <form th:action="@{/categories}" method="post" th:object="${category}" class="space-y-6">
+        <!-- Form Card -->
+        <div class="card-bg rounded-2xl shadow-xl p-8">
+            <form th:action="@{/categories}" method="post" th:object="${category}" class="space-y-8">
 
-                <!-- 多語名稱 -->
-                <div class="border-t pt-6">
-                    <h3 class="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">分類名稱（多語言） <span class="text-red-500">*</span></h3>
-
-                    <!-- 語言選擇器 -->
-                    <div class="mb-4">
-                        <select id="categoryLanguageSelector" class="px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary select-bg">
-                            <option value="TRADITIONAL_CHINESE">繁體中文</option>
-                            <option value="SIMPLIFIED_CHINESE">簡體中文</option>
-                            <option value="ENGLISH">英文</option>
-                            <option value="JAPANESE">日文</option>
-                            <option value="KOREAN">韓文</option>
-                            <option value="VIETNAMESE">越南文</option>
-                        </select>
+                <!-- Multilingual Names Section -->
+                <div class="border-t border-custom pt-8">
+                    <div class="mb-6">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-heading font-semibold text-gray-800 dark:text-white">分類名稱（多語言）</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Add translations for supported languages</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- 動態翻譯區域：每語言一個 input，只顯示目前選擇 -->
+                    <!-- Language Selector -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">選擇語言</label>
+                        <div class="relative">
+                            <select id="categoryLanguageSelector"
+                                    class="input-modern w-full px-4 py-3 rounded-xl appearance-none cursor-pointer bg-white dark:bg-gray-800 pr-12">
+                                <option value="TRADITIONAL_CHINESE">🇹🇼 繁體中文</option>
+                                <option value="SIMPLIFIED_CHINESE">🇨🇳 簡體中文</option>
+                                <option value="ENGLISH">🇺🇸 English</option>
+                                <option value="JAPANESE">🇯🇵 日本語</option>
+                                <option value="KOREAN">🇰🇷 한국어</option>
+                                <option value="VIETNAMESE">🇻🇳 Tiếng Việt</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Language Input Fields -->
                     <div id="categoryNameContainer" class="space-y-4">
+                        <!-- Traditional Chinese -->
                         <div class="category-name-item" data-lang="TRADITIONAL_CHINESE" style="display:block;">
-                            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">繁體中文名稱</label>
-                            <input type="text" th:field="*{name.tw}" required
-                                   placeholder="請輸入繁體中文名稱"
-                                   class="w-full px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary input-bg">
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇹🇼</span> 繁體中文名稱 <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" th:field="*{name.tw}" required
+                                       placeholder="請輸入繁體中文名稱"
+                                       class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Simplified Chinese -->
                         <div class="category-name-item" data-lang="SIMPLIFIED_CHINESE" style="display:none;">
-                            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">簡體中文名稱</label>
-                            <input type="text" th:field="*{name.cn}"
-                                   placeholder="请输入简体中文名称"
-                                   class="w-full px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary input-bg">
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇨🇳</span> 简体中文名称
+                            </label>
+                            <div class="relative">
+                                <input type="text" th:field="*{name.cn}"
+                                       placeholder="请输入简体中文名称"
+                                       class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- English -->
                         <div class="category-name-item" data-lang="ENGLISH" style="display:none;">
-                            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">英文名稱</label>
-                            <input type="text" th:field="*{name.en}"
-                                   placeholder="Enter English name"
-                                   class="w-full px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary input-bg">
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇺🇸</span> English Name
+                            </label>
+                            <div class="relative">
+                                <input type="text" th:field="*{name.en}"
+                                       placeholder="Enter English name"
+                                       class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Japanese -->
                         <div class="category-name-item" data-lang="JAPANESE" style="display:none;">
-                            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">日文名稱</label>
-                            <input type="text" th:field="*{name.ja}"
-                                   placeholder="日本語名を入力してください"
-                                   class="w-full px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary input-bg">
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇯🇵</span> 日本語名
+                            </label>
+                            <div class="relative">
+                                <input type="text" th:field="*{name.ja}"
+                                       placeholder="日本語名を入力してください"
+                                       class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Korean -->
                         <div class="category-name-item" data-lang="KOREAN" style="display:none;">
-                            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">韓文名稱</label>
-                            <input type="text" th:field="*{name.ko}"
-                                   placeholder="한국어 이름을 입력하세요"
-                                   class="w-full px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary input-bg">
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇰🇷</span> 한국어 이름
+                            </label>
+                            <div class="relative">
+                                <input type="text" th:field="*{name.ko}"
+                                       placeholder="한국어 이름을 입력하세요"
+                                       class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Vietnamese -->
                         <div class="category-name-item" data-lang="VIETNAMESE" style="display:none;">
-                            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">越南文名稱</label>
-                            <input type="text" th:field="*{name.vi}"
-                                   placeholder="Nhập tên tiếng Việt"
-                                   class="w-full px-3 py-2 border border-custom rounded-md focus:ring-2 focus:ring-primary input-bg">
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇻🇳</span> Tên tiếng Việt
+                            </label>
+                            <div class="relative">
+                                <input type="text" th:field="*{name.vi}"
+                                       placeholder="Nhập tên tiếng Việt"
+                                       class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 按鈕 -->
-                <div class="flex justify-between pt-6 border-t border-custom">
-                    <a href="/categories" class="px-6 py-2 border border-custom text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">取消</a>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition-colors">
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-8 border-t border-custom">
+                    <a href="/categories"
+                       class="inline-flex items-center gap-2 px-6 py-3 border-2 border-custom text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-semibold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        取消
+                    </a>
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
                         創建分類
                     </button>
                 </div>
@@ -84,12 +192,18 @@
     </div>
 
     <script>
-        // 語言切換
+        // Language switching logic with smooth transitions
         document.getElementById('categoryLanguageSelector').addEventListener('change', function() {
             const selected = this.value;
-            document.querySelectorAll('#categoryNameContainer .category-name-item').forEach(item => {
+            const container = document.getElementById('categoryNameContainer');
+            const items = container.querySelectorAll('.category-name-item');
+
+            items.forEach(item => {
                 if(item.getAttribute('data-lang') === selected){
                     item.style.display = 'block';
+                    item.style.animation = 'fadeIn 0.3s ease-out';
+                    const input = item.querySelector('input');
+                    if(input) input.focus();
                 } else {
                     item.style.display = 'none';
                 }

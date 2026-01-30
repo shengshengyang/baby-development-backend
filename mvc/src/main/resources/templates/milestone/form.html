@@ -9,138 +9,280 @@
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="max-w-4xl mx-auto py-8">
-        <h1 class="text-3xl font-bold mb-6 text-primary" th:text="${milestone.id != null ? '編輯 Milestone' : '新增 Milestone'}"></h1>
+    <div class="max-w-4xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <a th:href="@{/milestones}" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <h1 class="text-3xl font-heading font-bold text-gray-800 dark:text-white"
+                    th:text="${milestone.id != null ? '編輯 Milestone' : '新增 Milestone'}"></h1>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400"
+               th:text="${milestone.id != null ? 'Update milestone information' : 'Create a new developmental milestone'}"></p>
+        </div>
 
-        <div class="card-bg p-6 rounded-lg shadow-md">
+        <!-- Form Card -->
+        <div class="card-bg rounded-2xl shadow-xl p-8">
             <form th:action="${milestone.id != null ? '/milestones/edit/' + milestone.id : '/milestones'}"
                   method="post" th:object="${milestone}" enctype="multipart/form-data" class="space-y-8">
 
-                <!-- 基本選擇 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- 年齡 -->
-                    <div>
-                        <label for="age" class="block text-sm font-medium label-text mb-2">年齡 <span class="text-red-500">*</span></label>
-                        <select class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary select-bg"
-                                id="age" th:field="*{age.id}" required>
-                            <option value="">請選擇年齡</option>
-                            <option th:each="ageOpt : ${ageOptions}"
-                                    th:value="${ageOpt.value}"
-                                    th:text="${ageOpt.label}"
-                                    th:selected="${milestone.age != null and milestone.age.id.toString() == ageOpt.value}"></option>
-                        </select>
+                <!-- Basic Selection -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-heading font-semibold text-gray-800 dark:text-white">基本資訊</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Select age group and category</p>
+                        </div>
                     </div>
-                    <!-- 類別 -->
-                    <div>
-                        <label for="category" class="block text-sm font-medium label-text mb-2">類別 <span class="text-red-500">*</span></label>
-                        <select class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary select-bg"
-                                id="category" th:field="*{category.id}" required>
-                            <option value="">請選擇類別</option>
-                            <option th:each="catOpt : ${categoryOptions}"
-                                    th:value="${catOpt.value}"
-                                    th:text="${catOpt.label}"
-                                    th:selected="${milestone.category != null and milestone.category.id.toString() == catOpt.value}"></option>
-                        </select>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Age -->
+                        <div>
+                            <label for="age" class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                年齡 <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <select id="age" th:field="*{age.id}" required
+                                        class="input-modern w-full px-4 py-3 rounded-xl appearance-none cursor-pointer dark:bg-gray-800 pr-12">
+                                    <option value="">請選擇年齡</option>
+                                    <option th:each="ageOpt : ${ageOptions}"
+                                            th:value="${ageOpt.value}"
+                                            th:text="${ageOpt.label}"
+                                            th:selected="${milestone.age != null and milestone.age.id.toString() == ageOpt.value}"></option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div>
+                            <label for="category" class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                                類別 <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <select id="category" th:field="*{category.id}" required
+                                        class="input-modern w-full px-4 py-3 rounded-xl appearance-none cursor-pointer dark:bg-gray-800 pr-12">
+                                    <option value="">請選擇類別</option>
+                                    <option th:each="catOpt : ${categoryOptions}"
+                                            th:value="${catOpt.value}"
+                                            th:text="${catOpt.label}"
+                                            th:selected="${milestone.category != null and milestone.category.id.toString() == catOpt.value}"></option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 多語描述 -->
-                <div class="border-t pt-6">
-                    <h3 class="text-lg font-medium mb-4">描述（多語言） <span class="text-red-500">*</span></h3>
-
-                    <!-- 語言選擇器（使用與 flashcard 相同 enum 名稱） -->
-                    <div class="mb-4">
-                        <select id="milestoneLanguageSelector" class="px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary">
-                            <option value="TRADITIONAL_CHINESE">繁體中文</option>
-                            <option value="SIMPLIFIED_CHINESE">簡體中文</option>
-                            <option value="ENGLISH">英文</option>
-                            <option value="JAPANESE">日文</option>
-                            <option value="KOREAN">韓文</option>
-                            <option value="VIETNAMESE">越南文</option>
-                        </select>
+                <!-- Multilingual Description -->
+                <div class="border-t border-custom pt-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary to-orange-400 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-heading font-semibold text-gray-800 dark:text-white">描述（多語言）</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Add translations for supported languages</p>
+                        </div>
                     </div>
 
-                    <!-- 動態翻譯區域：每語言一個 textarea，只顯示目前選擇 -->
+                    <!-- Language Selector -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">選擇語言</label>
+                        <div class="relative">
+                            <select id="milestoneLanguageSelector"
+                                    class="input-modern w-full px-4 py-3 rounded-xl appearance-none cursor-pointer dark:bg-gray-800 pr-12">
+                                <option value="TRADITIONAL_CHINESE">🇹🇼 繁體中文</option>
+                                <option value="SIMPLIFIED_CHINESE">🇨🇳 簡體中文</option>
+                                <option value="ENGLISH">🇺🇸 English</option>
+                                <option value="JAPANESE">🇯🇵 日本語</option>
+                                <option value="KOREAN">🇰🇷 한국어</option>
+                                <option value="VIETNAMESE">🇻🇳 Tiếng Việt</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Language Textareas -->
                     <div id="milestoneDescriptionContainer" class="space-y-4">
                         <div class="milestone-desc-item" data-lang="TRADITIONAL_CHINESE" style="display:block;">
-                            <label class="block text-xs text-gray-600 mb-1">繁體中文描述</label>
-                            <!-- 使用 th:field 綁定 nested property，th:text 設置初始值 -->
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇹🇼</span> 繁體中文描述 <span class="text-red-500">*</span>
+                            </label>
                             <textarea th:field="*{descriptionObject.tw}" rows="4" required
                                       placeholder="請輸入繁體中文描述"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800 resize-none"
                                       th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.tw : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="SIMPLIFIED_CHINESE" style="display:none;">
-                            <label class="block text-xs text-gray-600 mb-1">簡體中文描述</label>
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇨🇳</span> 简体中文描述
+                            </label>
                             <textarea th:field="*{descriptionObject.cn}" rows="4"
                                       placeholder="请输入简体中文描述"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800 resize-none"
                                       th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.cn : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="ENGLISH" style="display:none;">
-                            <label class="block text-xs text-gray-600 mb-1">英文描述</label>
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇺🇸</span> English Description
+                            </label>
                             <textarea th:field="*{descriptionObject.en}" rows="4"
                                       placeholder="Enter English description"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800 resize-none"
                                       th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.en : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="JAPANESE" style="display:none;">
-                            <label class="block text-xs text-gray-600 mb-1">日文描述</label>
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇯🇵</span> 日本語の説明
+                            </label>
                             <textarea th:field="*{descriptionObject.ja}" rows="4"
                                       placeholder="日本語の説明を入力してください"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800 resize-none"
                                       th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.ja : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="KOREAN" style="display:none;">
-                            <label class="block text-xs text-gray-600 mb-1">韓文描述</label>
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇰🇷</span> 한국어 설명
+                            </label>
                             <textarea th:field="*{descriptionObject.ko}" rows="4"
                                       placeholder="한국어 설명을 입력하세요"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800 resize-none"
                                       th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.ko : ''}"></textarea>
                         </div>
                         <div class="milestone-desc-item" data-lang="VIETNAMESE" style="display:none;">
-                            <label class="block text-xs text-gray-600 mb-1">越南文描述</label>
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="text-lg">🇻🇳</span> Mô tả tiếng Việt
+                            </label>
                             <textarea th:field="*{descriptionObject.vi}" rows="4"
                                       placeholder="Nhập mô tả tiếng Việt"
-                                      class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-primary resize-none"
+                                      class="input-modern w-full px-4 py-3 rounded-xl dark:bg-gray-800 resize-none"
                                       th:text="${milestone.descriptionObject != null ? milestone.descriptionObject.vi : ''}"></textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- 影片連結 -->
-                <div class="border-t pt-6">
-                    <h3 class="text-lg font-medium mb-4">影片</h3>
-                    <label for="videoUrl" class="block text-sm font-medium label-text mb-2">影片連結</label>
-                    <input type="url" id="videoUrl" th:field="*{videoUrl}" placeholder="https://example.com/video"
-                           class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg" />
-                </div>
-
-                <!-- 圖片 -->
-                <div class="border-t pt-6 space-y-4">
-                    <h3 class="text-lg font-medium">圖片</h3>
-                    <div th:if="${milestone.imageBase64 != null}">
-                        <label class="block text-sm font-medium label-text mb-2">目前圖片</label>
-                        <div class="p-4 empty-state-bg rounded-lg">
-                            <img th:src="${milestone.imageBase64}" alt="目前里程碑圖片" class="max-w-xs max-h-48 rounded-lg shadow-md" />
+                <!-- Video URL -->
+                <div class="border-t border-custom pt-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-heading font-semibold text-gray-800 dark:text-white">影片連結</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Add a video URL (optional)</p>
                         </div>
                     </div>
-                    <div>
-                        <label for="imageFile" class="block text-sm font-medium label-text mb-2">上傳圖片</label>
-                        <input type="file" id="imageFile" name="imageFile" accept="image/*"
-                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary input-bg" onchange="previewImage(this)" />
-                        <p class="text-sm help-text mt-1">選擇圖片檔案 (JPG, PNG, GIF)。<span th:if="${milestone.imageBase64 != null}"> 留空則保持目前圖片。</span></p>
-                        <div id="imagePreview" class="hidden mt-4 p-4 empty-state-bg rounded-lg">
-                            <p class="text-sm font-medium label-text mb-2">預覽：</p>
-                            <img id="previewImg" alt="圖片預覽" class="max-w-xs max-h-48 rounded-lg shadow-md" />
+                    <div class="relative">
+                        <input type="url" id="videoUrl" th:field="*{videoUrl}" placeholder="https://example.com/video"
+                               class="input-modern w-full px-4 py-3 pl-11 rounded-xl dark:bg-gray-800" />
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
 
-                <!-- 按鈕 -->
-                <div class="flex justify-between pt-6 border-t border-custom">
-                    <a href="/milestones" class="px-6 py-2 border border-custom text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">取消</a>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition-colors">
+                <!-- Image Upload -->
+                <div class="border-t border-custom pt-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-heading font-semibold text-gray-800 dark:text-white">圖片</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Upload an image for this milestone</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Current Image -->
+                        <div th:if="${milestone.imageBase64 != null}">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">目前圖片</label>
+                            <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl inline-block">
+                                <img th:src="${milestone.imageBase64}" alt="目前里程碑圖片"
+                                     class="max-w-xs max-h-48 rounded-xl shadow-lg object-cover">
+                            </div>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div>
+                            <label for="imageFile" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                上傳圖片 <span class="text-gray-500" th:if="${milestone.imageBase64 != null}">(留空則保持目前圖片)</span>
+                            </label>
+                            <div class="relative">
+                                <input type="file" id="imageFile" name="imageFile" accept="image/*"
+                                       class="input-modern w-full px-4 py-3 pl-11 rounded-xl dark:bg-gray-800 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark"
+                                       onchange="previewImage(this)" />
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">支援 JPG, PNG, GIF 格式</p>
+
+                            <!-- Preview -->
+                            <div id="imagePreview" class="hidden mt-4">
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">預覽：</p>
+                                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl inline-block">
+                                    <img id="previewImg" alt="圖片預覽"
+                                         class="max-w-xs max-h-48 rounded-xl shadow-lg object-cover">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-8 border-t border-custom">
+                    <a th:href="@{/milestones}"
+                       class="inline-flex items-center gap-2 px-6 py-3 border-2 border-custom text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-semibold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        取消
+                    </a>
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
                         <span th:text="${milestone.id != null ? '更新' : '創建'}"></span> 里程碑
                     </button>
                 </div>
@@ -149,18 +291,25 @@
     </div>
 
     <script>
-        // 語言切換 (仿 flashcard)
+        // Language switching
         document.getElementById('milestoneLanguageSelector').addEventListener('change', function() {
             const selected = this.value;
-            document.querySelectorAll('#milestoneDescriptionContainer .milestone-desc-item').forEach(item => {
+            const container = document.getElementById('milestoneDescriptionContainer');
+            const items = container.querySelectorAll('.milestone-desc-item');
+
+            items.forEach(item => {
                 if(item.getAttribute('data-lang') === selected){
                     item.style.display = 'block';
+                    item.style.animation = 'fadeIn 0.3s ease-out';
+                    const textarea = item.querySelector('textarea');
+                    if(textarea) textarea.focus();
                 } else {
                     item.style.display = 'none';
                 }
             });
         });
-        // 圖片預覽
+
+        // Image preview
         function previewImage(input) {
             const preview = document.getElementById('imagePreview');
             const previewImg = document.getElementById('previewImg');
@@ -169,6 +318,7 @@
                 reader.onload = function(e) {
                     previewImg.src = e.target.result;
                     preview.classList.remove('hidden');
+                    preview.style.animation = 'fadeIn 0.3s ease-out';
                 };
                 reader.readAsDataURL(input.files[0]);
             } else {

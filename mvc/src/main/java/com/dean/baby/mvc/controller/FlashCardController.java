@@ -5,9 +5,15 @@ import com.dean.baby.common.repository.*;
 import com.dean.baby.common.dto.VideoDto;
 import com.dean.baby.common.dto.VideoFormDto;
 import com.dean.baby.common.service.VideoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +40,11 @@ public class FlashCardController {
     }
 
     @GetMapping
-    public String listFlashcards(Model model) {
-        model.addAttribute("flashcards", flashcardRepository.findAll());
+    public String listFlashcards(
+            @PageableDefault(size = 10, sort = "id.desc") Pageable pageable,
+            Model model) {
+        Page<Flashcard> flashcardPage = flashcardRepository.findAll(pageable);
+        model.addAttribute("flashcardPage", flashcardPage);
         return "flashcard/list";
     }
 

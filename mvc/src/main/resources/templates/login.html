@@ -2,10 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>登入</title>
-    <!-- 首屏依 localStorage 設定 dark，避免 FOUC -->
+    <title>Login - Goat Baby</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <script>(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}})();</script>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -17,11 +19,15 @@
                         secondary: '#FFCE51',
                         accent: '#FF8F77',
                         pastel: {
-                            blue: '#A7D8F0',
-                            green: '#B2DBC5',
-                            yellow: '#FFF1C2',
-                            pink: '#FFCAD4'
+                           blue: '#A7D8F0',
+                           green: '#B2DBC5',
+                           yellow: '#FFF1C2',
+                           pink: '#FFCAD4'
                         }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Outfit"', 'sans-serif']
                     }
                 }
             }
@@ -29,26 +35,101 @@
     </script>
     <link rel="stylesheet" href="/css/theme.css">
 </head>
-<body>
-<!-- 主題切換按鈕 -->
-<div class="fixed top-4 right-4 z-50">
-    <button id="theme-toggle" class="bg-primary text-white px-3 py-1 rounded shadow flex items-center justify-center">
-        <span id="theme-icon">
-            <!-- 預設 SVG，JS 會切換 -->
-            <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<body class="min-h-screen flex items-center justify-center animated-mesh-bg selection:bg-primary selection:text-white">
+
+    <!-- Theme Toggle -->
+    <div class="fixed top-6 right-6 z-50">
+        <button id="theme-toggle" class="glass-panel w-12 h-12 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-200 hover:scale-110 transition-transform">
+            <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="currentColor"/>
                 <path stroke="currentColor" stroke-width="2" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
             </svg>
-            <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke="currentColor" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
             </svg>
-        </span>
-    </button>
-</div>
+        </button>
+    </div>
+
+    <div class="w-full max-w-md p-8 glass-panel rounded-2xl animate-fade-in relative z-10 mx-4">
+        
+        <div class="text-center mb-8">
+             <h2 class="text-3xl font-heading font-bold text-gray-800 dark:text-gray-100 mb-2">Welcome Back</h2>
+             <p class="text-gray-500 dark:text-gray-300">Sign in to continue your journey</p>
+        </div>
+
+        <form th:action="@{/perform_login}" method="post" class="space-y-6">
+            
+            <div class="space-y-1">
+                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Email Address</label>
+                <div class="relative">
+                    <input type="text"
+                           class="input-modern w-full px-4 py-3 rounded-xl focus:outline-none dark:bg-gray-800 dark:text-white"
+                           id="email" name="email" placeholder="name@example.com" required>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Password</label>
+                <div class="relative">
+                    <input type="password"
+                           class="input-modern w-full px-4 py-3 rounded-xl focus:outline-none dark:bg-gray-800 dark:text-white"
+                           id="password" name="password" placeholder="Enter your password" required>
+                     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-primary hover:bg-opacity-90 text-white font-bold py-3.5 px-4 rounded-xl transition duration-300 transform hover:scale-[1.02] shadow-lg shadow-primary/30">
+                Sign In
+            </button>
+
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Don't have an account? 
+                    <a href="/register" class="text-primary font-semibold hover:text-primary-dark transition-colors">Create Account</a>
+                </p>
+            </div>
+
+            <!-- Messages -->
+            <div th:if="${param.error}" class="animate-fade-in mt-4">
+                <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg flex items-center gap-3" role="alert">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="font-bold">Login Failed</p>
+                        <p class="text-sm">Please check your credentials and try again.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${param.logout}" class="animate-fade-in mt-4">
+                <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg flex items-center gap-3" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <p>You have been signed out successfully.</p>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
 <script>
     const btn = document.getElementById('theme-toggle');
     const iconSun = document.getElementById('icon-sun');
     const iconMoon = document.getElementById('icon-moon');
+    
     function updateThemeIcon() {
         if (document.documentElement.classList.contains('dark')) {
             iconSun.classList.add('hidden');
@@ -58,57 +139,17 @@
             iconMoon.classList.add('hidden');
         }
     }
+    
     btn.onclick = () => {
         document.documentElement.classList.toggle('dark');
         localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         updateThemeIcon();
     };
+    
     if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
     }
     updateThemeIcon();
 </script>
-<div class="flex justify-center items-center min-h-screen">
-    <div class="w-full max-w-md p-8 rounded-xl bg-white/70 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg border-2 border-pastel-blue dark:border-gray-700">
-        <h2 class="text-2xl font-bold mb-6 text-center text-primary dark:text-secondary">親子發展平台</h2>
-        <form th:action="@{/perform_login}" method="post">
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-200">電子郵件</label>
-                <input type="text"
-                       class="w-full px-3 py-2 border border-pastel-blue dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-gray-100"
-                       id="email" name="email" placeholder="請輸入電子郵件">
-            </div>
-            <div class="mb-6">
-                <label for="password" class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-200">密碼</label>
-                <input type="password"
-                       class="w-full px-3 py-2 border border-pastel-blue dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-gray-100"
-                       id="password" name="password" placeholder="請輸入密碼">
-            </div>
-            <div>
-                <button type="submit"
-                        class="w-full bg-primary hover:bg-opacity-90 text-white font-medium py-2 px-4 rounded-md transition duration-300">
-                    登入
-                </button>
-            </div>
-            <div class="mt-3">
-                <a href="/register"
-                   class="w-full block text-center bg-secondary hover:bg-opacity-90 text-white font-medium py-2 px-4 rounded-md transition duration-300">
-                    註冊
-                </a>
-            </div>
-            <!-- 顯示錯誤訊息 -->
-            <div th:if="${param.error}" class="mt-4">
-                <div class="bg-accent bg-opacity-20 border border-accent text-gray-700 dark:text-gray-200 px-4 py-3 rounded" role="alert">
-                    登入失敗，請檢查電子郵件或密碼。
-                </div>
-            </div>
-            <div th:if="${param.logout}" class="mt-4">
-                <div class="bg-pastel-green border border-green-300 text-gray-700 dark:text-gray-200 px-4 py-3 rounded" role="alert">
-                    您已成功登出。
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
 </body>
 </html>
