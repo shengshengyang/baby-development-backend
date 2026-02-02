@@ -41,7 +41,7 @@ public class FlashCardController {
 
     @GetMapping
     public String listFlashcards(
-            @PageableDefault(size = 10, sort = "id.desc") Pageable pageable,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
         Page<Flashcard> flashcardPage = flashcardRepository.findAll(pageable);
         model.addAttribute("flashcardPage", flashcardPage);

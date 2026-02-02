@@ -1,6 +1,8 @@
 package com.dean.baby.common.repository;
 
 import com.dean.baby.common.entity.Milestone;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,12 @@ public interface MilestoneRepository extends JpaRepository<Milestone, UUID> {
     List<Milestone> findByAgeId(@Param("ageId") UUID ageId);
 
     /**
+     * 根據年齡 ID 查找里程碑（支援分頁）
+     */
+    @Query("SELECT m FROM Milestone m WHERE m.age.id = :ageId")
+    Page<Milestone> findByAgeId(@Param("ageId") UUID ageId, Pageable pageable);
+
+    /**
      * 根據年齡月份查找里程碑
      */
     @Query("SELECT m FROM Milestone m WHERE m.age.month = :month")
@@ -31,8 +39,20 @@ public interface MilestoneRepository extends JpaRepository<Milestone, UUID> {
     List<Milestone> findByCategoryId(@Param("categoryId") UUID categoryId);
 
     /**
+     * 根據分類 ID 查找里程碑（支援分頁）
+     */
+    @Query("SELECT m FROM Milestone m WHERE m.category.id = :categoryId")
+    Page<Milestone> findByCategoryId(@Param("categoryId") UUID categoryId, Pageable pageable);
+
+    /**
      * 根據年齡 ID 和分類 ID 查找里程碑
      */
     @Query("SELECT m FROM Milestone m WHERE m.age.id = :ageId AND m.category.id = :categoryId")
     List<Milestone> findByAgeIdAndCategoryId(@Param("ageId") UUID ageId, @Param("categoryId") UUID categoryId);
+
+    /**
+     * 根據年齡 ID 和分類 ID 查找里程碑（支援分頁）
+     */
+    @Query("SELECT m FROM Milestone m WHERE m.age.id = :ageId AND m.category.id = :categoryId")
+    Page<Milestone> findByAgeIdAndCategoryId(@Param("ageId") UUID ageId, @Param("categoryId") UUID categoryId, Pageable pageable);
 }

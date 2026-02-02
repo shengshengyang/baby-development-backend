@@ -2,10 +2,17 @@ package com.dean.baby.mvc.controller;
 
 import com.dean.baby.common.dto.MilestoneDTO;
 import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.common.entity.Age;
+import com.dean.baby.common.entity.Category;
 import com.dean.baby.common.repository.CategoryRepository;
 import com.dean.baby.common.repository.AgeRepository;
 import com.dean.baby.common.service.MilestoneService;
 import com.dean.baby.common.service.OptionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -46,11 +53,44 @@ public class MilestoneController {
         binder.setAutoGrowNestedPaths(true);
     }
 
-    // 顯示所有 Milestones 列表
+    // 顯示所有 Milestones 列表（支援查詢和分頁）
     @GetMapping
-    public String list(Model model) {
-        List<MilestoneDTO> milestones = milestoneService.getAllMilestones();
-        model.addAttribute("milestones", milestones);
+    public String list(
+            @RequestParam(required = false) UUID ageId,
+            @RequestParam(required = false) UUID categoryId,
+            @PageableDefault(size = 10, sort = "age.month", direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model) {
+        Page<MilestoneDTO> milestonePage;
+
+        // 根據查詢條件過濾
+        if (ageId != null && categoryId != null) {
+            // 同時有年齡和類別
+            milestonePage = milestoneService.getMilestonesByAgeIdAndCategoryId(ageId, categoryId, pageable);
+        } else if (ageId != null) {
+            // 只有年齡
+            milestonePage = milestoneService.getMilestonesByAgeId(ageId, pageable);
+        } else if (categoryId != null) {
+            // 只有類別
+            milestonePage = milestoneService.getMilestonesByCategoryId(categoryId, pageable);
+        } else {
+            // 沒有查詢條件，顯示全部
+            milestonePage = milestoneService.getAllMilestones(pageable);
+        }
+
+        model.addAttribute("milestonePage", milestonePage);
+        model.addAttribute("ageId", ageId);
+        model.addAttribute("categoryId", categoryId);
+
+        // 為查詢表單提供選項
+        model.addAttribute("ages", ageRepository.findAll());
+        model.addAttribute("categories", categoryRepository.findAll());
+
+        // 如果是 AJAX 請求，只返回表格片段
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "milestone/table-fragment :: table";
+        }
+
         return "milestone/list";
     }
 

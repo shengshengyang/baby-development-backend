@@ -22,7 +22,7 @@
         </div>
 
         <!-- 表單 -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="card-bg rounded-lg shadow-md overflow-hidden">
             <form th:action="${flashcard.id != null ? '/flashcard/edit' : '/flashcard/add'}"
                   method="post"
                   th:object="${flashcard}"
@@ -34,11 +34,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Category 選擇 -->
                     <div class="space-y-2">
-                        <label for="categoryId" class="block text-sm font-medium text-gray-700">
+                        <label for="categoryId" class="block text-sm font-medium label-text">
                             分類 <span class="text-red-500">*</span>
                         </label>
                         <select id="categoryId" name="categoryId" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                             <option value="">請選擇分類</option>
                             <option th:each="category : ${categories}"
                                     th:value="${category.id}"
@@ -50,11 +50,11 @@
 
                     <!-- Milestone 選擇 -->
                     <div class="space-y-2">
-                        <label for="milestoneId" class="block text-sm font-medium text-gray-700">
+                        <label for="milestoneId" class="block text-sm font-medium label-text">
                             里程碑 <span class="text-red-500">*</span>
                         </label>
                         <select id="milestoneId" name="milestoneId" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                             <option value="">請選擇里程碑</option>
                             <option th:each="milestone : ${milestones}"
                                     th:value="${milestone.id}"
@@ -67,40 +67,40 @@
 
                 <!-- Translation 區段 -->
                 <div class="border-t pt-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">翻譯內容</h3>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">翻譯內容</h3>
 
                     <!-- Subject (正面文字) - 使用 LangFieldObject -->
                     <div class="space-y-2 mb-6">
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label class="block text-sm font-medium label-text">
                             主題/正面文字 <span class="text-red-500">*</span>
                         </label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="subjectTw" class="block text-xs text-gray-600 mb-1">繁體中文</label>
+                                <label for="subjectTw" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">繁體中文</label>
                                 <input type="text" id="subjectTw" name="subject.tw" required
                                        th:value="${flashcard.subject?.tw}"
                                        placeholder="請輸入繁體中文主題"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
                             </div>
                             <div>
-                                <label for="subjectEn" class="block text-xs text-gray-600 mb-1">英文</label>
+                                <label for="subjectEn" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">英文</label>
                                 <input type="text" id="subjectEn" name="subject.en"
                                        th:value="${flashcard.subject?.en}"
                                        placeholder="請輸入英文主題"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
                             </div>
                         </div>
                     </div>
 
                     <!-- 圖片URL - 移到 Flashcard 層級 -->
                     <div class="space-y-2 mb-6">
-                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">
+                        <label for="imageUrl" class="block text-sm font-medium label-text">
                             圖片URL
                         </label>
                         <input type="url" id="imageUrl" name="imageUrl"
                                th:value="${flashcard.imageUrl}"
                                placeholder="https://example.com/image.jpg"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
 
                         <!-- 圖片預覽 -->
                         <div id="imagePreview" class="mt-2" style="display: none;">
@@ -110,14 +110,14 @@
 
                     <!-- Description (背面文字) - 保持多語言模式 -->
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label class="block text-sm font-medium label-text">
                             描述/背面文字 <span class="text-red-500">*</span>
                         </label>
 
                         <!-- 語言選擇器 -->
                         <div class="mb-4">
                             <select id="languageSelector"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                                 <option value="TRADITIONAL_CHINESE">繁體中文</option>
                                 <option value="SIMPLIFIED_CHINESE">簡體中文</option>
                                 <option value="ENGLISH">英文</option>
@@ -134,14 +134,14 @@
                                      class="translation-item"
                                      th:data-lang="${translation.languageCode.name()}"
                                      th:style="${iterStat.index == 0 ? 'display: block;' : 'display: none;'}">
-                                    <label class="block text-xs text-gray-600 mb-1"
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1"
                                            th:text="${translation.languageCode.displayName} + '描述'"></label>
                                     <textarea th:name="'translations[' + ${iterStat.index} + '].description'"
                                               rows="4"
                                               th:required="${iterStat.index == 0}"
                                               th:text="${translation.description}"
                                               th:placeholder="'請輸入' + ${translation.languageCode.displayName} + '描述'"
-                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                                              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"></textarea>
                                     <input type="hidden"
                                            th:name="'translations[' + ${iterStat.index} + '].languageCode'"
                                            th:value="${translation.languageCode.name()}">
@@ -154,10 +154,10 @@
                             <!-- 如果是新增模式，只顯示預設的繁體中文翻譯 -->
                             <div th:if="${flashcard.id == null or #lists.isEmpty(flashcard.translations)}">
                                 <div class="translation-item" data-lang="TRADITIONAL_CHINESE">
-                                    <label class="block text-xs text-gray-600 mb-1">繁體中文描述</label>
+                                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">繁體中文描述</label>
                                     <textarea name="translations[0].description" rows="4" required
                                               placeholder="請輸入繁體中文描述"
-                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                                              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"></textarea>
                                     <input type="hidden" name="translations[0].languageCode" value="TRADITIONAL_CHINESE">
                                 </div>
                             </div>
@@ -165,16 +165,16 @@
 
                         <!-- 新增翻譯按鈕 -->
                         <button type="button" id="addTranslationBtn"
-                                class="mt-2 px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors text-sm">
+                                class="mt-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors text-sm">
                             + 新增其他語言翻譯
                         </button>
                     </div>
                 </div>
 
                 <!-- 表單按鈕 -->
-                <div class="flex items-center justify-between pt-6 border-t">
+                <div class="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
                     <a th:href="@{/flashcard}"
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
@@ -183,7 +183,7 @@
 
                     <div class="flex space-x-3">
                         <button type="button" id="previewBtn"
-                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -206,11 +206,11 @@
 
     <!-- 預覽Modal -->
     <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg max-w-md w-full mx-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full mx-4">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium">Flashcard 預覽</h3>
-                    <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Flashcard 預覽</h3>
+                    <button id="closeModal" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -219,14 +219,14 @@
 
                 <!-- 預覽卡片 -->
                 <div class="space-y-4">
-                    <div class="border rounded-lg p-4 bg-gray-50">
-                        <h4 class="font-medium text-gray-700 mb-2">正面</h4>
-                        <p id="previewFront" class="text-gray-900"></p>
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+                        <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-2">正面</h4>
+                        <p id="previewFront" class="text-gray-900 dark:text-gray-100"></p>
                         <img id="previewImageModal" src="" alt="" class="mt-2 max-w-full h-32 object-cover rounded" style="display: none;">
                     </div>
-                    <div class="border rounded-lg p-4 bg-gray-50">
-                        <h4 class="font-medium text-gray-700 mb-2">背面</h4>
-                        <p id="previewBack" class="text-gray-900"></p>
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+                        <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-2">背面</h4>
+                        <p id="previewBack" class="text-gray-900 dark:text-gray-100"></p>
                     </div>
                 </div>
             </div>
@@ -348,10 +348,10 @@
                 newItem.style.display = 'none';
 
                 newItem.innerHTML = `
-                    <label class="block text-xs text-gray-600 mb-1">${langDisplayNames[nextLang]}描述</label>
+                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">${langDisplayNames[nextLang]}描述</label>
                     <textarea name="translations[${nextIndex}].description" rows="4"
                               placeholder="請輸入${langDisplayNames[nextLang]}描述"
-                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"></textarea>
                     <input type="hidden" name="translations[${nextIndex}].languageCode" value="${nextLang}">
                 `;
 

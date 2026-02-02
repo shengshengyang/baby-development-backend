@@ -16,22 +16,13 @@
                 <h1 class="text-3xl font-heading font-bold text-gray-800 dark:text-white mb-2">Milestone 管理</h1>
                 <p class="text-gray-500 dark:text-gray-400">Track developmental milestones for babies</p>
             </div>
-            <div class="flex gap-3">
-                <a th:href="@{/milestones/search}"
-                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    搜尋
-                </a>
-                <a th:href="@{/milestones/new}"
-                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    新增 Milestone
-                </a>
-            </div>
+            <a th:href="@{/milestones/new}"
+               class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                新增 Milestone
+            </a>
         </div>
 
         <!-- Success/Error Messages -->
@@ -75,20 +66,66 @@
 
         <!-- Milestones Card -->
         <div class="card-bg rounded-2xl shadow-xl overflow-hidden">
+            <!-- Search Form -->
+            <div class="p-6 border-b border-custom">
+                <h2 class="text-xl font-heading font-semibold text-gray-800 dark:text-white mb-4">查詢條件</h2>
+                <form id="searchForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Age Filter -->
+                    <div>
+                        <label for="ageId" class="block text-sm font-medium label-text mb-2">年齡</label>
+                        <select id="ageId" name="ageId"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                            <option value="">全部年齡</option>
+                            <option th:each="age : ${ages}"
+                                    th:value="${age.id}"
+                                    th:text="${age.displayName != null ? age.displayName.getLangByLocaleName() : (age.month + ' 個月')}"
+                                    th:selected="${ageId != null and ageId == age.id}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div>
+                        <label for="categoryId" class="block text-sm font-medium label-text mb-2">發展類別</label>
+                        <select id="categoryId" name="categoryId"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                            <option value="">全部類別</option>
+                            <option th:each="category : ${categories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.name}"
+                                    th:selected="${categoryId != null and categoryId == category.id}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-end gap-2">
+                        <button type="submit"
+                                class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 transition-colors">
+                            查詢
+                        </button>
+                        <button type="button" id="clearBtn"
+                                class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            清除
+                        </button>
+                    </div>
+                </form>
+            </div>
+
             <!-- Card Header -->
             <div class="p-6 border-b border-custom">
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-2xl font-heading font-bold text-gray-800 dark:text-white">Milestone 列表</h2>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Total: <span th:text="${#lists.size(milestones)}" class="font-semibold text-primary">0</span> milestones
+                            Total: <span th:text="${milestonePage.totalElements}" class="font-semibold text-primary">0</span> milestones
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- Empty State -->
-            <div th:if="${#lists.isEmpty(milestones)}" class="p-12 text-center">
+            <div th:if="${milestonePage.empty}" class="p-12 text-center">
                 <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-pastel-pink to-pastel-yellow mb-6 animate-float">
                     <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -98,7 +135,7 @@
                 <h3 class="text-xl font-heading font-semibold text-gray-800 dark:text-white mb-2">目前沒有任何 Milestone</h3>
                 <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">開始建立第一個 Milestone 來追蹤寶寶的發展里程碑</p>
                 <a th:href="@{/milestones/new}"
-                   class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -106,114 +143,309 @@
                 </a>
             </div>
 
-            <!-- Table -->
-            <div th:if="${!#lists.isEmpty(milestones)}" class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-50/50 dark:bg-gray-800/50">
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">圖片</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">年齡</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">類別</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">描述</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">影片</th>
-                            <th class="px-6 py-4 text-right text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-custom">
-                        <tr th:each="milestone : ${milestones}" class="table-row-hover">
-                            <!-- Image -->
-                            <td class="px-6 py-4">
-                                <div th:if="${milestone.imageBase64 != null}" class="flex-shrink-0">
-                                    <img th:src="${milestone.imageBase64}"
-                                         alt="里程碑圖片"
-                                         class="w-16 h-16 rounded-xl object-cover shadow-md hover:scale-105 transition-transform cursor-zoom-in">
-                                </div>
-                                <div th:unless="${milestone.imageBase64 != null}"
-                                     class="w-16 h-16 image-placeholder rounded-xl flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                            </td>
-
-                            <!-- Age -->
-                            <td class="px-6 py-4">
-                                <span th:if="${milestone.age != null and milestone.age.displayName != null}"
-                                      th:text="${milestone.age.displayName}"
-                                      class="inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm font-semibold">
-                                </span>
-                                <span th:if="${milestone.age == null or milestone.age.displayName == null}"
-                                      class="text-gray-400 dark:text-gray-500">未設定</span>
-                            </td>
-
-                            <!-- Category -->
-                            <td class="px-6 py-4">
-                                <span th:if="${milestone.category != null and milestone.category.name != null}"
-                                      th:text="${milestone.category.name}"
-                                      class="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-semibold">
-                                </span>
-                                <span th:if="${milestone.category == null or milestone.category.name == null}"
-                                      class="text-gray-400 dark:text-gray-500">未分類</span>
-                            </td>
-
-                            <!-- Description -->
-                            <td class="px-6 py-4">
-                                <div class="max-w-xs">
-                                    <p th:if="${milestone.description != null}"
-                                      th:text="${#strings.abbreviate(milestone.description, 80)}"
-                                      th:title="${milestone.description}"
-                                      class="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
-                                    </p>
-                                    <p th:if="${milestone.description == null}"
-                                      class="text-gray-400 dark:text-gray-500 text-sm">無內容</p>
-                                </div>
-                            </td>
-
-                            <!-- Video -->
-                            <td class="px-6 py-4">
-                                <div th:if="${milestone.videoUrl != null and !#strings.isEmpty(milestone.videoUrl)}">
-                                    <a th:href="${milestone.videoUrl}" target="_blank"
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all text-sm font-medium">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+            <!-- Table with Pagination -->
+            <div id="milestoneTableContainer" th:if="${!milestonePage.empty}">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50/50 dark:bg-gray-800/50">
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">圖片</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">年齡</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">類別</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">描述</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">影片</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-custom">
+                            <tr th:each="milestone : ${milestonePage.content}" class="table-row-hover">
+                                <!-- Image -->
+                                <td class="px-6 py-4">
+                                    <div th:if="${milestone.imageBase64 != null}" class="flex-shrink-0">
+                                        <img th:src="${milestone.imageBase64}"
+                                             alt="里程碑圖片"
+                                             class="w-16 h-16 rounded-xl object-cover shadow-md hover:scale-105 transition-transform cursor-zoom-in">
+                                    </div>
+                                    <div th:unless="${milestone.imageBase64 != null}"
+                                         class="w-16 h-16 image-placeholder rounded-xl flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
-                                        觀看影片
-                                    </a>
-                                </div>
-                                <div th:unless="${milestone.videoUrl != null and !#strings.isEmpty(milestone.videoUrl)}"
-                                     class="text-gray-400 dark:text-gray-500 text-sm">—</div>
-                            </td>
+                                    </div>
+                                </td>
 
-                            <!-- Actions -->
-                            <td class="px-6 py-4">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a th:href="@{'/milestones/view/' + ${milestone.id}}"
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all text-sm font-medium">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                        </svg>
-                                        查看
-                                    </a>
-                                    <form th:action="@{'/milestones/delete/' + ${milestone.id}}" method="post" class="inline">
-                                        <button type="submit"
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all text-sm font-medium"
-                                                onclick="return confirm('確定要刪除此 Milestone 嗎？此操作無法復原。')">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                <!-- Age -->
+                                <td class="px-6 py-4">
+                                    <span th:if="${milestone.age != null and milestone.age.displayName != null and !milestone.age.displayName.isEmpty()}"
+                                          th:text="${milestone.age.displayName}"
+                                          class="inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm font-semibold">
+                                    </span>
+                                    <span th:if="${milestone.age == null or milestone.age.displayName == null or milestone.age.displayName.isEmpty()}"
+                                          class="text-gray-400 dark:text-gray-500">未設定</span>
+                                </td>
+
+                                <!-- Category -->
+                                <td class="px-6 py-4">
+                                    <span th:if="${milestone.category != null and milestone.category.name != null}"
+                                          th:text="${milestone.category.name}"
+                                          class="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-semibold">
+                                    </span>
+                                    <span th:if="${milestone.category == null or milestone.category.name == null}"
+                                          class="text-gray-400 dark:text-gray-500">未分類</span>
+                                </td>
+
+                                <!-- Description -->
+                                <td class="px-6 py-4">
+                                    <div class="max-w-xs">
+                                        <p th:if="${milestone.description != null}"
+                                          th:text="${#strings.abbreviate(milestone.description, 80)}"
+                                          th:title="${milestone.description}"
+                                          class="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
+                                        </p>
+                                        <p th:if="${milestone.description == null}"
+                                          class="text-gray-400 dark:text-gray-500 text-sm">無內容</p>
+                                    </div>
+                                </td>
+
+                                <!-- Video -->
+                                <td class="px-6 py-4">
+                                    <div th:if="${milestone.videoUrl != null and !#strings.isEmpty(milestone.videoUrl)}">
+                                        <a th:href="${milestone.videoUrl}" target="_blank"
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all text-sm font-medium">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
                                             </svg>
-                                            刪除
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                            觀看影片
+                                        </a>
+                                    </div>
+                                    <div th:unless="${milestone.videoUrl != null and !#strings.isEmpty(milestone.videoUrl)}"
+                                         class="text-gray-400 dark:text-gray-500 text-sm">—</div>
+                                </td>
+
+                                <!-- Actions -->
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a th:href="@{'/milestones/view/' + ${milestone.id} + '?edit=true'}"
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all text-sm font-medium">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                            編輯
+                                        </a>
+                                        <form th:action="@{'/milestones/delete/' + ${milestone.id}}" method="post" class="inline">
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all text-sm font-medium"
+                                                    onclick="return confirm('確定要刪除此 Milestone 嗎？此操作無法復原。')">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                                刪除
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div id="paginationContainer" class="px-6 py-4 border-t border-custom flex items-center justify-between">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        顯示第 <span class="font-semibold text-gray-700 dark:text-gray-300" th:text="${milestonePage.number + 1}">1</span> 頁，
+                        共 <span class="font-semibold text-gray-700 dark:text-gray-300" th:text="${milestonePage.totalPages}">1</span> 頁，
+                        <span class="font-semibold text-gray-700 dark:text-gray-300" th:text="${milestonePage.totalElements}">0</span> 筆資料
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div class="flex gap-2" th:if="${milestonePage.totalPages > 1}">
+                        <!-- First Page -->
+                        <a th:if="${!milestonePage.isFirst()}"
+                           th:href="@{/milestones(ageId=${ageId},categoryId=${categoryId},page=0)}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </a>
+                        <span th:if="${milestonePage.isFirst()}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </span>
+
+                        <!-- Previous Page -->
+                        <a th:if="${milestonePage.hasPrevious()}"
+                           th:href="@{/milestones(ageId=${ageId},categoryId=${categoryId},page=${milestonePage.number - 1})}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </a>
+                        <span th:unless="${milestonePage.hasPrevious()}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </span>
+
+                        <!-- Page Numbers -->
+                        <div class="flex gap-1">
+                            <th:block th:each="pageNum : ${#numbers.sequence(0, milestonePage.totalPages - 1)}">
+                                <a th:href="@{/milestones(ageId=${ageId},categoryId=${categoryId},page=${pageNum})}"
+                                   th:class="${pageNum == milestonePage.number ? 'inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-gradient-to-r from-primary to-primary-dark text-white shadow-lg' : 'inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all'}">
+                                    <span th:text="${pageNum + 1}">1</span>
+                                </a>
+                            </th:block>
+                        </div>
+
+                        <!-- Next Page -->
+                        <a th:if="${milestonePage.hasNext()}"
+                           th:href="@{/milestones(ageId=${ageId},categoryId=${categoryId},page=${milestonePage.number + 1})}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7 7"></path>
+                            </svg>
+                        </a>
+                        <span th:unless="${milestonePage.hasNext()}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7 7"></path>
+                            </svg>
+                        </span>
+
+                        <!-- Last Page -->
+                        <a th:if="${!milestonePage.isLast()}"
+                           th:href="@{/milestones(ageId=${ageId},categoryId=${categoryId},page=${milestonePage.totalPages - 1})}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7 7M5 5l14 14"></path>
+                            </svg>
+                        </a>
+                        <span th:if="${milestonePage.isLast()}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7 7M5 5l14 14"></path>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center gap-3 shadow-xl">
+            <svg class="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-gray-700 dark:text-gray-300">載入中...</span>
+        </div>
+    </div>
+
+    <script>
+        // 查詢表單 AJAX 處理
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            performSearch(0);
+        });
+
+        // 清除按鈕
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('ageId').value = '';
+            document.getElementById('categoryId').value = '';
+            performSearch(0);
+        });
+
+        // 執行查詢
+        function performSearch(page) {
+            const ageId = document.getElementById('ageId').value;
+            const categoryId = document.getElementById('categoryId').value;
+
+            // 構建查詢參數
+            const params = new URLSearchParams();
+            if (ageId) params.append('ageId', ageId);
+            if (categoryId) params.append('categoryId', categoryId);
+            params.append('page', page);
+
+            // 顯示載入中
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
+            // 發送 AJAX 請求
+            fetch('/milestones?' + params.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // 直接替換表格容器內容
+                const tableContainer = document.getElementById('milestoneTableContainer');
+                if (tableContainer) {
+                    tableContainer.innerHTML = html;
+                }
+
+                // 重新綁定分頁點擊事件
+                bindPaginationEvents();
+
+                // 更新總數顯示（從返回的 HTML 中提取）
+                updateTotalCount();
+            })
+            .catch(error => {
+                console.error('查詢失敗:', error);
+                alert('查詢失敗，請稍後再試');
+            })
+            .finally(() => {
+                // 隱藏載入中
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            });
+        }
+
+        // 綁定分頁點擊事件
+        function bindPaginationEvents() {
+            const paginationLinks = document.querySelectorAll('.pagination-link');
+            paginationLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    if (page !== null) {
+                        performSearch(parseInt(page));
+                    }
+                });
+            });
+
+            // 綁定刪除確認
+            const deleteForms = document.querySelectorAll('#milestoneTableContainer form');
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm('確定要刪除此 Milestone 嗎？此操作無法復原。')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        }
+
+        // 更新總數顯示
+        function updateTotalCount() {
+            const tableContainer = document.getElementById('milestoneTableContainer');
+            const countElement = tableContainer.querySelector('.font-semibold.text-primary');
+            if (countElement) {
+                // 更新頁面標題中的總數
+                const totalCountElement = document.querySelector('.card-bg .font-semibold.text-primary');
+                if (totalCountElement) {
+                    totalCountElement.textContent = countElement.textContent;
+                }
+            }
+        }
+
+        // 頁面載入完成後綁定分頁事件
+        document.addEventListener('DOMContentLoaded', function() {
+            bindPaginationEvents();
+        });
+    </script>
 </section>
 </body>
 </html>
