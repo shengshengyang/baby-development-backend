@@ -7,6 +7,10 @@ import com.dean.baby.common.repository.UserRepository;
 import com.dean.baby.api.service.AuthService;
 import com.dean.baby.api.service.EmailService;
 import com.dean.baby.api.service.RedisService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
+@Tag(name = "認證管理", description = "用戶註冊、登入與認證 API")
 public class AuthController {
 
     private final UserRepository userRepo;
@@ -32,44 +37,46 @@ public class AuthController {
         this.authService = authService;
     }
 
-
-//    @PostMapping("/register")
-//    public String register(@NonNull @RequestParam String email) {
-//
-//        String code = String.valueOf(random.nextInt(900000) + 100000); // 6 位驗證碼
-//        redisService.saveVerificationCode(email, code);
-//        emailService.sendVerificationCode(email, code);
-//        return "驗證碼已發送至 " + email;
-//    }
-//
-//    @PostMapping("/verify")
-//    public ResponseEntity<String> verify(@NonNull @RequestParam String email,@NonNull @RequestParam String code, @RequestBody User user) {
-//        if (redisService.verifyCode(email, code)) {
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
-//            userRepo.save(user);
-//            redisService.deleteVerificationCode(email);
-//            return ResponseEntity.ok("Verification successful");
-//        }
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification code not match or expired");
-//    }
-
-    @PostMapping("/create")
-    public ResponseEntity<UserDto> create(@RequestBody RegisterVo vo) {
+    @Operation(summary = "用戶註冊", description = "創建新的用戶帳號")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "註冊成功"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "請求參數錯誤或帳號已存在")
+    })
+    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "註冊資訊") @RequestBody RegisterVo vo) {
         return ResponseEntity.ok(authService.register(vo));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody LoginVo vo) {
+    @Operation(summary = "用戶登入", description = "用戶登入並獲取 JWT Token")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "登入成功"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "帳號或密碼錯誤")
+    })
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> login(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "登入資訊") @RequestBody LoginVo vo) {
         return ResponseEntity.ok(authService.login(vo));
     }
 
-    @PatchMapping
-    public ResponseEntity<UserDto> update(@RequestBody RegisterVo vo) {
+    @Operation(summary = "更新用戶資訊", description = "更新當前登入用戶的資訊")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "更新成功"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "請求參數錯誤"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未授權")
+    })
+    @PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> update(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "用戶資訊") @RequestBody RegisterVo vo) {
         return ResponseEntity.ok(authService.update(vo));
     }
 
-    @PostMapping("/logout")
-    public String logout() {
-        return "登出成功";
+    @Operation(summary = "用戶登出", description = "用戶登出系統")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "登出成功")
+    })
+    @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("登出成功");
     }
 }

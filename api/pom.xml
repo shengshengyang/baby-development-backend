@@ -3,13 +3,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.dean</groupId>
-        <artifactId>baby-development-backend</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.3</version>
+        <relativePath/>
     </parent>
+    <groupId>com.dean</groupId>
     <artifactId>baby-development-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>baby-development-api</name>
+    <description>Baby Development API - Backend for Baby Development Tracking System</description>
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -79,7 +87,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.5.0</version>
+            <version>2.7.0</version>
         </dependency>
 
         <!-- Google API Client Library -->
@@ -106,12 +114,6 @@
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.dean</groupId>
-            <artifactId>baby-development-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- Logstash Logback Encoder for ELK integration -->
         <dependency>
             <groupId>net.logstash.logback</groupId>

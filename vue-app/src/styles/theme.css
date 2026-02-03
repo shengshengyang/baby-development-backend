@@ -1,0 +1,769 @@
+/* ============================================
+   BABY DEVELOPMENT DASHBOARD - THEME SYSTEM
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+/* ============================================
+   CSS CUSTOM PROPERTIES - LIGHT THEME
+   ============================================ */
+:root {
+  /* Typography */
+  --font-display: 'Outfit', -apple-system, sans-serif;
+  --font-body: 'Nunito', -apple-system, sans-serif;
+
+  /* Primary Colors - Warm Coral */
+  --color-primary: #FF6B6B;
+  --color-primary-light: #FF8E8E;
+  --color-primary-dark: #E85555;
+  --color-primary-soft: rgba(255, 107, 107, 0.12);
+
+  /* Secondary Colors - Mint Green */
+  --color-secondary: #4ECDC4;
+  --color-secondary-light: #7EDDD6;
+  --color-secondary-dark: #3DB8B0;
+  --color-secondary-soft: rgba(78, 205, 196, 0.12);
+
+  /* Neutral Colors - Warm Grays */
+  --color-bg-primary: #FFFEF9;
+  --color-bg-secondary: #F9F7F4;
+  --color-bg-tertiary: #F3F0EB;
+  --color-bg-elevated: #FFFFFF;
+
+  --color-text-primary: #2D2A26;
+  --color-text-secondary: #6B6660;
+  --color-text-tertiary: #9A958D;
+  --color-text-inverse: #FFFFFF;
+
+  /* Border Colors */
+  --color-border-subtle: rgba(218, 213, 205, 0.8);
+  --color-border-default: rgba(189, 181, 170, 0.5);
+  --color-border-strong: rgba(156, 149, 141, 0.3);
+
+  /* Semantic Colors */
+  --color-success: #4ECDC4;
+  --color-warning: #FFB347;
+  --color-error: #FF6B6B;
+  --color-info: #74B9FF;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(45, 42, 38, 0.04);
+  --shadow-md: 0 4px 12px rgba(45, 42, 38, 0.06);
+  --shadow-lg: 0 8px 24px rgba(45, 42, 38, 0.08);
+  --shadow-xl: 0 16px 48px rgba(45, 42, 38, 0.12);
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* ============================================
+   CSS CUSTOM PROPERTIES - DARK THEME
+   ============================================ */
+[data-theme="dark"] {
+  /* Primary Colors - Adjusted for Dark */
+  --color-primary: #FF8585;
+  --color-primary-light: #FFA5A5;
+  --color-primary-dark: #FF6B6B;
+  --color-primary-soft: rgba(255, 133, 133, 0.15);
+
+  /* Secondary Colors */
+  --color-secondary: #5EDDD5;
+  --color-secondary-light: #8FEBE5;
+  --color-secondary-dark: #4ECDC4;
+  --color-secondary-soft: rgba(94, 221, 213, 0.15);
+
+  /* Neutral Colors - Dark Warm Grays */
+  --color-bg-primary: #1A1816;
+  --color-bg-secondary: #242119;
+  --color-bg-tertiary: #2E2A24;
+  --color-bg-elevated: #3A3630;
+
+  --color-text-primary: #FAF8F6;
+  --color-text-secondary: #C4C0B8;
+  --color-text-tertiary: #8A8680;
+  --color-text-inverse: #2D2A26;
+
+  /* Border Colors */
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-default: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.15);
+
+  /* Semantic Colors */
+  --color-success: #5EDDD5;
+  --color-warning: #FFC76E;
+  --color-error: #FF8585;
+  --color-info: #8CC9FF;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================
+   GLOBAL BASE STYLES
+   ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: 2.5rem; letter-spacing: -0.02em; }
+h2 { font-size: 2rem; letter-spacing: -0.01em; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: 0.875rem; }
+
+p {
+  margin-bottom: 1em;
+}
+
+/* ============================================
+   THEME TRANSITION
+   ============================================ */
+.theme-transition {
+  transition:
+    background-color var(--transition-slow),
+    border-color var(--transition-slow),
+    color var(--transition-slow),
+    box-shadow var(--transition-slow);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-tertiary); }
+
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-bg-secondary); }
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-default);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-strong);
+}
+
+/* ============================================
+   ELEMENT PLUS OVERRIDES - THEME COLORS
+   ============================================ */
+:root {
+  --el-color-primary: var(--color-primary) !important;
+  --el-color-primary-light-3: var(--color-primary-light) !important;
+  --el-color-primary-light-5: var(--color-primary-light) !important;
+  --el-color-primary-light-7: var(--color-primary-light) !important;
+  --el-color-primary-light-8: var(--color-primary-light) !important;
+  --el-color-primary-light-9: var(--color-primary-light) !important;
+  --el-color-primary-dark-2: var(--color-primary-dark) !important;
+
+  --el-color-success: var(--color-success) !important;
+  --el-color-warning: var(--color-warning) !important;
+  --el-color-danger: var(--color-error) !important;
+  --el-color-info: var(--color-info) !important;
+
+  --el-bg-color: var(--color-bg-elevated) !important;
+  --el-bg-color-page: var(--color-bg-primary) !important;
+
+  --el-text-color-primary: var(--color-text-primary) !important;
+  --el-text-color-regular: var(--color-text-secondary) !important;
+  --el-text-color-secondary: var(--color-text-tertiary) !important;
+
+  --el-border-color: var(--color-border-default) !important;
+  --el-border-color-light: var(--color-border-subtle) !important;
+  --el-border-color-lighter: var(--color-border-subtle) !important;
+  --el-border-color-extra-light: var(--color-border-subtle) !important;
+
+  --el-border-radius-base: var(--radius-md) !important;
+  --el-border-radius-small: var(--radius-sm) !important;
+  --el-border-radius-round: var(--radius-full) !important;
+
+  --el-box-shadow-base: var(--shadow-md) !important;
+  --el-box-shadow-light: var(--shadow-sm) !important;
+  --el-box-shadow-dark: var(--shadow-lg) !important;
+
+  --el-font-size-base: 14px !important;
+}
+
+[data-theme="dark"] {
+  --el-bg-color: var(--color-bg-elevated) !important;
+  --el-bg-color-page: var(--color-bg-primary) !important;
+}
+
+/* ============================================
+   CARD COMPONENT
+   ============================================ */
+.card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   BUTTON OVERRIDES
+   ============================================ */
+.el-button {
+  border-radius: var(--radius-md) !important;
+  font-weight: 600 !important;
+  font-family: var(--font-body) !important;
+  transition: all var(--transition-base) !important;
+}
+
+.el-button--primary {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.el-button--primary:hover {
+  background: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.el-button--default {
+  background: var(--color-bg-elevated) !important;
+  border-color: var(--color-border-default) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.el-button--default:hover {
+  background: var(--color-bg-secondary) !important;
+  border-color: var(--color-border-strong) !important;
+}
+
+/* ============================================
+   INPUT OVERRIDES
+   ============================================ */
+.el-input__wrapper {
+  border-radius: var(--radius-md) !important;
+  box-shadow: none !important;
+  border: 1.5px solid var(--color-border-default) !important;
+  background: var(--color-bg-elevated) !important;
+  transition: all var(--transition-base) !important;
+}
+
+.el-input__wrapper:hover {
+  border-color: var(--color-border-strong) !important;
+  background: var(--color-bg-elevated) !important;
+}
+
+.el-input__wrapper.is-focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px var(--color-primary-soft) !important;
+  background: var(--color-bg-elevated) !important;
+}
+
+.el-input__inner {
+  color: var(--color-text-primary) !important;
+  font-family: var(--font-body) !important;
+  background: transparent !important;
+}
+
+.el-input__inner::placeholder {
+  color: var(--color-text-tertiary) !important;
+}
+
+/* Dark mode input fixes */
+[data-theme="dark"] .el-input__wrapper {
+  background: var(--color-bg-elevated) !important;
+}
+
+[data-theme="dark"] .el-input__inner {
+  color: var(--color-text-primary) !important;
+  background: transparent !important;
+}
+
+/* ============================================
+   SELECT OVERRIDES
+   ============================================ */
+.el-select .el-input__wrapper {
+  border-radius: var(--radius-md) !important;
+}
+
+.el-select-dropdown {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.el-select-dropdown__item {
+  border-radius: var(--radius-sm) !important;
+  margin: 2px 4px;
+  transition: all var(--transition-fast) !important;
+}
+
+.el-select-dropdown__item.selected {
+  background: var(--color-primary-soft) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600;
+}
+
+/* ============================================
+   TABLE OVERRIDES
+   ============================================ */
+.el-table {
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden;
+  background: var(--color-bg-elevated) !important;
+}
+
+.el-table__inner-wrapper {
+  background: var(--color-bg-elevated) !important;
+}
+
+.el-table__header-wrapper {
+  background: var(--color-bg-secondary) !important;
+}
+
+.el-table__header th {
+  background: var(--color-bg-secondary) !important;
+  color: var(--color-text-secondary) !important;
+  font-weight: 600 !important;
+  font-family: var(--font-display) !important;
+  text-transform: uppercase;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border-subtle) !important;
+}
+
+.el-table__header th .cell {
+  color: var(--color-text-secondary) !important;
+}
+
+.el-table__body-wrapper {
+  background: var(--color-bg-elevated) !important;
+}
+
+.el-table__body tr {
+  background: var(--color-bg-elevated) !important;
+  transition: background var(--transition-fast) !important;
+  border-bottom: 1px solid var(--color-border-subtle) !important;
+}
+
+.el-table__body tr:hover > td {
+  background: var(--color-bg-secondary) !important;
+}
+
+.el-table__body td {
+  background: var(--color-bg-elevated) !important;
+  border-bottom: 1px solid var(--color-border-subtle) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.el-table__body tr.current-row > td {
+  background: var(--color-primary-soft) !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background: var(--color-bg-secondary) !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped:hover > td {
+  background: var(--color-bg-tertiary) !important;
+}
+
+/* Table cell text color */
+.el-table .cell {
+  color: var(--color-text-primary) !important;
+}
+
+/* Empty state */
+.el-table__empty-block {
+  background: var(--color-bg-elevated) !important;
+}
+
+.el-table__empty-text {
+  color: var(--color-text-tertiary) !important;
+}
+
+/* Loading overlay */
+.el-table .el-loading-mask {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ============================================
+   MENU OVERRIDES
+   ============================================ */
+.el-menu {
+  border-right: none !important;
+}
+
+.el-menu-item {
+  border-radius: var(--radius-md) !important;
+  margin: 4px 8px !important;
+  transition: all var(--transition-base) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.el-menu-item:hover {
+  background: var(--color-bg-tertiary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.el-menu-item.is-active {
+  background: var(--color-primary-soft) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600;
+}
+
+/* ============================================
+   CARD OVERRIDES
+   ============================================ */
+.el-card {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+  box-shadow: var(--shadow-sm) !important;
+  background: var(--color-bg-elevated) !important;
+  transition: all var(--transition-base) !important;
+}
+
+.el-card__header {
+  border-bottom: 1px solid var(--color-border-subtle) !important;
+  padding: 20px 24px !important;
+  background: var(--color-bg-elevated) !important;
+}
+
+.el-card__body {
+  padding: 24px !important;
+  background: var(--color-bg-elevated) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* ============================================
+   MESSAGE OVERRIDES
+   ============================================ */
+.el-message {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 16px 20px !important;
+}
+
+.el-message--success {
+  background: var(--color-bg-elevated) !important;
+  border: 1px solid rgba(78, 205, 196, 0.3) !important;
+}
+
+.el-message--error {
+  background: var(--color-bg-elevated) !important;
+  border: 1px solid rgba(255, 107, 107, 0.3) !important;
+}
+
+.el-message--warning {
+  background: var(--color-bg-elevated) !important;
+  border: 1px solid rgba(255, 179, 71, 0.3) !important;
+}
+
+/* ============================================
+   PAGINATION OVERRIDES
+   ============================================ */
+.el-pagination {
+  font-family: var(--font-body) !important;
+}
+
+.el-pagination button {
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.el-pagination .el-pager li {
+  border-radius: var(--radius-md) !important;
+  margin: 0 2px;
+  transition: all var(--transition-fast) !important;
+}
+
+.el-pagination .el-pager li.is-active {
+  background: var(--color-primary) !important;
+  color: white !important;
+}
+
+/* ============================================
+   AVATAR OVERRIDES
+   ============================================ */
+.el-avatar {
+  border-radius: var(--radius-md) !important;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)) !important;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* ============================================
+   DARK MODE SPECIFIC FIXES
+   ============================================ */
+[data-theme="dark"] {
+  /* Ensure all text is readable */
+  color: var(--color-text-primary);
+}
+
+/* Sidebar and header fixes for dark mode */
+[data-theme="dark"] .sidebar {
+  background: var(--color-bg-elevated) !important;
+  border-right-color: var(--color-border-subtle) !important;
+}
+
+[data-theme="dark"] .sidebar-header {
+  background: var(--color-bg-elevated) !important;
+  border-bottom-color: var(--color-border-subtle) !important;
+}
+
+[data-theme="dark"] .sidebar-footer {
+  border-top-color: var(--color-border-subtle) !important;
+  background: var(--color-bg-elevated) !important;
+}
+
+[data-theme="dark"] .header {
+  background: var(--color-bg-elevated) !important;
+  border-bottom-color: var(--color-border-subtle) !important;
+}
+
+/* Logo text colors */
+[data-theme="dark"] .logo-title {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .logo-subtitle {
+  color: var(--color-text-tertiary) !important;
+}
+
+/* User info in dark mode */
+[data-theme="dark"] .user-info {
+  background: var(--color-bg-secondary) !important;
+  border-color: var(--color-border-subtle) !important;
+}
+
+[data-theme="dark"] .username {
+  color: var(--color-text-primary) !important;
+}
+
+/* Table text colors in dark mode */
+[data-theme="dark"] .el-table {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .el-table th .cell,
+[data-theme="dark"] .el-table td .cell {
+  color: var(--color-text-primary) !important;
+}
+
+/* Form labels in dark mode */
+[data-theme="dark"] .el-form-item__label {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Dropdown in dark mode */
+[data-theme="dark"] .el-select-dropdown {
+  background: var(--color-bg-elevated) !important;
+  border-color: var(--color-border-default) !important;
+}
+
+[data-theme="dark"] .el-select-dropdown__item {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .el-select-dropdown__item.hover,
+[data-theme="dark"] .el-select-dropdown__item:hover {
+  background: var(--color-bg-secondary) !important;
+}
+
+[data-theme="dark"] .el-select-dropdown__item.selected {
+  background: var(--color-primary-soft) !important;
+  color: var(--color-primary) !important;
+}
+
+/* Pagination in dark mode */
+[data-theme="dark"] .el-pagination .el-pager li {
+  background: var(--color-bg-elevated) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+}
+
+[data-theme="dark"] .el-pagination .el-pager li:hover {
+  background: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .el-pagination button {
+  background: var(--color-bg-elevated) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+}
+
+[data-theme="dark"] .el-pagination button:hover {
+  background: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Button text in dark mode */
+[data-theme="dark"] .el-button--default {
+  color: var(--color-text-primary) !important;
+}
+
+/* Message text in dark mode */
+[data-theme="dark"] .el-message__content {
+  color: var(--color-text-primary) !important;
+}
+
+/* Dialog in dark mode */
+[data-theme="dark"] .el-dialog {
+  background: var(--color-bg-elevated) !important;
+}
+
+[data-theme="dark"] .el-dialog__title {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .el-dialog__body {
+  color: var(--color-text-primary) !important;
+}
+
+/* Drawer in dark mode */
+[data-theme="dark"] .el-drawer {
+  background: var(--color-bg-elevated) !important;
+}
+
+[data-theme="dark"] .el-drawer__header {
+  color: var(--color-text-primary) !important;
+}
+
+/* Popover in dark mode */
+[data-theme="dark"] .el-popover {
+  background: var(--color-bg-elevated) !important;
+  border-color: var(--color-border-default) !important;
+}
+
+[data-theme="dark"] .el-popover__title {
+  color: var(--color-text-primary) !important;
+}
+
+/* Tooltip in dark mode */
+[data-theme="dark"] .el-tooltip__popper {
+  background: var(--color-bg-tertiary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .el-tooltip__popper .el-tooltip__arrow::before {
+  border-color: var(--color-bg-tertiary) !important;
+}
