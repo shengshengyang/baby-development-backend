@@ -1,198 +1,421 @@
-/* 全域暗色模式樣式 */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
+
+:root {
+  /* Brand Colors */
+  --color-primary: #4abbb9;
+  --color-primary-dark: #3a9694;
+  --color-secondary: #ffce51;
+  --color-accent: #ff8f77;
+
+  /* Pastel Palette */
+  --color-pastel-blue: #a7d8f0;
+  --color-pastel-green: #b2dbc5;
+  --color-pastel-yellow: #fff1c2;
+  --color-pastel-pink: #ffcad4;
+
+  /* System Colors */
+  --bg-body: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+html.dark {
+  --bg-body: #111827;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border-color: #374151;
+
+  --glass-bg: rgba(17, 24, 39, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
 body {
-    transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  overflow-x: hidden;
 }
 
-/* 確保背景完全覆蓋 */
-html,
-body {
-    min-height: 100vh;
-    background-color: white;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Outfit", sans-serif;
 }
 
-html.dark,
-html.dark body {
-    background-color: #1f2937; /* gray-800 */
-    color: #f3f4f6; /* gray-100 */
+/* --- Utilities --- */
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
-/* 側邊欄背景修正 */
-.sidebar-bg {
-    background-color: #B2DBC5; /* pastel-green */
+.text-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-html.dark .sidebar-bg {
-    background-color: #374151; /* gray-700 */
+/* --- Animations --- */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* 卡片背景修正 */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes gradient-xy {
+  0%,
+  100% {
+    background-size: 400% 400%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Delay utilities */
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+/* --- Specific Components --- */
+
+/* Sidebar */
+.sidebar-wrapper {
+  background-color: var(--color-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.dark .sidebar-wrapper {
+  background-color: #1f2937;
+  border-right: 1px solid #374151;
+}
+
+.nav-link {
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(5px);
+}
+
+.nav-link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 70%;
+  width: 4px;
+  background-color: var(--color-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Background Animated Mesh */
+.animated-mesh-bg {
+  background:
+    radial-gradient(at 0% 0%, rgba(74, 187, 185, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 206, 81, 0.3) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      rgba(255, 143, 119, 0.3) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 100%, rgba(167, 216, 240, 0.3) 0px, transparent 50%);
+  background-size: 150% 150%;
+  animation: gradient-xy 15s ease infinite;
+}
+
+html.dark .animated-mesh-bg {
+  background:
+    radial-gradient(at 0% 0%, rgba(74, 187, 185, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 206, 81, 0.15) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      rgba(255, 143, 119, 0.15) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 100%, rgba(167, 216, 240, 0.15) 0px, transparent 50%);
+  background-color: #111827;
+}
+
+/* Card Overrides */
+.card-hoverable {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card-hoverable:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Form Elements --- */
+.input-modern {
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  transition: all 0.3s ease;
+}
+
+.input-modern:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 187, 185, 0.2);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.input-modern::placeholder {
+  color: var(--text-muted);
+}
+
+/* --- Card & Background Styles --- */
 .card-bg {
-    background-color: white;
-    transition: background-color 0.3s ease;
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
 html.dark .card-bg {
-    background-color: #374151; /* gray-700 */
+  background-color: rgba(31, 41, 55, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 表格標頭背景修正 */
-.table-header-bg {
-    background-color: #f9fafb; /* gray-50 */
-}
-
-html.dark .table-header-bg {
-    background-color: #4b5563; /* gray-600 */
-}
-
-/* 表格行 hover 效果 */
-.table-row-hover:hover {
-    background-color: #f9fafb; /* gray-50 */
-}
-
-html.dark .table-row-hover:hover {
-    background-color: #4b5563; /* gray-600 */
-}
-
-/* 輸入框背景修正 */
 .input-bg {
-    background-color: white;
-    border-color: #d1d5db; /* gray-300 */
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
 }
 
 html.dark .input-bg {
-    background-color: #374151; /* gray-700 */
-    border-color: #4b5563; /* gray-600 */
-    color: #f3f4f6; /* gray-100 */
+  background-color: rgba(55, 65, 81, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 選擇框背景修正 */
 .select-bg {
-    background-color: white;
-    border-color: #d1d5db; /* gray-300 */
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
 }
 
 html.dark .select-bg {
-    background-color: #374151; /* gray-700 */
-    border-color: #4b5563; /* gray-600 */
-    color: #f3f4f6; /* gray-100 */
+  background-color: rgba(55, 65, 81, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 文字區域背景修正 */
-.textarea-bg {
-    background-color: white;
-    border-color: #d1d5db; /* gray-300 */
-}
-
-html.dark .textarea-bg {
-    background-color: #374151; /* gray-700 */
-    border-color: #4b5563; /* gray-600 */
-    color: #f3f4f6; /* gray-100 */
-}
-
-/* 提示文字顏色修正 */
-.help-text {
-    color: #6b7280; /* gray-500 */
-}
-
-html.dark .help-text {
-    color: #9ca3af; /* gray-400 */
-}
-
-/* 標籤文字顏色修正 */
-.label-text {
-    color: #374151; /* gray-700 */
-}
-
-html.dark .label-text {
-    color: #d1d5db; /* gray-300 */
-}
-
-/* 邊框顏色修正 */
-.border-custom {
-    border-color: #e5e7eb; /* gray-200 */
-}
-
-html.dark .border-custom {
-    border-color: #4b5563; /* gray-600 */
-}
-
-/* 導航連結 hover 效果 */
-.nav-link:hover {
-    background-color: #4ABBB9; /* primary */
-    color: white;
-}
-
-/* 空狀態背景修正 */
-.empty-state-bg {
-    background-color: #f9fafb; /* gray-50 */
-}
-
-html.dark .empty-state-bg {
-    background-color: #4b5563; /* gray-600 */
-}
-
-/* 圖片佔位符背景修正 */
 .image-placeholder {
-    background-color: #e5e7eb; /* gray-200 */
+  background: linear-gradient(135deg, rgba(167, 216, 240, 0.3), rgba(178, 219, 197, 0.3));
+  border: 2px dashed var(--border-color);
 }
 
 html.dark .image-placeholder {
-    background-color: #4b5563; /* gray-600 */
+  background: linear-gradient(135deg, rgba(74, 187, 185, 0.1), rgba(255, 206, 81, 0.1));
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 成功訊息背景修正 */
+/* --- Status/Alert Styles --- */
 .success-bg {
-    background-color: #ecfdf5; /* green-50 */
-    border-color: #bbf7d0; /* green-200 */
-}
-
-html.dark .success-bg {
-    background-color: #064e3b; /* green-900/20 */
-    border-color: #065f46; /* green-800 */
+  background-color: rgba(178, 219, 197, 0.3);
+  border-color: #10b981;
 }
 
 .success-text {
-    color: #166534; /* green-800 */
+  color: #065f46;
+}
+
+html.dark .success-bg {
+  background-color: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
 }
 
 html.dark .success-text {
-    color: #bbf7d0; /* green-200 */
+  color: #6ee7b7;
 }
 
-/* 錯誤訊息背景修正 */
 .error-bg {
-    background-color: #fef2f2; /* red-50 */
-    border-color: #fecaca; /* red-200 */
-}
-
-html.dark .error-bg {
-    background-color: #7f1d1d; /* red-900/20 */
-    border-color: #991b1b; /* red-800 */
+  background-color: rgba(255, 202, 212, 0.3);
+  border-color: #ef4444;
 }
 
 .error-text {
-    color: #dc2626; /* red-600 */
+  color: #991b1b;
+}
+
+html.dark .error-bg {
+  background-color: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
 }
 
 html.dark .error-text {
-    color: #fca5a5; /* red-300 */
+  color: #fca5a5;
 }
 
-/* 資訊提示背景修正 */
-.info-bg {
-    background-color: #eff6ff; /* blue-50 */
-    border-color: #dbeafe; /* blue-200 */
+/* --- Table Styles --- */
+.border-custom {
+  border-color: var(--border-color);
 }
 
-html.dark .info-bg {
-    background-color: #1e3a8a; /* blue-900/20 */
-    border-color: #1d4ed8; /* blue-700 */
+.table-header-bg {
+  background-color: rgba(74, 187, 185, 0.1);
 }
 
-.info-text {
-    color: #1d4ed8; /* blue-700 */
+html.dark .table-header-bg {
+  background-color: rgba(74, 187, 185, 0.05);
 }
 
-html.dark .info-text {
-    color: #93c5fd; /* blue-300 */
+.table-row-hover {
+  transition: all 0.2s ease;
+}
+
+.table-row-hover:hover {
+  background-color: rgba(74, 187, 185, 0.05);
+  transform: scale(1.01);
+}
+
+html.dark .table-row-hover:hover {
+  background-color: rgba(74, 187, 185, 0.03);
+}
+
+/* --- Button Enhancements --- */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 187, 185, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 187, 185, 0.4);
+}
+
+.btn-secondary {
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(74, 187, 185, 0.1);
+  border-color: var(--color-primary);
+}
+
+/* --- Scrollbar Customization --- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Loading & Empty States --- */
+.loading-skeleton {
+  background: linear-gradient(90deg, rgba(167, 216, 240, 0.3) 25%, rgba(178, 219, 197, 0.3) 50%, rgba(167, 216, 240, 0.3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

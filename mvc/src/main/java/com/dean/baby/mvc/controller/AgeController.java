@@ -112,7 +112,7 @@ public class AgeController {
                            RedirectAttributes redirectAttributes) {
         try {
             Optional<Age> ageOpt = ageRepository.findById(id);
-            if (!ageOpt.isPresent()) {
+            if (ageOpt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Age 不存在！");
                 return "redirect:/ages";
             }

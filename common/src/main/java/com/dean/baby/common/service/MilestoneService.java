@@ -16,12 +16,15 @@ import com.dean.baby.common.repository.UserRepository;
 import com.dean.baby.common.util.ChangeLogUtil;
 import com.dean.baby.common.util.LanguageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import com.dean.baby.common.dto.enums.Language;
 import com.dean.baby.common.dto.common.LangFieldObject;
 
@@ -73,6 +76,42 @@ public class MilestoneService extends BaseService {
         return milestoneRepository.findAll().stream()
                 .map(MilestoneDTO::fromEntity)
                 .toList();
+    }
+
+    /**
+     * 獲取所有 Milestones（支援分頁）
+     */
+    public Page<MilestoneDTO> getAllMilestones(Pageable pageable) {
+        Language currentLanguage = LanguageUtil.getLanguageFromLocale();
+        return milestoneRepository.findAll(pageable)
+                .map(milestone -> buildMilestoneDTOWithLanguage(milestone, currentLanguage));
+    }
+
+    /**
+     * 根據年齡 UUID 查找里程碑（支援分頁）
+     */
+    public Page<MilestoneDTO> getMilestonesByAgeId(UUID ageId, Pageable pageable) {
+        Language currentLanguage = LanguageUtil.getLanguageFromLocale();
+        return milestoneRepository.findByAgeId(ageId, pageable)
+                .map(milestone -> buildMilestoneDTOWithLanguage(milestone, currentLanguage));
+    }
+
+    /**
+     * 根據分類 UUID 查找里程碑（支援分頁）
+     */
+    public Page<MilestoneDTO> getMilestonesByCategoryId(UUID categoryId, Pageable pageable) {
+        Language currentLanguage = LanguageUtil.getLanguageFromLocale();
+        return milestoneRepository.findByCategoryId(categoryId, pageable)
+                .map(milestone -> buildMilestoneDTOWithLanguage(milestone, currentLanguage));
+    }
+
+    /**
+     * 根據年齡 UUID 和分類 UUID 查找里程碑（支援分頁）
+     */
+    public Page<MilestoneDTO> getMilestonesByAgeIdAndCategoryId(UUID ageId, UUID categoryId, Pageable pageable) {
+        Language currentLanguage = LanguageUtil.getLanguageFromLocale();
+        return milestoneRepository.findByAgeIdAndCategoryId(ageId, categoryId, pageable)
+                .map(milestone -> buildMilestoneDTOWithLanguage(milestone, currentLanguage));
     }
 
     /**

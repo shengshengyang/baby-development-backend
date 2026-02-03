@@ -40,4 +40,7 @@ public class Flashcard {
 
     @OneToMany(mappedBy = "flashcard")
     private List<FlashcardTranslation> translations;
+
+    @OneToMany(mappedBy = "flashcard")
+    private List<Video> videos;
 }

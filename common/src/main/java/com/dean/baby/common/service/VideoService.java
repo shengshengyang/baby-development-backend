@@ -8,6 +8,8 @@ import com.dean.baby.common.exception.ApiException;
 import com.dean.baby.common.exception.SysCode;
 import com.dean.baby.common.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -168,6 +170,15 @@ public class VideoService extends BaseService {
     public List<VideoDto> getAllVideos() {
         List<Video> videos = videoRepository.findAll();
         return VideoDto.fromEntities(videos);
+    }
+
+    /**
+     * 獲取所有videos (分頁)
+     */
+    @Transactional(readOnly = true)
+    public Page<VideoDto> getAllVideosPaginated(Pageable pageable) {
+        Page<Video> videoPage = videoRepository.findAll(pageable);
+        return videoPage.map(VideoDto::fromEntity);
     }
 
     /**

@@ -8,6 +8,11 @@ import com.dean.baby.common.repository.MilestoneRepository;
 import com.dean.baby.common.repository.FlashcardRepository;
 import com.dean.baby.common.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,12 +43,15 @@ public class VideoController {
      * 顯示所有 Video 列表
      */
     @GetMapping
-    public String listVideos(Model model,
-                            @RequestParam(value = "success", required = false) String success,
-                            @RequestParam(value = "error", required = false) String error) {
+    public String listVideos(
+            @PageableDefault(size = 12, sort = "id.desc") Pageable pageable,
+            @RequestParam(value = "success", required = false) String success,
+            @RequestParam(value = "error", required = false) String error,
+            Model model) {
         try {
-            List<VideoDto> videos = videoService.getAllVideos();
-            model.addAttribute("videos", videos);
+            // 使用 VideoService 獲取分頁數據
+            Page<VideoDto> videoPage = videoService.getAllVideosPaginated(pageable);
+            model.addAttribute("videoPage", videoPage);
 
             if (success != null) {
                 model.addAttribute("success", "操作成功完成");
@@ -55,6 +63,7 @@ public class VideoController {
             return "video/list";
         } catch (Exception e) {
             model.addAttribute("error", "載入視頻列表失敗：" + e.getMessage());
+            model.addAttribute("videoPage", Page.empty(pageable));
             return "video/list";
         }
     }
