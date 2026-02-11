@@ -1,6 +1,6 @@
-package com.dean.baby.common.repository;
+package com.dean.baby.repository;
 
-import com.dean.baby.common.entity.Age;
+import com.dean.baby.entity.Age;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

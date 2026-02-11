@@ -99,21 +99,47 @@
 
     <!-- Logger 設定 -->
     <!-- Spring Framework Logger -->
-    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.boot" level="WARN"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.security" level="INFO"/>
 
-    <!-- Hibernate Logger - 僅記錄重要日誌 -->
-    <logger name="org.hibernate" level="INFO"/>
+    <!-- Spring Security AutoConfiguration -->
+    <logger name="org.springframework.boot.autoconfigure.security" level="ERROR"/>
+
+    <!-- Hibernate Logger - 降低啟動日誌 -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.orm" level="WARN"/>
+    <logger name="org.hibernate.jpa" level="WARN"/>
+    <logger name="org.hibernate.engine" level="WARN"/>
 
     <!-- Hibernate SQL Logger - 預設關閉（不記錄查詢） -->
     <!-- 如需查看所有 SQL（含查詢），請將 level 設為 DEBUG -->
-    <logger name="org.hibernate.SQL" level="INFO"/>
+    <logger name="org.hibernate.SQL" level="WARN"/>
 
     <!-- Hibernate 參數綁定 - 預設關閉 -->
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="WARN"/>
+
+    <!-- Hibernate 連線池日誌 -->
+    <logger name="org.hibernate.orm.connections.pooling" level="ERROR"/>
+
+    <!-- Hibernate Dialect 警告 -->
+    <logger name="org.hibernate.dialect" level="ERROR"/>
 
     <!-- Hibernate 事務管理 - 記錄事務相關資訊 -->
-    <logger name="org.hibernate.transaction" level="INFO"/>
-    <logger name="org.hibernate.engine.transaction" level="INFO"/>
+    <logger name="org.hibernate.transaction" level="WARN"/>
+    <logger name="org.hibernate.engine.transaction" level="WARN"/>
+
+    <!-- Flyway 資料庫遷移日誌 -->
+    <logger name="org.flywaydb" level="WARN"/>
+    <logger name="org.flywaydb.core" level="WARN"/>
+
+    <!-- Tomcat -->
+    <logger name="org.apache.coyote" level="INFO"/>
+    <logger name="org.apache.catalina" level="WARN"/>
+
+    <!-- HikariCP 連線池 -->
+    <logger name="com.zaxxer.hikari" level="WARN"/>
 
     <!-- Hibernate 統計資訊 - 可選：啟用後可看到實體的異動統計 -->
     <!-- <logger name="org.hibernate.stat" level="DEBUG"/> -->

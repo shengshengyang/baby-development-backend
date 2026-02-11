@@ -1,9 +1,9 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.LoginVo;
-import com.dean.baby.common.dto.RegisterVo;
-import com.dean.baby.common.dto.UserDto;
-import com.dean.baby.common.repository.UserRepository;
+import com.dean.baby.dto.LoginVo;
+import com.dean.baby.dto.RegisterVo;
+import com.dean.baby.dto.UserDto;
+import com.dean.baby.repository.UserRepository;
 import com.dean.baby.api.service.AuthService;
 import com.dean.baby.api.service.EmailService;
 import com.dean.baby.api.service.RedisService;

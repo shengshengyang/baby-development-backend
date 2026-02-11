@@ -1,4 +1,4 @@
-package com.dean.baby.common.dto.enums;
+package com.dean.baby.dto.enums;
 
 import lombok.Getter;
 

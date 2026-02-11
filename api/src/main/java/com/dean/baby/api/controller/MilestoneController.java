@@ -1,7 +1,7 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.MilestoneDTO;
-import com.dean.baby.common.service.MilestoneService;
+import com.dean.baby.dto.MilestoneDTO;
+import com.dean.baby.service.MilestoneService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

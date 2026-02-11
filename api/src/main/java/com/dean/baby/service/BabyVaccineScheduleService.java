@@ -1,15 +1,15 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.enums.VaccineStatus;
-import com.dean.baby.common.entity.Baby;
-import com.dean.baby.common.entity.BabyVaccineSchedule;
-import com.dean.baby.common.entity.Vaccine;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.BabyRepository;
-import com.dean.baby.common.repository.BabyVaccineScheduleRepository;
-import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.common.repository.VaccineRepository;
+import com.dean.baby.dto.enums.VaccineStatus;
+import com.dean.baby.entity.Baby;
+import com.dean.baby.entity.BabyVaccineSchedule;
+import com.dean.baby.entity.Vaccine;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.BabyRepository;
+import com.dean.baby.repository.BabyVaccineScheduleRepository;
+import com.dean.baby.repository.UserRepository;
+import com.dean.baby.repository.VaccineRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

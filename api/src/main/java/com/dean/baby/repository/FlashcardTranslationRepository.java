@@ -1,7 +1,7 @@
-package com.dean.baby.common.repository;
+package com.dean.baby.repository;
 
-import com.dean.baby.common.entity.FlashcardTranslation;
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.entity.FlashcardTranslation;
+import com.dean.baby.dto.enums.Language;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

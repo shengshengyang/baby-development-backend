@@ -1,7 +1,9 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.util.LanguageUtil;
+import com.dean.baby.dto.enums.Language;
+import com.dean.baby.entity.Flashcard;
+import com.dean.baby.entity.FlashcardTranslation;
+import com.dean.baby.util.LanguageUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +22,7 @@ public class FlashcardSummaryDTO {
     private String imageUrl;                    // 圖片URL
     private String description;                 // 當前語系的描述文字
 
-    public static FlashcardSummaryDTO fromEntity(com.dean.baby.common.entity.Flashcard flashcard) {
+    public static FlashcardSummaryDTO fromEntity(Flashcard flashcard) {
         if (flashcard == null) {
             return null;
         }
@@ -39,7 +41,7 @@ public class FlashcardSummaryDTO {
             description = flashcard.getTranslations().stream()
                 .filter(translation -> translation.getLanguageCode() == currentLanguage)
                 .findFirst()
-                .map(com.dean.baby.common.entity.FlashcardTranslation::getDescription)
+                .map(FlashcardTranslation::getDescription)
                 .orElse("");
         }
 

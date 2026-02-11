@@ -1,4 +1,4 @@
-package com.dean.baby.common.exception;
+package com.dean.baby.exception;
 
 public enum SysCode implements ErrorCode {
 

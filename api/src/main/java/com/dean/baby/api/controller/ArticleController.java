@@ -1,8 +1,8 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.ArticleDto;
-import com.dean.baby.common.service.ArticleService;
-import com.dean.baby.common.util.LanguageUtil;
+import com.dean.baby.dto.ArticleDto;
+import com.dean.baby.service.ArticleService;
+import com.dean.baby.util.LanguageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

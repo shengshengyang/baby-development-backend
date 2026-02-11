@@ -1,6 +1,7 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.entity.Milestone;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class MilestoneBaseDTO {
     @JsonIgnore
     private LangFieldObject descriptionObject;
 
-    public static MilestoneBaseDTO fromEntity(com.dean.baby.common.entity.Milestone milestone) {
+    public static MilestoneBaseDTO fromEntity(Milestone milestone) {
         if (milestone == null) {
             return null;
         }

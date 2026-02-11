@@ -1,8 +1,8 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.UpdateUserRequestVo;
-import com.dean.baby.common.dto.UserDto;
-import com.dean.baby.common.service.UserService;
+import com.dean.baby.dto.UpdateUserRequestVo;
+import com.dean.baby.dto.UserDto;
+import com.dean.baby.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,6 +1,6 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.dto.common.LangFieldObject;
 import lombok.Data;
 
 /**

@@ -23,6 +23,9 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // 明確排除 Spring Security 預設 UserDetailsService 自動配置
+    // 我們使用 CustomUserDetailsService，不需要預設的 inMemoryUserDetailsManager
+
     private final JwtRequestFilter jwtRequestFilter;
 
     public SecurityConfig(JwtRequestFilter jwtRequestFilter) {

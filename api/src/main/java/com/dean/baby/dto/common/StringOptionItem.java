@@ -1,4 +1,4 @@
-package com.dean.baby.common.dto.common;
+package com.dean.baby.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

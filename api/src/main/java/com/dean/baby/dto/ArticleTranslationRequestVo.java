@@ -1,6 +1,6 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.dto.enums.Language;
 
 public record ArticleTranslationRequestVo(
         Language languageCode,

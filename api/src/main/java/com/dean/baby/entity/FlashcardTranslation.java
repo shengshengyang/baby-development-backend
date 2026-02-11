@@ -1,12 +1,12 @@
 package com.dean.baby.entity;
 
 import lombok.*;
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.dto.enums.Language;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
-import com.dean.baby.common.util.LanguageConverter;
+import com.dean.baby.util.LanguageConverter;
 
 @Entity
 @Getter

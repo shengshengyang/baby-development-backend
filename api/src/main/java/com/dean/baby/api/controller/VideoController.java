@@ -1,8 +1,8 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.VideoDto;
-import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.service.VideoService;
+import com.dean.baby.dto.VideoDto;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.service.VideoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

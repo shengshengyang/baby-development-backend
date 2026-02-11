@@ -1,4 +1,4 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
 public record RegisterVo(
         String username,

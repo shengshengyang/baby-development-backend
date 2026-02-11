@@ -1,13 +1,13 @@
-package com.dean.baby.common.dto.common;
+package com.dean.baby.dto.common;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
+import com.dean.baby.dto.enums.Language;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.context.i18n.LocaleContextHolder;
 

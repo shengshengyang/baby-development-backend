@@ -1,10 +1,10 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.ProgressDto;
-import com.dean.baby.common.dto.UpdateProgressStatusRequest;
-import com.dean.baby.common.entity.ProgressStatus;
-import com.dean.baby.common.entity.ProgressType;
-import com.dean.baby.common.service.ProgressService;
+import com.dean.baby.dto.ProgressDto;
+import com.dean.baby.dto.UpdateProgressStatusRequest;
+import com.dean.baby.entity.ProgressStatus;
+import com.dean.baby.entity.ProgressType;
+import com.dean.baby.service.ProgressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

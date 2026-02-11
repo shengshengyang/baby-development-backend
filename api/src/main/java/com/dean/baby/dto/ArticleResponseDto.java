@@ -1,8 +1,8 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.entity.Article;
-import com.dean.baby.common.entity.ArticleTranslation;
+import com.dean.baby.dto.enums.Language;
+import com.dean.baby.entity.Article;
+import com.dean.baby.entity.ArticleTranslation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

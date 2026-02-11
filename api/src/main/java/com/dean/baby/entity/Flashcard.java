@@ -6,8 +6,8 @@ import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
-import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.util.LangFieldObjectConverter;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.util.LangFieldObjectConverter;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,11 +1,11 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.BabyCreateRequestVo;
-import com.dean.baby.common.dto.BabyDto;
-import com.dean.baby.common.dto.CompleteScheduleRequest;
-import com.dean.baby.common.entity.BabyVaccineSchedule;
-import com.dean.baby.common.service.BabyService;
-import com.dean.baby.common.service.BabyVaccineScheduleService;
+import com.dean.baby.dto.BabyCreateRequestVo;
+import com.dean.baby.dto.BabyDto;
+import com.dean.baby.dto.CompleteScheduleRequest;
+import com.dean.baby.entity.BabyVaccineSchedule;
+import com.dean.baby.service.BabyService;
+import com.dean.baby.service.BabyVaccineScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

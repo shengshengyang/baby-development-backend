@@ -1,9 +1,9 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.common.StringOptionItem;
-import com.dean.baby.common.entity.Age;
-import com.dean.baby.common.repository.AgeRepository;
-import com.dean.baby.common.repository.CategoryRepository;
+import com.dean.baby.dto.common.StringOptionItem;
+import com.dean.baby.entity.Age;
+import com.dean.baby.repository.AgeRepository;
+import com.dean.baby.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;

@@ -1,19 +1,19 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.ArticleCreateRequestVo;
-import com.dean.baby.common.dto.ArticleDto;
-import com.dean.baby.common.dto.ArticleResponseDto;
-import com.dean.baby.common.dto.ArticleTranslationRequestVo;
-import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.entity.Article;
-import com.dean.baby.common.entity.ArticleTranslation;
-import com.dean.baby.common.entity.Category;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.ArticleRepository;
-import com.dean.baby.common.repository.CategoryRepository;
-import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.common.util.LanguageUtil;
+import com.dean.baby.dto.ArticleCreateRequestVo;
+import com.dean.baby.dto.ArticleDto;
+import com.dean.baby.dto.ArticleResponseDto;
+import com.dean.baby.dto.ArticleTranslationRequestVo;
+import com.dean.baby.dto.enums.Language;
+import com.dean.baby.entity.Article;
+import com.dean.baby.entity.ArticleTranslation;
+import com.dean.baby.entity.Category;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.ArticleRepository;
+import com.dean.baby.repository.CategoryRepository;
+import com.dean.baby.repository.UserRepository;
+import com.dean.baby.util.LanguageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

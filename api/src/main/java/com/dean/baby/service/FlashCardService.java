@@ -1,11 +1,11 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.*;
-import com.dean.baby.common.entity.*;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.*;
-import com.dean.baby.common.util.LanguageUtil;
+import com.dean.baby.dto.*;
+import com.dean.baby.entity.*;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.*;
+import com.dean.baby.util.LanguageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.dto.enums.Language;
 
 @Service
 public class FlashCardService extends BaseService {

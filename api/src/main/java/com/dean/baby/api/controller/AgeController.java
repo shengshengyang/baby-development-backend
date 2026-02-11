@@ -1,9 +1,9 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.AgeDto;
-import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.entity.Age;
-import com.dean.baby.common.service.AgeService;
+import com.dean.baby.dto.AgeDto;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.entity.Age;
+import com.dean.baby.service.AgeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

@@ -1,6 +1,6 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.service.DashboardService;
+import com.dean.baby.service.DashboardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

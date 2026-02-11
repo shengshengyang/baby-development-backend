@@ -1,7 +1,8 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
- import com.dean.baby.common.dto.common.LangFieldObject;
-import lombok.AllArgsConstructor;
+ import com.dean.baby.dto.common.LangFieldObject;
+ import com.dean.baby.entity.Flashcard;
+ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ public class FlashcardDTO {
     private String imageUrl;                    // 圖片URL (從 FlashcardTranslation 移過來)
     private List<FlashcardTranslationDTO> translations;
 
-    public static FlashcardDTO fromEntity(com.dean.baby.common.entity.Flashcard flashcard) {
+    public static FlashcardDTO fromEntity(Flashcard flashcard) {
         if (flashcard == null) {
             return null;
         }

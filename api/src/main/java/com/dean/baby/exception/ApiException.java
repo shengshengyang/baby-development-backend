@@ -1,4 +1,4 @@
-package com.dean.baby.common.exception;
+package com.dean.baby.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

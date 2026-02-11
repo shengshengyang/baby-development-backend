@@ -1,6 +1,6 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.entity.ProgressStatus;
+import com.dean.baby.entity.ProgressStatus;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotNull;

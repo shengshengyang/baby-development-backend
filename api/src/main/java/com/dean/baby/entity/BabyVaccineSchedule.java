@@ -1,6 +1,6 @@
 package com.dean.baby.entity;
 
-import com.dean.baby.common.dto.enums.VaccineStatus;
+import com.dean.baby.dto.enums.VaccineStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;

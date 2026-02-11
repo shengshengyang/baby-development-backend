@@ -1,8 +1,8 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.entity.Category;
-import com.dean.baby.common.service.CategoryService;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.entity.Category;
+import com.dean.baby.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

@@ -1,7 +1,7 @@
-package com.dean.baby.common.util;
+package com.dean.baby.util;
 
-import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.dto.enums.Language;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;

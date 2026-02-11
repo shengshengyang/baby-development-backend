@@ -1,11 +1,11 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.ProgressDto;
-import com.dean.baby.common.dto.UpdateProgressStatusRequest;
-import com.dean.baby.common.entity.*;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.*;
+import com.dean.baby.dto.ProgressDto;
+import com.dean.baby.dto.UpdateProgressStatusRequest;
+import com.dean.baby.entity.*;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

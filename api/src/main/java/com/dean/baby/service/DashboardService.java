@@ -1,8 +1,8 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.repository.MilestoneRepository;
-import com.dean.baby.common.repository.FlashcardRepository;
-import com.dean.baby.common.repository.ArticleRepository;
+import com.dean.baby.repository.MilestoneRepository;
+import com.dean.baby.repository.FlashcardRepository;
+import com.dean.baby.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
 import jakarta.annotation.Nullable;
 

@@ -1,7 +1,7 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.entity.Vaccine;
-import com.dean.baby.common.repository.VaccineRepository;
+import com.dean.baby.entity.Vaccine;
+import com.dean.baby.repository.VaccineRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

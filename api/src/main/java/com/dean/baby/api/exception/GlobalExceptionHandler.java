@@ -1,7 +1,7 @@
 package com.dean.baby.api.exception;
 
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

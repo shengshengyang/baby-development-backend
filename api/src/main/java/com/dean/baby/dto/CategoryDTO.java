@@ -1,6 +1,7 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.entity.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class CategoryDTO {
      * @param category Category實體
      * @return CategoryDTO
      */
-    public static CategoryDTO fromEntity(com.dean.baby.common.entity.Category category) {
+    public static CategoryDTO fromEntity(Category category) {
         if (category == null) {
             return null;
         }
@@ -41,7 +42,7 @@ public class CategoryDTO {
      * @param languageCode 語言代碼 (如: tw, cn, en等)
      * @return CategoryDTO
      */
-    public static CategoryDTO fromEntity(com.dean.baby.common.entity.Category category, String languageCode) {
+    public static CategoryDTO fromEntity(Category category, String languageCode) {
         if (category == null) {
             return null;
         }

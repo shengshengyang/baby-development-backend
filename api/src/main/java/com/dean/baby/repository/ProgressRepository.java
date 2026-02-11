@@ -1,8 +1,8 @@
-package com.dean.baby.common.repository;
+package com.dean.baby.repository;
 
-import com.dean.baby.common.entity.Progress;
-import com.dean.baby.common.entity.ProgressStatus;
-import com.dean.baby.common.entity.ProgressType;
+import com.dean.baby.entity.Progress;
+import com.dean.baby.entity.ProgressStatus;
+import com.dean.baby.entity.ProgressType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

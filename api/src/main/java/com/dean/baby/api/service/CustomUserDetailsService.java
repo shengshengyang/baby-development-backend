@@ -1,9 +1,9 @@
 package com.dean.baby.api.service;
 
-import com.dean.baby.common.entity.User;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.UserRepository;
+import com.dean.baby.entity.User;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

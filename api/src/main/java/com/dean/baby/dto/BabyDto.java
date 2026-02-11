@@ -1,6 +1,6 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.entity.Baby;
+import com.dean.baby.entity.Baby;
 import lombok.Builder;
 import lombok.Data;
 

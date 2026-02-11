@@ -1,20 +1,20 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.AgeDto;
-import com.dean.baby.common.dto.CategoryDTO;
-import com.dean.baby.common.dto.FlashcardSummaryDTO;
-import com.dean.baby.common.dto.MilestoneDTO;
-import com.dean.baby.common.entity.Age;
-import com.dean.baby.common.entity.Category;
-import com.dean.baby.common.entity.Milestone;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.AgeRepository;
-import com.dean.baby.common.repository.CategoryRepository;
-import com.dean.baby.common.repository.MilestoneRepository;
-import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.common.util.ChangeLogUtil;
-import com.dean.baby.common.util.LanguageUtil;
+import com.dean.baby.dto.AgeDto;
+import com.dean.baby.dto.CategoryDTO;
+import com.dean.baby.dto.FlashcardSummaryDTO;
+import com.dean.baby.dto.MilestoneDTO;
+import com.dean.baby.entity.Age;
+import com.dean.baby.entity.Category;
+import com.dean.baby.entity.Milestone;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.AgeRepository;
+import com.dean.baby.repository.CategoryRepository;
+import com.dean.baby.repository.MilestoneRepository;
+import com.dean.baby.repository.UserRepository;
+import com.dean.baby.util.ChangeLogUtil;
+import com.dean.baby.util.LanguageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import com.dean.baby.common.dto.enums.Language;
-import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.dto.enums.Language;
+import com.dean.baby.dto.common.LangFieldObject;
 
 @Service
 @Slf4j
@@ -69,7 +69,7 @@ public class MilestoneService extends BaseService {
     }
 
     public Optional<MilestoneDTO> getMilestoneById(UUID id) {
-        return milestoneRepository.findById(id).map(MilestoneDTO::fromEntity);
+        return milestoneRepository.findByIdWithDetails(id).map(MilestoneDTO::fromEntity);
     }
 
     public List<MilestoneDTO> getAllMilestones() {
@@ -81,6 +81,7 @@ public class MilestoneService extends BaseService {
     /**
      * 獲取所有 Milestones（支援分頁）
      */
+    @Transactional
     public Page<MilestoneDTO> getAllMilestones(Pageable pageable) {
         Language currentLanguage = LanguageUtil.getLanguageFromLocale();
         return milestoneRepository.findAll(pageable)
@@ -90,6 +91,7 @@ public class MilestoneService extends BaseService {
     /**
      * 根據年齡 UUID 查找里程碑（支援分頁）
      */
+    @Transactional
     public Page<MilestoneDTO> getMilestonesByAgeId(UUID ageId, Pageable pageable) {
         Language currentLanguage = LanguageUtil.getLanguageFromLocale();
         return milestoneRepository.findByAgeId(ageId, pageable)
@@ -99,6 +101,7 @@ public class MilestoneService extends BaseService {
     /**
      * 根據分類 UUID 查找里程碑（支援分頁）
      */
+    @Transactional
     public Page<MilestoneDTO> getMilestonesByCategoryId(UUID categoryId, Pageable pageable) {
         Language currentLanguage = LanguageUtil.getLanguageFromLocale();
         return milestoneRepository.findByCategoryId(categoryId, pageable)
@@ -108,6 +111,7 @@ public class MilestoneService extends BaseService {
     /**
      * 根據年齡 UUID 和分類 UUID 查找里程碑（支援分頁）
      */
+    @Transactional
     public Page<MilestoneDTO> getMilestonesByAgeIdAndCategoryId(UUID ageId, UUID categoryId, Pageable pageable) {
         Language currentLanguage = LanguageUtil.getLanguageFromLocale();
         return milestoneRepository.findByAgeIdAndCategoryId(ageId, categoryId, pageable)
@@ -117,6 +121,7 @@ public class MilestoneService extends BaseService {
     /**
      * 根據年齡月份查找里程碑（向後兼容）
      */
+    @Transactional
     public List<MilestoneDTO> getMilestonesByAgeAndLanguage(int ageMonth, String languageCode) {
         Language language = Language.fromCode(languageCode);
         if (language == null) {
@@ -131,6 +136,7 @@ public class MilestoneService extends BaseService {
     /**
      * 根據年齡 UUID 查找里程碑，使用當前語言環境
      */
+    @Transactional
     public List<MilestoneDTO> getMilestonesByAgeId(UUID ageId) {
         Language currentLanguage = LanguageUtil.getLanguageFromLocale();
 
@@ -143,6 +149,7 @@ public class MilestoneService extends BaseService {
      * 根據條件查找里程碑，支援 ageId 和 categoryId 的組合查詢
      * 如果兩個參數都為 null 則返回所有里程碑
      */
+    @Transactional
     public List<MilestoneDTO> getMilestonesByConditions(UUID ageId, UUID categoryId) {
         Language currentLanguage = LanguageUtil.getLanguageFromLocale();
         List<Milestone> milestones;
@@ -273,8 +280,17 @@ public class MilestoneService extends BaseService {
 
     /**
      * 構建帶有特定語言的里程碑 DTO
+     * 注意：此方法需要在 @Transactional 上下文中調用以初始化懶加載集合
      */
     private MilestoneDTO buildMilestoneDTOWithLanguage(Milestone milestone, Language language) {
+        // 在 Session 內初始化 flashcards 的 translations
+        if (milestone.getFlashcards() != null) {
+            milestone.getFlashcards().forEach(f -> {
+                if (f.getTranslations() != null) {
+                    f.getTranslations().size(); // 觸發初始化
+                }
+            });
+        }
         String description = milestone.getDescription() != null
                 ? milestone.getDescription().getLang(language.getCode())
                 : "";

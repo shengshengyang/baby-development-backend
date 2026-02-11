@@ -1,6 +1,6 @@
 package com.dean.baby.api.config;
 
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.dto.enums.Language;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;

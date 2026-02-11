@@ -1,14 +1,14 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.*;
-import com.dean.baby.common.entity.Role;
-import com.dean.baby.common.entity.User;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.BabyRepository;
-import com.dean.baby.common.repository.RoleRepository;
-import com.dean.baby.common.repository.UserRepository;
-import com.dean.baby.common.util.JwtUtil;
+import com.dean.baby.dto.*;
+import com.dean.baby.entity.Role;
+import com.dean.baby.entity.User;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.BabyRepository;
+import com.dean.baby.repository.RoleRepository;
+import com.dean.baby.repository.UserRepository;
+import com.dean.baby.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

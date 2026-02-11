@@ -1,7 +1,7 @@
 package com.dean.baby.entity;
 
-import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.util.LangFieldObjectConverter;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.util.LangFieldObjectConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;

@@ -1,6 +1,6 @@
 package com.dean.baby.api.aspect;
 
-import com.dean.baby.common.exception.ApiException;
+import com.dean.baby.exception.ApiException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

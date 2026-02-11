@@ -1,6 +1,6 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.entity.Article;
+import com.dean.baby.entity.Article;
 import lombok.Data;
 
 import java.util.List;

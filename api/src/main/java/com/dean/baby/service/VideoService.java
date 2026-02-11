@@ -1,12 +1,12 @@
-package com.dean.baby.common.service;
+package com.dean.baby.service;
 
-import com.dean.baby.common.dto.VideoDto;
-import com.dean.baby.common.dto.VideoFormDto;
-import com.dean.baby.common.dto.common.LangFieldObject;
-import com.dean.baby.common.entity.*;
-import com.dean.baby.common.exception.ApiException;
-import com.dean.baby.common.exception.SysCode;
-import com.dean.baby.common.repository.*;
+import com.dean.baby.dto.VideoDto;
+import com.dean.baby.dto.VideoFormDto;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.entity.*;
+import com.dean.baby.exception.ApiException;
+import com.dean.baby.exception.SysCode;
+import com.dean.baby.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

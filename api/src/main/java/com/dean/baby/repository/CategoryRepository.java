@@ -1,6 +1,6 @@
-package com.dean.baby.common.repository;
+package com.dean.baby.repository;
 
-import com.dean.baby.common.entity.Category;
+import com.dean.baby.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

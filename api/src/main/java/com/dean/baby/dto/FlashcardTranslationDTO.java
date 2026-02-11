@@ -1,6 +1,7 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.dto.enums.Language;
+import com.dean.baby.entity.FlashcardTranslation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class FlashcardTranslationDTO {
     private Language languageCode; // 語言代碼，例如 TRADITIONAL_CHINESE, ENGLISH 等
     private String description;    // 描述文字（原 backText）
 
-    public static FlashcardTranslationDTO fromEntity(com.dean.baby.common.entity.FlashcardTranslation translation) {
+    public static FlashcardTranslationDTO fromEntity(FlashcardTranslation translation) {
         if (translation == null) {
             return null;
         }

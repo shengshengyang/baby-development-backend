@@ -1,6 +1,6 @@
-package com.dean.baby.common.util;
+package com.dean.baby.util;
 
-import com.dean.baby.common.dto.enums.Language;
+import com.dean.baby.dto.enums.Language;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

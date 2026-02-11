@@ -1,7 +1,7 @@
 package com.dean.baby.api.controller;
 
-import com.dean.baby.common.dto.*;
-import com.dean.baby.common.service.FlashCardService;
+import com.dean.baby.dto.*;
+import com.dean.baby.service.FlashCardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

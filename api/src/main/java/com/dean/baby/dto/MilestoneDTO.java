@@ -1,6 +1,7 @@
-package com.dean.baby.common.dto;
+package com.dean.baby.dto;
 
-import com.dean.baby.common.dto.common.LangFieldObject;
+import com.dean.baby.dto.common.LangFieldObject;
+import com.dean.baby.entity.Milestone;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class MilestoneDTO {
     // 新增：對應的 FlashCard 列表
     private List<FlashcardSummaryDTO> flashcards;
 
-    public static MilestoneDTO fromEntity(com.dean.baby.common.entity.Milestone milestone) {
+    public static MilestoneDTO fromEntity(Milestone milestone) {
         if (milestone == null) {
             return null;
         }

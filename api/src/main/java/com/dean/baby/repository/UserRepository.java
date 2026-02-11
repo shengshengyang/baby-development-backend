@@ -1,6 +1,6 @@
-package com.dean.baby.common.repository;
+package com.dean.baby.repository;
 
-import com.dean.baby.common.entity.User;
+import com.dean.baby.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

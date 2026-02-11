@@ -1,4 +1,4 @@
-package com.dean.baby.common.util;
+package com.dean.baby.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
