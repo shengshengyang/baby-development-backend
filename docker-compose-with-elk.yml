@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # Elasticsearch - 儲存和索引日誌
   elasticsearch:
@@ -109,28 +107,6 @@ services:
     depends_on:
       logstash:
         condition: service_started
-    restart: unless-stopped
-
-  # MVC 模組 - 啟用 Logstash 日誌
-  mvc:
-    build:
-      context: .
-      dockerfile: mvc/Dockerfile
-    container_name: baby-dev-mvc
-    ports:
-      - "8084:8084"
-    command: ["--server.port=8084"]
-    environment:
-      # 啟用 Logstash 日誌傳送
-      - LOGSTASH_ENABLED=true
-      - LOGSTASH_HOST=logstash
-      - LOGSTASH_PORT=5000
-      - SPRING_PROFILES_ACTIVE=prod
-    networks:
-      - baby-dev-network
-    depends_on:
-      - api
-      - logstash
     restart: unless-stopped
 
 networks:
