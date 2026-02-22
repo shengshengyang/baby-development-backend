@@ -71,12 +71,13 @@ services:
       retries: 5
     restart: unless-stopped
 
-  # Kibana Setup - 自動設定 Data View
+  # Kibana Setup - 自動設定 Data View 和 Dashboard
   kibana-setup:
     image: curlimages/curl
     container_name: baby-dev-kibana-setup
     volumes:
       - ./kibana-setup.sh:/kibana-setup.sh
+      - ./dashboard.ndjson:/dashboard.ndjson
     command: ["/bin/sh", "/kibana-setup.sh"]
     networks:
       - baby-dev-network
