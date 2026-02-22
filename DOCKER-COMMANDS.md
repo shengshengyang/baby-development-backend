@@ -1,5 +1,39 @@
 # Docker Compose ELK 常用命令快速參考
 
+## 快速開始
+
+```bash
+# 完整啟動（含 ELK Stack + 自動設定 Kibana Dashboard）
+docker-compose -f docker-compose-with-elk.yml up -d --build
+
+# 查看服務狀態
+docker-compose -f docker-compose-with-elk.yml ps
+
+# 查看日誌
+docker-compose -f docker-compose-with-elk.yml logs -f
+```
+
+啟動後可訪問：
+- **API**: http://localhost:8085
+- **Kibana**: http://localhost:5601
+- **Elasticsearch**: http://localhost:9200
+
+## 自動設定功能
+
+使用 `docker-compose-with-elk.yml` 啟動時，會自動執行以下設定：
+
+1. **Data View**: 自動建立 `baby-development-backend-*` 索引模式
+2. **Dashboard**: 自動匯入 "Baby Backend Dashboard"
+3. **Visualizations**:
+   - Logs Over Time - 按時間與等級的日誌數量圖
+   - Log Count by Level - 日誌等級分佈圓餅圖
+   - Recent Logs - 最近日誌列表
+
+### 設定腳本
+
+- `kibana-setup.sh` - Kibana 自動設定腳本
+- `dashboard.ndjson` - Dashboard 匯出檔案
+
 ## 啟動與停止
 
 ```bash
@@ -17,17 +51,10 @@ docker-compose -f docker-compose-with-elk.yml restart api
 docker-compose -f docker-compose-with-elk.yml restart elasticsearch
 
 # 單獨重新 build 並重啟 api (使用 Maven Wrapper)
-mvnw clean install -pl api -am && docker-compose -f docker-compose-with-elk.yml up -d --build --no-deps api
+./mvnw clean install -pl api -am && docker-compose -f docker-compose-with-elk.yml up -d --build --no-deps api
 
-# 查看服務狀態
-docker-compose -f docker-compose-with-elk.yml ps
-
-# 查看即時 log
-docker-compose -f docker-compose-with-elk.yml logs -f
-
-# 查看特定服務 log
-docker-compose -f docker-compose-with-elk.yml logs -f elasticsearch
-docker-compose -f docker-compose-with-elk.yml logs -f api
+# 重新執行 Kibana 設定（如需手動觸發）
+docker rm -f baby-dev-kibana-setup && docker-compose -f docker-compose-with-elk.yml up -d kibana-setup
 ```
 
 ## Volume 管理
@@ -63,35 +90,20 @@ docker run --rm \
   alpine tar xzf /backup/elasticsearch-backup-YYYYMMDD.tar.gz -C /data
 ```
 
-## ELK 服務訪問
+## Kibana 使用指南
 
-- **Kibana**: http://localhost:5601
-- **Elasticsearch**: http://localhost:9200
-- **Logstash 監控**: http://localhost:9600
+### 直接訪問 Dashboard
 
-## Kibana 8.x 設定步驟（Data Views）
+啟動後直接訪問：http://localhost:5601/app/dashboards#/view/baby-backend-dashboard
 
-首次使用 Kibana 需要建立 Data View：
+### 手動查看日誌
 
-1. **打開 Kibana**
-   - 訪問：http://localhost:5601
+1. 前往 **Discover** 頁面
+2. 選擇 `baby-development-backend-*` Data View
+3. 設定時間範圍
+4. 開始查詢
 
-2. **建立 Data View**
-   - 方式一：前往「Stack Management」>「Data Views」>「Create data view」
-   - 方式二：直接點擊左側選單「Kibana」>「Data Views」>「Create data view」
-
-3. **設定 Data View**
-   - **Name**: `baby-development-backend-*`
-   - **Index pattern**: `baby-development-backend-*`
-   - **Time field**: 選擇 `@timestamp`
-   - 點擊「Save data view」
-
-4. **查看日誌**
-   - 前往「Discover」頁面
-   - 選擇剛建立的 `baby-development-backend-*` Data View
-   - 即可開始查詢和分析日誌
-
-**常見查詢範例**：
+### 常用查詢語法
 
 ```
 # 查看 API 請求
@@ -105,9 +117,36 @@ action: "CREATE" AND entity: "Baby"
 
 # 追蹤請求 ID
 requestId: "550e8400-e29b-41d4-a716-446655440000"
+
+# 查看回應時間超過 1 秒的請求
+executionTime > 1000
 ```
 
+### 日誌欄位說明
+
+| 欄位 | 說明 |
+|------|------|
+| `@timestamp` | 日誌時間 |
+| `level` | 日誌等級 (INFO, WARN, ERROR) |
+| `logger_name` | Logger 類別名稱 |
+| `message` | 日誌訊息 |
+| `thread_name` | 執行緒名稱 |
+| `requestId` | 請求追蹤 ID |
+| `executionTime` | API 執行時間 (ms) |
+| `clientIp` | 客戶端 IP |
+| `method` | HTTP 方法 |
+| `status` | 請���狀態 (SUCCESS/FAILED) |
+
 ## 故障排除
+
+### ELK 健康檢查腳本
+
+```bash
+# 執行診斷腳本
+./check-elk.sh
+```
+
+### 手動檢查
 
 ```bash
 # 查看容器健康狀態
@@ -124,25 +163,27 @@ curl http://localhost:9200/_cluster/health?pretty
 # 查看索引列表
 curl http://localhost:9200/_cat/indices?v
 
-# 查看最近的 log
-docker-compose -f docker-compose-with-elk.yml logs --tail=100 elasticsearch
+# 查看日誌數量
+curl http://localhost:9200/baby-development-backend-*/_count
+
+# 檢查 Kibana Data View
+curl http://localhost:5601/api/data_views
+
+# 檢查 Dashboard
+curl http://localhost:5601/api/saved_objects/_find?type=dashboard
+
+# 查看 kibana-setup 執行日誌
+docker logs baby-dev-kibana-setup
 ```
 
-## 日常使用流程
+### 常見問題
 
-```bash
-# 第一次啟動
-docker-compose -f docker-compose-with-elk.yml up -d --build
-
-# 每日開發流程
-docker-compose -f docker-compose-with-elk.yml restart api mvc
-
-# 每週維護（重啟 ELK 服務）
-docker-compose -f docker-compose-with-elk.yml restart elasticsearch logstash kibana
-
-# 備份資料
-./backup-elk.sh
-```
+| 問題 | 可能原因 | 解決方法 |
+|------|----------|----------|
+| Dashboard 沒有出現 | kibana-setup 未執行 | 重新執行 `docker-compose -f docker-compose-with-elk.yml up -d kibana-setup` |
+| 沒有日誌資料 | API 未連接 Logstash | 確認 `LOGSTASH_ENABLED=true` |
+| Kibana 無法啟動 | ES 未就緒 | 等待 ES health check 通過 |
+| 索引不存在 | API 尚未產生日誌 | 發送一些 API 請求產生日誌 |
 
 ## 清理資源
 
