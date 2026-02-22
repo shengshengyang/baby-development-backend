@@ -38,3 +38,13 @@ logs/
 /logs
 .agent
 .claude
+
+### Production Environment ###
+.env.prod
+.env.*.local
+nginx/htpasswd
+certbot/
+
+### Docker volumes (local) ###
+elasticsearch_data/
+redis_data/

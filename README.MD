@@ -240,6 +240,308 @@ curl http://localhost:5601/api/status
 - **dev**: Development mode with console logging
 - **prod**: Production mode with file and Logstash logging
 
+## Production Deployment
+
+### Architecture
+
+```
+                        ┌─────────────────────────────────────────┐
+                        │              Cloudflare                 │
+                        │  ┌─────────────────────────────────┐   │
+                        │  │   Vue App (Cloudflare Pages)    │   │
+                        │  │   https://app.your-domain.com   │   │
+                        │  └──────────────┬──────────────────┘   │
+                        └─────────────────┼───────────────────────┘
+                                          │ HTTPS
+                                          ▼
+                        ┌─────────────────────────────────────────┐
+                        │           GCP Compute Engine            │
+                        │  ┌─────────────────────────────────┐   │
+                        │  │         Nginx Reverse Proxy     │   │
+                        │  │   api.your-domain.com → :8085   │   │
+                        │  │   kibana.your-domain.com → :5601│   │
+                        │  └──────┬────────────────┬─────────┘   │
+                        │         │                │              │
+                        │  ┌──────▼─────┐   ┌──────▼─────┐       │
+                        │  │  API (Java)│   │   Kibana   │       │
+                        │  │   :8085    │   │   :5601    │       │
+                        │  └──────┬─────┘   └──────┬─────┘       │
+                        │         │                │              │
+                        │  ┌──────▼─────┐   ┌──────▼─────┐       │
+                        │  │  Logstash  │   │Elasticsearch│       │
+                        │  │   :5000    │   │   :9200    │       │
+                        │  └────────────┘   └────────────┘       │
+                        │         │                               │
+                        │  ┌──────▼─────┐                        │
+                        │  │   Redis    │                        │
+                        │  │   :6379    │                        │
+                        │  └────────────┘                        │
+                        └─────────────────┬───────────────────────┘
+                                          │
+                                          ▼
+                        ┌─────────────────────────────────────────┐
+                        │      MySQL (35.212.228.226:3306)        │
+                        │           現有資料庫                    │
+                        └─────────────────────────────────────────┘
+```
+
+### Prerequisites
+
+- GCP Account with Compute Engine enabled
+- Cloudflare Account (for DNS and Pages)
+- Domain name configured in Cloudflare
+
+---
+
+### Part 1: GCP Compute Engine 設定
+
+#### 1.1 建立 VM 執行個體
+
+```bash
+# 使用 gcloud CLI 建立 VM
+gcloud compute instances create baby-backend-prod \
+  --project=your-project-id \
+  --zone=asia-east1-a \
+  --machine-type=e2-medium \
+  --image-family=ubuntu-2204-lts \
+  --image-project=ubuntu-os-cloud \
+  --boot-disk-size=50GB \
+  --tags=http-server,https-server
+```
+
+#### 1.2 取得靜態 IP
+
+```bash
+# 保留靜態外部 IP
+gcloud compute addresses create baby-backend-ip \
+  --region=asia-east1
+
+# 查看分配的 IP
+gcloud compute addresses describe baby-backend-ip \
+  --region=asia-east1 --format='get(address)'
+```
+
+#### 1.3 連線到 VM 並執行初始設定
+
+```bash
+# SSH 連線
+gcloud compute ssh baby-backend-prod --zone=asia-east1-a
+
+# 下載並執行設定腳本
+git clone https://github.com/your-username/baby-development-backend.git
+cd baby-development-backend
+chmod +x scripts/*.sh deploy.sh
+./scripts/setup-gcp.sh
+
+# 重新登入以套用 Docker 群組
+exit
+gcloud compute ssh baby-backend-prod --zone=asia-east1-a
+```
+
+---
+
+### Part 2: Cloudflare DNS 設定
+
+在 Cloudflare Dashboard 設定以下 DNS 記錄：
+
+| 類型 | 名稱 | 內容 | 代理狀態 |
+|------|------|------|----------|
+| A | api | GCP_VM_IP | 已代理 (橘色雲) |
+| A | kibana | GCP_VM_IP | 已代理 (橘色雲) |
+| CNAME | app | your-project.pages.dev | 已代理 (橘色雲) |
+
+#### SSL/TLS 設定
+
+- 模式: **Full (strict)**
+- Always Use HTTPS: **On**
+- Minimum TLS Version: **1.2**
+
+---
+
+### Part 3: 部署後端到 GCP VM
+
+#### 3.1 設定環境變數
+
+```bash
+cd ~/baby-development-backend
+
+# 複製環境變數範本
+cp .env.prod.example .env.prod
+
+# 編輯環境變數
+nano .env.prod
+```
+
+填入以下必要資訊：
+
+```env
+# Database
+SPRING_DATASOURCE_URL=jdbc:mysql://35.212.228.226:3306/baby_development
+SPRING_DATASOURCE_USERNAME=your_db_username
+SPRING_DATASOURCE_PASSWORD=your_db_password
+
+# JWT (使用 openssl rand -base64 64 產生)
+JWT_SECRET=your-super-secure-jwt-secret
+
+# CORS
+CORS_ALLOWED_ORIGINS=https://app.your-domain.com
+
+# Domains
+API_DOMAIN=api.your-domain.com
+KIBANA_DOMAIN=kibana.your-domain.com
+```
+
+#### 3.2 設定 Kibana 密碼保護
+
+```bash
+# 安裝 htpasswd 工具 (如果尚未安裝)
+sudo apt-get install apache2-utils -y
+
+# 建立密碼檔案
+htpasswd -c nginx/htpasswd admin
+# 輸入密碼兩次
+```
+
+#### 3.3 執行部署
+
+```bash
+# 一鍵部署
+./deploy.sh
+
+# 或手動執行
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+```
+
+#### 3.4 設定 SSL 憑證
+
+```bash
+# 取得 Let's Encrypt 憑證
+./scripts/get-cert.sh
+```
+
+---
+
+### Part 4: 部署前端到 Cloudflare Pages
+
+#### 4.1 連接 GitHub Repository
+
+1. 到 Cloudflare Dashboard > Pages
+2. 選擇 "Create a project" > "Connect to Git"
+3. 選擇 GitHub 和 `baby-development-backend` repository
+
+#### 4.2 建置設定
+
+```
+Framework preset: Vue.js
+Build command: npm run build
+Build output directory: dist
+Root directory: vue-app
+```
+
+#### 4.3 環境變數
+
+```
+VITE_API_BASE_URL=https://api.your-domain.com
+NODE_VERSION=18
+```
+
+#### 4.4 自訂網域
+
+1. 到 Pages project > Custom domains
+2. 新增 `app.your-domain.com`
+
+---
+
+### Part 5: 驗證部署
+
+#### 5.1 檢查服務狀態
+
+```bash
+# 在 GCP VM 上執行
+docker compose -f docker-compose.prod.yml ps
+
+# 執行健康檢查腳本
+./scripts/check-elk.sh
+```
+
+#### 5.2 檢查外部存取
+
+```bash
+# API 健康檢查
+curl https://api.your-domain.com/actuator/health
+
+# Kibana (需要 Basic Auth)
+curl -u admin https://kibana.your-domain.com/api/status
+
+# 前端
+curl https://app.your-domain.com
+```
+
+---
+
+### 部署檔案清單
+
+| 檔案 | 說明 |
+|------|------|
+| `docker-compose.prod.yml` | 生產環境 Docker Compose |
+| `nginx/nginx.conf` | Nginx 反向代理配置 |
+| `nginx/htpasswd` | Kibana Basic Auth 密碼檔 |
+| `.env.prod` | 環境變數 (不提交到 Git) |
+| `.env.prod.example` | 環境變數範例 |
+| `api/src/main/resources/application-prod.properties` | Spring 生��配置 |
+| `vue-app/.env.production` | Vue 生產環境變數 |
+| `deploy.sh` | 一鍵部署腳本 |
+| `scripts/setup-gcp.sh` | GCP 初始設定腳本 |
+| `scripts/check-elk.sh` | ELK 健康檢查腳本 |
+| `scripts/get-cert.sh` | SSL 憑證設定腳本 |
+
+---
+
+### 維護操作
+
+#### 更新 API
+
+```bash
+# 拉取最新代碼
+git pull
+
+# 重新建置並部署
+./deploy.sh --build-jar
+```
+
+#### 查看日誌
+
+```bash
+# 即時日誌
+docker compose -f docker-compose.prod.yml logs -f
+
+# 特定服務
+docker compose -f docker-compose.prod.yml logs -f api
+```
+
+#### 重啟服務
+
+```bash
+# 重啟特定服務
+docker compose -f docker-compose.prod.yml restart api
+
+# 重啟所有服務
+docker compose -f docker-compose.prod.yml restart
+```
+
+---
+
+### 安全檢查清單
+
+- [ ] 資料庫密碼使用環境變數
+- [ ] JWT Secret 足夠複雜 (64+ 字元)
+- [ ] CORS 只允許前端網域
+- [ ] Kibana 有密碼保護
+- [ ] SSL/TLS 已啟用
+- [ ] Elasticsearch 不對外暴露
+- [ ] Redis 不對外暴露
+- [ ] .env.prod 檔案已加入 .gitignore
+
 ## License
 
 This project is private and proprietary.

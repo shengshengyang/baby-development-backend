@@ -2,9 +2,14 @@ import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 
+// Get API base URL from environment variable
+// In production: VITE_API_BASE_URL should be set to the full API URL (e.g., https://api.your-domain.com)
+// In development: VITE_API_BASE_URL is empty, so we use '/api' for Vite proxy
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+
 // 創建 axios 實例
 const service: AxiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: `${API_BASE_URL}/api`,
   timeout: 60000,
 })
 
