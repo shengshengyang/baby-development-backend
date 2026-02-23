@@ -135,13 +135,14 @@ function handleCancel() {
 }
 
 // Handle image upload and convert to base64
-function handleImageUpload(file: File) {
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    form.value.imageBase64 = e.target?.result as string
+function handleImageUpload(uploadFile: UploadFile) {
+  if (uploadFile.raw) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      form.value.imageBase64 = e.target?.result as string
+    }
+    reader.readAsDataURL(uploadFile.raw)
   }
-  reader.readAsDataURL(file)
-  return false // Prevent auto upload
 }
 
 function handleImageRemove() {

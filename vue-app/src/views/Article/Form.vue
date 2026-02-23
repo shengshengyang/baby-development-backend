@@ -12,14 +12,14 @@ const loading = ref(false)
 const saving = ref(false)
 const categories = ref<Category[]>([])
 
-const articleId = computed(() => parseInt(route.params.id as string))
+const articleId = computed(() => route.params.id as string)
 const isEdit = computed(() => !!articleId.value)
 
 const form = ref({
   title: '',
   content: '',
   summary: '',
-  categoryId: undefined as number | undefined,
+  categoryId: undefined as string | undefined,
 })
 
 const rules = {
@@ -104,7 +104,7 @@ async function handleSubmit() {
 
         <el-form-item label="分類" prop="categoryId">
           <el-select v-model="form.categoryId" placeholder="請選擇分類" style="width: 100%">
-            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
+            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name?.tw || cat.name?.en || ''" :value="cat.id" />
           </el-select>
         </el-form-item>
 

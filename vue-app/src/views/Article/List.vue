@@ -10,7 +10,7 @@ const loading = ref(false)
 const articles = ref<Article[]>([])
 const categories = ref<Category[]>([])
 
-const filters = ref({ categoryId: undefined as number | undefined })
+const filters = ref({ categoryId: undefined as string | undefined })
 const pagination = ref({ page: 1, size: 10, total: 0 })
 
 onMounted(async () => {
@@ -72,7 +72,7 @@ function handlePageChange(page: number) {
       <el-form :inline="true">
         <el-form-item label="分類">
           <el-select v-model="filters.categoryId" placeholder="請選擇分類" clearable style="width: 200px">
-            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
+            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name?.tw || cat.name?.en || ''" :value="cat.id" />
           </el-select>
         </el-form-item>
         <el-form-item>

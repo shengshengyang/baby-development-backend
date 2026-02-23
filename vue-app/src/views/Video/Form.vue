@@ -12,7 +12,7 @@ const loading = ref(false)
 const saving = ref(false)
 const milestones = ref<Milestone[]>([])
 
-const videoId = computed(() => parseInt(route.params.id as string))
+const videoId = computed(() => route.params.id as string)
 const isEdit = computed(() => !!videoId.value)
 
 const form = ref({
@@ -21,8 +21,8 @@ const form = ref({
   url: '',
   thumbnailUrl: '',
   duration: undefined as number | undefined,
-  milestoneId: undefined as number | undefined,
-  articleId: undefined as number | undefined,
+  milestoneId: undefined as string | undefined,
+  articleId: undefined as string | undefined,
 })
 
 const rules = {
@@ -123,12 +123,12 @@ async function handleSubmit() {
 
         <el-form-item label="關聯里程碑" prop="milestoneId">
           <el-select v-model="form.milestoneId" placeholder="請選擇里程碑" clearable filterable style="width: 100%">
-            <el-option v-for="m in milestones" :key="m.id" :label="m.title" :value="m.id" />
+            <el-option v-for="m in milestones" :key="m.id" :label="m.descriptionObject?.tw || m.descriptionObject?.en || m.description || ''" :value="m.id" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="關聯文章 ID" prop="articleId">
-          <el-input v-model="form.articleId" type="number" placeholder="請輸入文章 ID" />
+          <el-input v-model="form.articleId" placeholder="請輸入文章 ID" />
         </el-form-item>
 
         <el-form-item>

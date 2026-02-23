@@ -13,15 +13,15 @@ const saving = ref(false)
 const categories = ref<Category[]>([])
 const ages = ref<Age[]>([])
 
-const flashcardId = computed(() => parseInt(route.params.id as string))
+const flashcardId = computed(() => route.params.id as string)
 const isEdit = computed(() => !!flashcardId.value)
 
 const form = ref({
   question: '',
   answer: '',
-  categoryId: undefined as number | undefined,
-  ageId: undefined as number | undefined,
-  milestoneId: undefined as number | undefined,
+  categoryId: undefined as string | undefined,
+  ageId: undefined as string | undefined,
+  milestoneId: undefined as string | undefined,
 })
 
 const rules = {
@@ -112,18 +112,18 @@ async function handleSubmit() {
 
         <el-form-item label="分類" prop="categoryId">
           <el-select v-model="form.categoryId" placeholder="請選擇分類" clearable style="width: 100%">
-            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
+            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name?.tw || cat.name?.en || ''" :value="cat.id" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="年齡段" prop="ageId">
           <el-select v-model="form.ageId" placeholder="請選擇年齡段" clearable style="width: 100%">
-            <el-option v-for="age in ages" :key="age.id" :label="age.name" :value="age.id" />
+            <el-option v-for="age in ages" :key="age.id" :label="age.displayName?.tw || age.displayName?.en || ''" :value="age.id" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="關聯里程碑" prop="milestoneId">
-          <el-input v-model="form.milestoneId" type="number" placeholder="請輸入里程碑 ID" />
+          <el-input v-model="form.milestoneId" placeholder="請輸入里程碑 ID" />
         </el-form-item>
 
         <el-form-item>
