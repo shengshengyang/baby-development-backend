@@ -60,7 +60,7 @@ fi
 
 # Create necessary directories
 log_info "Creating directories..."
-mkdir -p nginx certbot/conf certbot/www
+mkdir -p nginx
 
 # Check if htpasswd exists, create if not
 if [ ! -f "nginx/htpasswd" ]; then
@@ -128,8 +128,9 @@ echo ""
 echo "=========================================="
 echo "Next steps:"
 echo "=========================================="
-echo "1. Get SSL certificates (first time only):"
-echo "   ./scripts/get-cert.sh"
+echo "1. Configure Cloudflare SSL (Flexible mode)"
+echo "   - Set SSL/TLS to Flexible in Cloudflare dashboard"
+echo "   - Cloudflare will handle HTTPS and connect to server via HTTP"
 echo ""
 echo "2. View logs:"
 echo "   docker compose -f docker-compose.prod.yml logs -f"
