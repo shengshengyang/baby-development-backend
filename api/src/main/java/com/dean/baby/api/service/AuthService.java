@@ -57,9 +57,10 @@ public class AuthService extends BaseService {
         return super.getCurrentUser();
     }
 
+    @Transactional
     public UserDto login(LoginVo loginRequest) {
 
-        User user = userRepository.findByEmail(loginRequest.email()).orElseThrow(
+        User user = userRepository.findWithBabiesByEmail(loginRequest.email()).orElseThrow(
                 () -> new ApiException(SysCode.USER_NOT_FOUND, "User not found")
         );
 
